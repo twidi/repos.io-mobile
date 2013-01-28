@@ -247,13 +247,12 @@ var Reposio = (function() {
                 path = repository.full_name || repository.name;
             markup += '<li>';
             markup += '<a href="#repository_home?repository=' + path.replace('/', ':') + '@github">' ;
-            markup += '<h4>' + path;
-            if (repository.fork) {
-                markup += '<span> - fork</span>'
-            }
-            markup += '</h4>';
+            markup += '<h4>' + path + '</h4>';
             if (repository.description) {
                 markup += '<p class="repo-desc">' + repository.description + '</p>';
+            }
+            if (repository.fork) {
+                markup += '<p class="ui-li-aside ui-btn-up-e ui-btn-corner-all fork">fork</p>'
             }
             markup += '</a>';
             markup += '</li>';

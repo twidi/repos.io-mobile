@@ -9,9 +9,9 @@ p.ui-li-desc.repo-desc {
     overflow-x: auto;
 }
 
-li.ui-li h4 span {
-    font-weight: normal;
-    font-size: smaller;
-    font-style: italic;
-    color: orange;
+p.ui-li-aside.fork {
+    width: auto;
+    padding: 0.2em 0.5em;
+    text-align: center;
+    margin-top: 1ex;
 }

@@ -4,3 +4,10 @@ div[data-role="popup"] > div.ui-bar {
 p.ui-li-desc.repo-desc {
     white-space: normal;
 }
+
+li.ui-li h4 span {
+    font-weight: normal;
+    font-size: smaller;
+    font-style: italic;
+    color: orange;
+}

@@ -4,8 +4,7 @@ var Reposio = (function() {
 
     Providers['github'] = function(controller) {
         this.name = 'github';
-        //this.engine = new Github({username: "foo", password: "bar", auth: "basic", origin: "http://localhost:8000"});
-        this.engine = new Github({origin: "http://localhost:8000"});
+        this.engine = new Github(typeof providers_config == 'undefined' ? {} : providers_config.github);
         this.user = this.engine.getUser();
     };
 

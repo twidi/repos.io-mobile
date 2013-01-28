@@ -34,9 +34,6 @@
           }
         }
       };
-      if (options.origin) {
-          xhr.setRequestHeader('Origin', options.origin);        
-      }
       xhr.setRequestHeader('Accept','application/vnd.github.raw');
       xhr.setRequestHeader('Content-Type','application/json');
       if (

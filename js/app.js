@@ -307,7 +307,7 @@ var Reposio = (function() {
             markup += '<p><em>Fork ok <strong>' + repository.details.parent.full_name + '</strong></em></p>'
         }
         if (repository.details.readme) {
-            markup += '<hr />' + repository.details.readme;
+            markup += '<hr /><div class="readme-container">' + repository.details.readme + '</div>';
         }
         return markup;
     }

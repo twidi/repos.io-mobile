@@ -5,6 +5,10 @@ p.ui-li-desc.repo-desc {
     white-space: normal;
 }
 
+.readme-container {
+    overflow-x: auto;
+}
+
 li.ui-li h4 span {
     font-weight: normal;
     font-size: smaller;

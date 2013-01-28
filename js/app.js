@@ -61,8 +61,12 @@ var Reposio = (function() {
         var that = this;
         if (that[type] === null) {
             that.controller.account.provider['get_account_' + type](that.username, function(err, data) {
-                that[type] = data;
-                callback();
+                if (err) {
+                    that.controller.fetch_error(err, that, type, callback);
+                } else {
+                    that[type] = data;
+                    callback();                    
+                }
             });
         } else {
             callback();
@@ -88,8 +92,12 @@ var Reposio = (function() {
         var that = this;
         if (that[type] === null) {
             that.controller.repository.provider['get_repository_' + type](that.path, function(err, data) {
-                that[type] = data;
-                callback();
+                if (err) {
+                    that.controller.fetch_error(err, that, type, callback);
+                } else {
+                    that[type] = data;
+                    callback();
+                }
             });
         } else {
             callback();
@@ -297,6 +305,19 @@ var Reposio = (function() {
         return markup;
     };
 
+    Display.prototype.confirm_new_fech = function(error) {
+        $.mobile.loading('hide');
+        error = error || 'undefined error';
+        var result = confirm('Unable to fetch (' + error + '), retry ?');
+        if (result) {
+            $.mobile.loading('show');
+        } else {
+            history.go(-1);
+        }
+        return result;
+    };
+
+
     var Controller = function() {
         this.providers = {
             github: new Providers['github'](this)
@@ -367,6 +388,12 @@ var Reposio = (function() {
         $('.current_page, .page_loaded').removeClass('current_page, page_loaded');
         $('#repository_' + page).addClass('current_page');
         this.repository.fetch(fetch_type, render);
+    };
+
+    Controller.prototype.fetch_error = function(error, obj, fetch_type, original_callback) {
+        if (this.display.confirm_new_fech(error.error)) {
+            obj.fetch(fetch_type, original_callback);
+        }
     };
 
     Controller.prototype.init_events = function() {

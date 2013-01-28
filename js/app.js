@@ -71,10 +71,11 @@ var Reposio = (function() {
                 page_name = this.pages[obj_type][page_index];
                 full_page_name = obj_type + '_' + page_name
                 page = $('#' + full_page_name);
-                this.nodes[obj_type][page_name] = {
+                this.nodes[obj_type][full_page_name] = {
                     links: $('a.' + full_page_name + '-link'),
                     page: page,
-                    header: page.find(':jqmData(role=header)').find('h3')
+                    header: page.find(':jqmData(role=header)').find('h3'),
+                    content: page.children(":jqmData(role=content)")
                 };
             }
         }
@@ -87,15 +88,16 @@ var Reposio = (function() {
     }
 
     Display.prototype.change_account = function() {
-        for (var name in this.nodes.account) {
-            var links = this.nodes.account[name].links;
+        for (var page_name in this.nodes.account) {
+            var links = this.nodes.account[page_name].links;
             for (var i=0; i<links.length; i++) {
                 var link = $(links[i]),
-                    href = '#account_' + name + '?account=' + this.controller.account.id;
+                    href = '#' + page_name + '?account=' + this.controller.account.id;
                 link.attr('href', href);
 
             }
-            this.nodes.account[name].header.html(this.controller.account.id);
+            this.nodes.account[page_name].header.html(this.controller.account.id);
+            this.nodes.account[page_name].content.html(' ');
         }
     };
 
@@ -154,7 +156,7 @@ var Reposio = (function() {
     Display.prototype.render_page = function(name, obj) {
         var page = $('#'+name);
         if (!this.is_current_page(page, obj)) { return; }
-        var content = page.children( ":jqmData(role=content)" ),
+        var content = this.nodes.account[name].content,
             markup = this['get_markup_for_'+name](obj);
         
         content.html(markup);

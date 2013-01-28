@@ -234,9 +234,11 @@ var Reposio = (function() {
         content.html(markup);
         page.page();
         content.find(":jqmData(role=listview)").listview();
+        content.find(":jqmData(role=collapsible-set)").collapsibleset();
+        content.find(":jqmData(role=collapsible)").collapsible();
 
         $.mobile.loading('hide');
-        page.addClass('page_loaded');        
+        page.addClass('page_loaded');
     }
 
     Display.prototype.get_markup_for_repositories = function(repositories) {
@@ -313,12 +315,14 @@ var Reposio = (function() {
             markup += '<strong><a href="#account_home?account=' + repository.details.parent.owner.login + '@' + repository.provider.name + '">' + repository.details.parent.owner.login + '</a></strong>';
             markup += '</em></p>'
         }
+         markup += '<div data-role="collapsible-set" data-corners="false" data-theme="c" data-content-theme="d" data-inset="false" data-mini="true">';
         if (repository.details.description) {
-            markup += '<hr /><p>' + repository.details.description + '</p>';
+            markup += '<div data-role="collapsible" data-collapsed="false"><h3>Description</h3><p>' + repository.details.description + '</p></div>';
         }
         if (repository.details.readme) {
-            markup += '<hr /><div class="readme-container">' + repository.details.readme + '</div>';
+            markup += '<div data-role="collapsible"' + (repository.details.description ? '' : ' data-collapsed="false"') + '><h3>Readme</h3><div class="readme-container">' + repository.details.readme + '</div></div>';
         }
+        markup += '</div>';
         return markup;
     }
 

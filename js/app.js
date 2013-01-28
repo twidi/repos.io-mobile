@@ -301,9 +301,17 @@ var Reposio = (function() {
     };
 
     Display.prototype.get_markup_for_repository_home = function(repository) {
-        var markup = '<p><strong>' + repository.path + '</strong> est sur <strong>' + repository.provider.name + '</strong></p>';
+        var markup = '<p>';
+        markup += '<strong>' + repository.details.name + '</strong>';
+        markup += ' by ';
+        markup += '<strong><a href="#account_home?account=' + repository.details.owner.login + '@' + repository.provider.name + '">' + repository.details.owner.login + '</a></strong>';
+        markup += '</strong> on <strong>' + repository.provider.name + '</strong></p>';
         if (repository.details.fork) {
-            markup += '<p><em>Fork ok <strong>' + repository.details.parent.full_name + '</strong></em></p>'
+            markup += '<p><em>Fork ok ';
+            markup += '<strong><a href="#repository_home?repository=' + repository.details.parent.full_name.replace('/', ':') + '@' + repository.provider.name + '">' + repository.details.parent.name + '</a></strong>';
+            markup += ' by ';
+            markup += '<strong><a href="#account_home?account=' + repository.details.parent.owner.login + '@' + repository.provider.name + '">' + repository.details.parent.owner.login + '</a></strong>';
+            markup += '</em></p>'
         }
         if (repository.details.description) {
             markup += '<hr /><p>' + repository.details.description + '</p>';

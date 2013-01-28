@@ -350,6 +350,13 @@
         _request("GET", repoPath, null, cb);
       };
 
+      // List repository events
+      // -------
+
+      this.events = function(cb) {
+        _request("GET", repoPath + "/events", null, cb);
+      };
+
       // Get contents
       // --------
 

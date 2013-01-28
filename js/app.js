@@ -8,24 +8,37 @@ var Reposio = (function() {
         this.user = this.engine.getUser();
     };
 
-    Providers['github'].prototype.get_details = function(username, callback) {
+    Providers['github'].prototype.get_repo = function(path) {
+        var parts = path.split('/');
+        return this.engine.getRepo(parts[0], parts[1]);
+    }
+
+    Providers['github'].prototype.get_account_details = function(username, callback) {
         this.user.show(username, callback);
     };
 
-    Providers['github'].prototype.get_repositories = function(username, callback) {
+    Providers['github'].prototype.get_account_repositories = function(username, callback) {
         this.user.userRepos(username, callback);
     };
 
-    Providers['github'].prototype.get_stars = function(username, callback) {
+    Providers['github'].prototype.get_account_stars = function(username, callback) {
         this.user.userStars(username, callback);
     };
 
-    Providers['github'].prototype.get_own_events = function(username, callback) {
+    Providers['github'].prototype.get_account_own_events = function(username, callback) {
         this.user.userEvents(username, callback);
     };
 
-    Providers['github'].prototype.get_received_events = function(username, callback) {
+    Providers['github'].prototype.get_account_received_events = function(username, callback) {
         this.user.userReceivedEvents(username, callback);
+    };
+
+    Providers['github'].prototype.get_repository_details = function(path, callback) {
+        this.get_repo(path).show(callback);
+    };
+
+    Providers['github'].prototype.get_repository_activity = function(path, callback) {
+        this.get_repo(path).events(callback);
     };
 
 
@@ -47,7 +60,34 @@ var Reposio = (function() {
     Account.prototype.fetch = function(type, callback) {
         var that = this;
         if (that[type] === null) {
-            that.controller.account.provider['get_' + type](that.username, function(err, data) {
+            that.controller.account.provider['get_account_' + type](that.username, function(err, data) {
+                that[type] = data;
+                callback();
+            });
+        } else {
+            callback();
+        }
+    };
+
+
+    var Repository = function(id, controller) {
+        var parts = id.split('@');
+        this.id = id;
+        this.path = parts[0];
+        this.href_id = this.id.replace('/', ':');
+
+        this.provider = controller.providers[parts[1]];
+
+        this.controller = controller;
+
+        this.details = null;
+        this.activity = null;
+    };
+
+    Repository.prototype.fetch = function(type, callback) {
+        var that = this;
+        if (that[type] === null) {
+            that.controller.repository.provider['get_repository_' + type](that.path, function(err, data) {
                 that[type] = data;
                 callback();
             });
@@ -84,7 +124,8 @@ var Reposio = (function() {
     };
 
     Display.prototype.pages = {
-        account: ['home', 'activity', 'repositories', 'stars', 'events']
+        account: ['home', 'activity', 'repositories', 'stars', 'events'],
+        repository: ['home', 'activity']
     }
 
     Display.prototype.change_account = function() {
@@ -98,6 +139,20 @@ var Reposio = (function() {
             }
             this.nodes.account[page_name].header.html(this.controller.account.id);
             this.nodes.account[page_name].content.html(' ');
+        }
+    };
+
+    Display.prototype.change_repository = function() {
+        for (var page_name in this.nodes.repository) {
+            var links = this.nodes.repository[page_name].links;
+            for (var i=0; i<links.length; i++) {
+                var link = $(links[i]),
+                    href = '#' + page_name + '?repository=' + this.controller.repository.href_id;
+                link.attr('href', href);
+
+            }
+            this.nodes.repository[page_name].header.html(this.controller.repository.id);
+            this.nodes.repository[page_name].content.html(' ');
         }
     };
 
@@ -153,11 +208,12 @@ var Reposio = (function() {
         return page.hasClass('current_page');
     }
 
-    Display.prototype.render_page = function(name, obj) {
-        var page = $('#'+name);
+    Display.prototype.render_page = function(type, name, obj) {
+        var full_name = type + '_' + name,
+            page = $('#' + full_name);
         if (!this.is_current_page(page, obj)) { return; }
-        var content = this.nodes.account[name].content,
-            markup = this['get_markup_for_'+name](obj);
+        var content = this.nodes[type][full_name].content,
+            markup = this['get_markup_for_' + full_name](obj);
         
         content.html(markup);
         page.page();
@@ -171,12 +227,15 @@ var Reposio = (function() {
         var markup = "<ul data-role='listview'>";
 
         for (var i=0; i<repositories.length; i++) {
-            var repository = repositories[i];
+            var repository = repositories[i],
+                path = repository.full_name || repository.name;
             markup += '<li>';
-            markup += '<h4>' + (repository.full_name || repository.name) + '</h4>';
+            markup += '<a href="#repository_home?repository=' + path.replace('/', ':') + '@github">' ;
+            markup += '<h4>' + path + '</h4>';
             if (repository.description) {
                 markup += '<p class="repo-desc">' + repository.description + '</p>';
             }
+            markup += '</a>';
             markup += '</li>';
         }
 
@@ -222,11 +281,28 @@ var Reposio = (function() {
         return markup;
     };
 
+    Display.prototype.get_markup_for_repository_home = function(repository) {
+        var markup = '<p><strong>' + repository.path + '</strong> est sur <strong>' + repository.provider.name + '</strong>';
+        return markup;
+    }
+
+    Display.prototype.get_markup_for_repository_activity = function(repository) {
+        var markup = "<ul data-role='listview'>";
+        for (var i=0; i<repository.activity.length; i++) {
+            var entry = repository.activity[i];
+            markup += '<li>' + entry.actor.login + ' | ' + entry.type.replace('Event', '').toLowerCase();
+        }
+        markup += "</ul>";
+
+        return markup;
+    };
+
     var Controller = function() {
         this.providers = {
             github: new Providers['github'](this)
         };
         this.account = null;
+        this.repository = null;
         this.display = new Display(this);
     };
 
@@ -238,6 +314,10 @@ var Reposio = (function() {
             stars: 'stars',
             activity: 'own_events',
             events: 'received_events'
+        },
+        repository: {
+            home: 'details',
+            activity: 'activity'
         }
     }
 
@@ -255,16 +335,38 @@ var Reposio = (function() {
         return changed;
     };
 
+    Controller.prototype.set_repository = function(repository_id) {
+        var changed = (this.repository == null || this.repository.id != repository_id);
+        if (changed) {
+            this.repository = new Repository(repository_id, this);
+            this.display.change_repository();
+        }
+        return changed;
+    };
+
     Controller.prototype.on_account_page_before_load = function(account_id, page) {
         var that = this,
             changed = this.set_account(account_id),
             account = this.account,
-            render = function() { that.display.render_page('account_' + page, account); },
+            render = function() { that.display.render_page('account', page, account); },
             fetch_type = this.mapping.account[page];
 
         $('.current_page, .page_loaded').removeClass('current_page, page_loaded');
         $('#account_' + page).addClass('current_page');
         this.account.fetch(fetch_type, render);
+    };
+
+    Controller.prototype.on_repository_page_before_load = function(repository_id, page) {
+        repository_id = repository_id.replace(':', '/');
+        var that = this,
+            changed = this.set_repository(repository_id),
+            repository = this.repository,
+            render = function() { that.display.render_page('repository', page, repository); },
+            fetch_type = this.mapping.repository[page];
+
+        $('.current_page, .page_loaded').removeClass('current_page, page_loaded');
+        $('#repository_' + page).addClass('current_page');
+        this.repository.fetch(fetch_type, render);
     };
 
     Controller.prototype.init_events = function() {

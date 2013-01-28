@@ -34,7 +34,15 @@ var Reposio = (function() {
     };
 
     Providers['github'].prototype.get_repository_details = function(path, callback) {
-        this.get_repo(path).show(callback);
+        var repo = this.get_repo(path);
+        repo.show(function(err, data) {
+            if (err) { return callback(err, {}); }
+            repo.readme(function(err, readme) {
+                if (err) { return callback(err, {}); }
+                data.readme = readme;
+                callback(null, data);
+            });
+        });
     };
 
     Providers['github'].prototype.get_repository_activity = function(path, callback) {
@@ -253,7 +261,7 @@ var Reposio = (function() {
     }
 
     Display.prototype.get_markup_for_account_home = function(account) {
-        var markup = '<p><img src="' + account.details.avatar_url + '" /></p><p><strong>' + account.username + '</strong> (<strong>' + account.details.name + '</strong>) est sur <strong>' + account.provider.name + '</strong>';
+        var markup = '<p><img src="' + account.details.avatar_url + '" /></p><p><strong>' + account.username + '</strong> (<strong>' + account.details.name + '</strong>) est sur <strong>' + account.provider.name + '</strong></p>';
         return markup;
     }
 
@@ -290,7 +298,10 @@ var Reposio = (function() {
     };
 
     Display.prototype.get_markup_for_repository_home = function(repository) {
-        var markup = '<p><strong>' + repository.path + '</strong> est sur <strong>' + repository.provider.name + '</strong>';
+        var markup = '<p><strong>' + repository.path + '</strong> est sur <strong>' + repository.provider.name + '</strong></p>';
+        if (repository.details.readme) {
+            markup += '<hr />' + repository.details.readme;
+        }
         return markup;
     }
 

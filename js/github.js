@@ -15,7 +15,7 @@
     // 
     // I'm not proud of this and neither should you be if you were responsible for the XMLHttpRequest spec.
 
-    function _request(method, path, data, cb, raw) {
+    function _request(method, path, data, cb, raw, accept) {
       function getURL() {
         var url = API_URL + path;
         return url + ((/\?/).test(url) ? "&" : "?") + (new Date()).getTime();
@@ -34,7 +34,8 @@
           }
         }
       };
-      xhr.setRequestHeader('Accept','application/vnd.github.raw');
+      if (!accept) { accept = 'application/vnd.github.raw'; }
+      xhr.setRequestHeader('Accept', accept);
       xhr.setRequestHeader('Content-Type','application/json');
       if (
          (options.auth == 'oauth' && options.token) ||
@@ -348,6 +349,13 @@
 
       this.show = function(cb) {
         _request("GET", repoPath, null, cb);
+      };
+
+      // Show repository readme
+      // -------
+
+      this.readme = function(cb) {
+        _request("GET", repoPath + "/readme", null, cb, 'html', "application/vnd.github.beta.html+json");
       };
 
       // List repository events

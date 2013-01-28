@@ -236,6 +236,7 @@ var Reposio = (function() {
         content.find(":jqmData(role=listview)").listview();
         content.find(":jqmData(role=collapsible-set)").collapsibleset();
         content.find(":jqmData(role=collapsible)").collapsible();
+        content.find(":jqmData(role=button)").button();
 
         $.mobile.loading('hide');
         page.addClass('page_loaded');
@@ -303,17 +304,17 @@ var Reposio = (function() {
     };
 
     Display.prototype.get_markup_for_repository_home = function(repository) {
-        var markup = '<p>';
+        var markup = '<div class="repo-main">';
         markup += '<strong>' + repository.details.name + '</strong>';
         markup += ' by ';
-        markup += '<strong><a href="#account_home?account=' + repository.details.owner.login + '@' + repository.provider.name + '">' + repository.details.owner.login + '</a></strong>';
-        markup += '</strong> on <strong>' + repository.provider.name + '</strong></p>';
+        markup += '<a class="mini-button" data-role="button" data-inline="true" data-mini="true" data-theme="a" href="#account_home?account=' + repository.details.owner.login + '@' + repository.provider.name + '">' + repository.details.owner.login + '</a>';
+        markup += '</strong> on <strong>' + repository.provider.name + '</strong></div>';
         if (repository.details.fork) {
-            markup += '<p><em>Fork ok ';
-            markup += '<strong><a href="#repository_home?repository=' + repository.details.parent.full_name.replace('/', ':') + '@' + repository.provider.name + '">' + repository.details.parent.name + '</a></strong>';
+            markup += '<div class="repo-fork">Fork ok ';
+            markup += '<a class="mini-button" data-role="button" data-inline="true" data-mini="true" data-theme="b" href="#repository_home?repository=' + repository.details.parent.full_name.replace('/', ':') + '@' + repository.provider.name + '">' + repository.details.parent.name + '</a>';
             markup += ' by ';
-            markup += '<strong><a href="#account_home?account=' + repository.details.parent.owner.login + '@' + repository.provider.name + '">' + repository.details.parent.owner.login + '</a></strong>';
-            markup += '</em></p>'
+            markup += '<a class="mini-button" data-role="button" data-inline="true" data-mini="true" data-theme="a" href="#account_home?account=' + repository.details.parent.owner.login + '@' + repository.provider.name + '">' + repository.details.parent.owner.login + '</a>';
+            markup += '</div>'
         }
          markup += '<div data-role="collapsible-set" data-corners="false" data-theme="c" data-content-theme="d" data-inset="false" data-mini="true">';
         if (repository.details.description) {

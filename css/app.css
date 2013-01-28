@@ -15,3 +15,18 @@ p.ui-li-aside.fork {
     text-align: center;
     margin-top: 1ex;
 }
+a.mini-button.ui-btn.ui-mini {
+    margin-left: 2px;
+    margin-right: 1px;
+}
+a.mini-button.ui-btn.ui-mini .ui-btn-inner {
+    padding: 0.1em 8px 0.2em;
+}
+#repository_home .ui-content div.repo-main strong:first-of-type {
+    font-size: larger;
+}
+#repository_home .ui-content div.repo-fork {
+    font-style: italic;
+    text-align: right;
+    margin-top: 1ex;
+}

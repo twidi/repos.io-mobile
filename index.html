@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>Repos.io Mobile WebApp</title>
+    <link rel="stylesheet" href="css/jquery.mobile-1.3.0-beta.1.min.css" />
+    <link rel="stylesheet" href="css/app.css" />
+    <script src="js/jquery-1.8.3.min.js"></script>
+    <script src="js/jquery.mobile-config.js"></script>
+    <script src="js/jquery.mobile-1.3.0-beta.1.min.js"></script>
+    <script src="js/jqm.page.params.js"></script>
+    <script src="js/underscore-min.js"></script>
+    <script src="js/base64.js"></script>
+    <script src="js/github.js"></script>
+    <script src="js/app.js"></script>
+</head>
+<body>
+
+
+<!-- Home -->
+<div data-role="page" id="home">
+    <div data-theme="a" data-role="header">
+        <h3>
+            Repos.io
+        </h3>
+    </div>
+    <div data-role="content">
+        <ul data-role="listview" data-divider-theme="b" data-inset="true">
+            <li data-theme="c">
+                <a href="#account_home?account=twidi@github" class="account_home-link">
+                    twidi@github
+                </a>
+            </li>
+        </ul>
+        <a data-role="button" href="#accounts" data-icon="arrow-r" data-iconpos="right" data-theme="b" >
+            Manage accounts
+        </a>
+    </div>
+</div>
+
+
+<!-- Manage accounts -->
+<div data-role="page" id="accounts">
+    <div data-theme="a" data-role="header">
+        <a data-role="button" href="#account-new" data-icon="plus" data-iconpos="notext" class="ui-btn-right" data-rel="popup" data-position-to="window" data-transition="pop">
+            Add account
+        </a>
+        <h3>
+            Accounts
+        </h3>
+    </div>
+    <div data-role="content">
+        <ul data-role="listview" data-inset="true" data-split-icon="minus" data-split-theme="a">
+            <li data-theme="c">
+                <a href="#account_home?account=twidi@github" class="account_home-link">
+                    twidi@github
+                </a>
+                <a href="#account-remove" data-rel="popup" data-position-to="window" data-transition="pop">
+                    Remove account
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Remove account -->
+    <div data-role="popup" id="account-remove" data-theme="a" data-overlay-theme="a">
+        <div class="ui-bar ui-bar-a">
+            <h1>Remove account?</h1>
+        </div>
+        <div data-role="content" data-theme="a">
+            <p>Your account <strong>twidi@github</strong> will be fully removed from this app.</p>
+            <fieldset class="ui-grid-a">
+                <div class="ui-block-a"><a href="index.html" data-role="button" data-rel="back" data-theme="b" data-icon="check" data-mini="true">Remove</a></div>
+                <div class="ui-block-b"><a href="index.html" data-role="button" data-rel="back" data-mini="true" data-icon="delete">Cancel</a></div>  
+            </fieldset>
+        </div>
+    </div>
+
+    <!-- Add account -->
+    <div data-role="popup" id="account-new" data-theme="a" data-overlay-theme="a">
+        <div class="ui-bar ui-bar-a">
+            <h1>Add account</h1>
+        </div>
+        <div data-role="content" data-theme="a">
+                <fieldset data-role="controlgroup" data-type="vertical">
+                    <input id="radio1" name="" value="github" type="radio" data->
+                    <label for="radio1">
+                        Github
+                    </label>
+                    <input id="radio2" name="" value="bitbucket" type="radio">
+                    <label for="radio2">
+                        Bitbucket
+                    </label>
+                </fieldset>
+                <fieldset data-role="controlgroup" class="ui-hide-label">
+                    <label for="textinput1">
+                        Username:
+                    </label>
+                    <input name="" id="textinput1" placeholder="Username" value="" type="text">
+                </fieldset>
+            <fieldset class="ui-grid-a">
+                <div class="ui-block-a"><input data-icon="check" data-iconpos="left" value="Add" type="submit" data-rel="back" data-theme="b" data-mini="true"></div>
+                <div class="ui-block-b"><a href="index.html" data-role="button" data-rel="back" data-mini="true" data-icon="delete" data-mini="true">Cancel</a></div>  
+            </fieldset>
+        </div>
+    </div>
+
+</div>
+
+
+<!-- Account home -->
+<div data-role="page" id="account_home">
+    <div data-theme="a" data-role="header" data-id="account_pages" data-position="fixed">
+        <h3>
+            ???
+        </h3>
+
+        <div data-role="navbar">
+            <ul>
+                <li><a href="#account_home" class="ui-btn-active ui-state-persist account_home-link">Details</a></li>
+                <li><a href="#account_activity" class="account_activity-link">Activity</a></li>
+                <li><a href="#account_repositories" class="account_repositories-link">Repos</a></li>
+                <li><a href="#account_stars" class="account_stars-link">Stars</a></li>
+                <li><a href="#account_events" class="account_events-link">Events</a></li>
+            </ul>
+        </div><!-- /navbar -->
+    </div>
+    <div data-role="content">
+    </div>
+</div>
+
+
+<!-- Account activity -->
+<div data-role="page" id="account_activity">
+    <div data-theme="a" data-role="header" data-id="account_pages" data-position="fixed">
+        <h3>
+            ???
+        </h3>
+
+        <div data-role="navbar">
+            <ul>
+                <li><a href="#account_home" data-direction="reverse" class="account_home-link">Details</a></li>
+                <li><a href="#account_activity" class="ui-btn-active ui-state-persist account_activity-link">Activity</a></li>
+                <li><a href="#account_repositories" class="account_repositories-link">Repos</a></li>
+                <li><a href="#account_stars" class="account_stars-link">Stars</a></li>
+                <li><a href="#account_events" class="account_events-link">Events</a></li>
+            </ul>
+        </div><!-- /navbar -->
+    </div>
+    <div data-role="content">
+    </div>
+</div>
+
+
+<!-- Account Repositories -->
+<div data-role="page" id="account_repositories">
+    <div data-theme="a" data-role="header" data-id="account_pages" data-position="fixed">
+        <h3>
+            ???
+        </h3>
+        <a href="index.html" data-icon="search" class="ui-btn-right" data-iconpos="notext">Search</a>
+
+        <div data-role="navbar">
+            <ul>
+                <li><a href="#account_home" data-direction="reverse" class="account_home-link">Details</a></li>
+                <li><a href="#account_activity" data-direction="reverse" class="account_activity-link">Activity</a></li>
+                <li><a href="#account_repositories" class="ui-btn-active ui-state-persist account_repositories-link">Repos</a></li>
+                <li><a href="#account_stars" class="account_stars-link">Stars</a></li>
+                <li><a href="#account_events" class="account_events-link">Events</a></li>
+            </ul>
+        </div><!-- /navbar -->
+    </div>
+    <div data-role="content">
+    </div>
+</div>
+
+
+<!-- Account Stars -->
+<div data-role="page" id="account_stars">
+    <div data-theme="a" data-role="header" data-id="account_pages" data-position="fixed">
+        <h3>
+            twidi@github
+        </h3>
+        <a href="index.html" data-icon="search" class="ui-btn-right" data-iconpos="notext">Search</a>
+
+        <div data-role="navbar">
+            <ul>
+                <li><a href="#account_home" data-direction="reverse" class="account_home-link">Details</a></li>
+                <li><a href="#account_activity" data-direction="reverse" class="account_activity-link">Activity</a></li>
+                <li><a href="#account_repositories" data-direction="reverse" class="account_repositories-link">Repos</a></li>
+                <li><a href="#account_stars" class="ui-btn-active ui-state-persist account_stars-link">Stars</a></li>
+                <li><a href="#account_events" class="account_events-link">Events</a></li>
+            </ul>
+        </div><!-- /navbar -->
+    </div>
+    <div data-role="content">
+    </div>
+</div>
+
+
+<!-- Account Events -->
+<div data-role="page" id="account_events">
+    <div data-theme="a" data-role="header" data-id="account_events" data-position="fixed">
+        <h3>
+            twidi@github
+        </h3>
+
+        <div data-role="navbar">
+            <ul>
+                <li><a href="#account_home" data-direction="reverse" class="account_home-link">Details</a></li>
+                <li><a href="#account_activity" data-direction="reverse" class="account_activity-link">Activity</a></li>
+                <li><a href="#account_repositories" data-direction="reverse" class="account_repositories-link">Repos</a></li>
+                <li><a href="#account_stars" data-direction="reverse" class="account_stars-link">Stars</a></li>
+                <li><a href="#account_events" class="ui-btn-active ui-state-persist account_events-link">Events</a></li>
+            </ul>
+        </div><!-- /navbar -->
+    </div>
+    <div data-role="content">
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,7 @@
+.*.sw?
+.directory
+*.vim
+*~
+*.DS_Store
+*.sublime-project
+*.sublime-workspace

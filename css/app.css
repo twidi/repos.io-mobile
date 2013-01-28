@@ -1,3 +1,6 @@
 div[data-role="popup"] > div.ui-bar {
     text-align: center;
 }
+p.ui-li-desc.repo-desc {
+    white-space: normal;
+}

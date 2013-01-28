@@ -170,7 +170,12 @@ var Reposio = (function() {
 
         for (var i=0; i<repositories.length; i++) {
             var repository = repositories[i];
-            markup += '<li>' + (repository.full_name || repository.name) + '</li>';
+            markup += '<li>';
+            markup += '<h4>' + (repository.full_name || repository.name) + '</h4>';
+            if (repository.description) {
+                markup += '<p class="repo-desc">' + repository.description + '</p>';
+            }
+            markup += '</li>';
         }
 
         markup += "</ul>";

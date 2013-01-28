@@ -91,7 +91,7 @@
       // -------
 
       this.userRepos = function(username, cb) {
-        _request("GET", "/users/"+username+"/repos?type=all&per_page=1000&sort=updated", null, function(err, res) {
+        _request("GET", "/users/"+username+"/repos?type=all&per_page=1000&sort=pushed", null, function(err, res) {
           cb(err, res);
         });
       };
@@ -100,7 +100,7 @@
       // -------
 
       this.userStars = function(username, cb) {
-        _request("GET", "/users/"+username+"/starred?type=all&per_page=1000&sort=updated", null, function(err, res) {
+        _request("GET", "/users/"+username+"/starred?per_page=1000", null, function(err, res) {
           cb(err, res);
         });
       };

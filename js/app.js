@@ -49,6 +49,10 @@ var Reposio = (function() {
         this.get_repo(path).events(callback);
     };
 
+    Providers['github'].prototype.get_repository_forks = function(path, callback) {
+        this.get_repo(path).forks(callback);
+    };
+
 
     var Account = function(id, controller) {
         var parts = id.split('@');
@@ -94,6 +98,7 @@ var Reposio = (function() {
 
         this.details = null;
         this.activity = null;
+        this.forks = null;
     };
 
     Repository.prototype.fetch = function(type, callback) {
@@ -141,7 +146,7 @@ var Reposio = (function() {
 
     Display.prototype.pages = {
         account: ['home', 'activity', 'repositories', 'stars', 'events'],
-        repository: ['home', 'activity']
+        repository: ['home', 'activity', 'forks']
     }
 
     Display.prototype.change_account = function() {
@@ -364,6 +369,11 @@ var Reposio = (function() {
         return markup;
     };
 
+    Display.prototype.get_markup_for_repository_forks = function(repository) {
+        var markup = this.get_markup_for_repositories(repository.forks);
+        return markup;
+    };
+
     Display.prototype.confirm_new_fech = function(error) {
         $.mobile.loading('hide');
         error = error || 'undefined error';
@@ -397,7 +407,8 @@ var Reposio = (function() {
         },
         repository: {
             home: 'details',
-            activity: 'activity'
+            activity: 'activity',
+            forks: 'forks'
         }
     }
 

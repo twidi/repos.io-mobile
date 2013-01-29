@@ -365,6 +365,13 @@
         _request("GET", repoPath + "/events", null, cb);
       };
 
+      // List repository forks
+      // -------
+
+      this.forks = function(cb) {
+        _request("GET", repoPath + "/forks", null, cb);
+      };
+
       // Get contents
       // --------
 

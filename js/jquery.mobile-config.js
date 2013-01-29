@@ -5,10 +5,9 @@ $(document).bind("mobileinit", function(){
 });
 
 
-var qs_separator = '!';
 function querystringize(hash) {
-    if (hash.indexOf(qs_separator) != -1) {
-        return hash.replace(qs_separator, '?')
+    if (hash.indexOf('!') != -1) {
+        return hash.replace('!', '?')
     }
     return hash
 }

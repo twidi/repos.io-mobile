@@ -149,7 +149,7 @@ var Reposio = (function() {
             var links = this.nodes.account[page_name].links;
             for (var i=0; i<links.length; i++) {
                 var link = $(links[i]),
-                    href = '#' + page_name + '?account=' + this.controller.account.id;
+                    href = '#' + page_name + '!account=' + this.controller.account.id;
                 link.attr('href', href);
 
             }
@@ -163,7 +163,7 @@ var Reposio = (function() {
             var links = this.nodes.repository[page_name].links;
             for (var i=0; i<links.length; i++) {
                 var link = $(links[i]),
-                    href = '#' + page_name + '?repository=' + this.controller.repository.href_id;
+                    href = '#' + page_name + '!repository=' + this.controller.repository.href_id;
                 link.attr('href', href);
 
             }
@@ -177,7 +177,7 @@ var Reposio = (function() {
         $(document).on("pagebeforechange", function(e, data) {
             if (typeof data.toPage !== "string") { return; }
             if (data.options.dataUrl) {
-                data.options.dataUrl = data.options.dataUrl.replace('?', qs_separator);
+                data.options.dataUrl = data.options.dataUrl.replace('?', '!');
             }
             that.on_before_page_change(e, data);
         });
@@ -249,7 +249,7 @@ var Reposio = (function() {
             var repository = repositories[i],
                 path = repository.full_name || repository.name;
             markup += '<li>';
-            markup += '<a href="#repository_home?repository=' + path.replace('/', ':') + '@github">' ;
+            markup += '<a href="#repository_home!repository=' + path.replace('/', ':') + '@github">' ;
             markup += '<h4>' + path + '</h4>';
             if (repository.description) {
                 markup += '<p class="repo-desc">' + repository.description + '</p>';
@@ -330,13 +330,13 @@ var Reposio = (function() {
         markup += '<div>';
         markup += '<strong>' + repository.details.name + '</strong>';
         markup += ' by ';
-        markup += '<a class="mini-button" data-role="button" data-inline="true" data-mini="true" data-theme="a" href="#account_home?account=' + repository.details.owner.login + '@' + repository.provider.name + '">' + repository.details.owner.login + '</a>';
+        markup += '<a class="mini-button" data-role="button" data-inline="true" data-mini="true" data-theme="a" href="#account_home!account=' + repository.details.owner.login + '@' + repository.provider.name + '">' + repository.details.owner.login + '</a>';
         markup += '</strong></div>';
         if (repository.details.fork) {
             markup += '<div>Fork ok ';
-            markup += '<a class="mini-button" data-role="button" data-inline="true" data-mini="true" data-theme="b" href="#repository_home?repository=' + repository.details.parent.full_name.replace('/', ':') + '@' + repository.provider.name + '">' + repository.details.parent.name + '</a>';
+            markup += '<a class="mini-button" data-role="button" data-inline="true" data-mini="true" data-theme="b" href="#repository_home!repository=' + repository.details.parent.full_name.replace('/', ':') + '@' + repository.provider.name + '">' + repository.details.parent.name + '</a>';
             markup += ' by ';
-            markup += '<a class="mini-button" data-role="button" data-inline="true" data-mini="true" data-theme="a" href="#account_home?account=' + repository.details.parent.owner.login + '@' + repository.provider.name + '">' + repository.details.parent.owner.login + '</a>';
+            markup += '<a class="mini-button" data-role="button" data-inline="true" data-mini="true" data-theme="a" href="#account_home!account=' + repository.details.parent.owner.login + '@' + repository.provider.name + '">' + repository.details.parent.owner.login + '</a>';
             markup += '</div>'
         }
         markup += '<p class="ui-li-aside ui-btn-up-c ui-btn-corner-all provider">' + repository.provider.name + '</p>'

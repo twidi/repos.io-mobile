@@ -30,10 +30,15 @@ a.mini-button.ui-btn.ui-mini .ui-btn-inner {
     padding: 0.1em 8px 0.2em;
 }
 
-#repository_home .ui-content div.repo-main strong:first-of-type {
-    font-size: larger;
+#repository_home .ui-content .repo-main li {
+    font-weight: normal;
 }
-#repository_home .ui-content div.repo-fork {
+#repository_home .ui-content .repo-main li > div:first-of-type strong:first-of-type {
+    font-size: larger;
+    border-bottom: dashed #333 1px;
+    margin-right: 0.5ex;
+}
+#repository_home .ui-content .repo-main li > div + div {
     font-style: italic;
     text-align: right;
     margin-top: 1ex;

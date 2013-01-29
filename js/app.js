@@ -326,18 +326,22 @@ var Reposio = (function() {
     };
 
     Display.prototype.get_markup_for_repository_home = function(repository) {
-        var markup = '<div class="repo-main">';
+        var markup = '<ul data-role="listview" data-theme="e" class="repo-main"><li>';
+        markup += '<div>';
         markup += '<strong>' + repository.details.name + '</strong>';
         markup += ' by ';
         markup += '<a class="mini-button" data-role="button" data-inline="true" data-mini="true" data-theme="a" href="#account_home?account=' + repository.details.owner.login + '@' + repository.provider.name + '">' + repository.details.owner.login + '</a>';
-        markup += '</strong> on <strong>' + repository.provider.name + '</strong></div>';
+        markup += '</strong></div>';
         if (repository.details.fork) {
-            markup += '<div class="repo-fork">Fork ok ';
+            markup += '<div>Fork ok ';
             markup += '<a class="mini-button" data-role="button" data-inline="true" data-mini="true" data-theme="b" href="#repository_home?repository=' + repository.details.parent.full_name.replace('/', ':') + '@' + repository.provider.name + '">' + repository.details.parent.name + '</a>';
             markup += ' by ';
             markup += '<a class="mini-button" data-role="button" data-inline="true" data-mini="true" data-theme="a" href="#account_home?account=' + repository.details.parent.owner.login + '@' + repository.provider.name + '">' + repository.details.parent.owner.login + '</a>';
             markup += '</div>'
         }
+        markup += '<p class="ui-li-aside ui-btn-up-c ui-btn-corner-all provider">' + repository.provider.name + '</p>'
+        markup += '</li></ul>';
+
          markup += '<div data-role="collapsible-set" data-corners="false" data-theme="c" data-content-theme="d" data-inset="false" data-mini="true">';
         if (repository.details.description) {
             markup += '<div data-role="collapsible" data-collapsed="false"><h3>Description</h3><p>' + repository.details.description + '</p></div>';

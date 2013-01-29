@@ -15,6 +15,13 @@ p.ui-li-aside.fork {
     text-align: center;
     margin-top: 1ex;
 }
+p.ui-li-aside.provider {
+    width: auto;
+    padding: 0.2em 0.5em;
+    text-align: center;
+    margin: -0.5em -10px 0 0;
+}
+
 a.mini-button.ui-btn.ui-mini {
     margin-left: 2px;
     margin-right: 1px;
@@ -22,6 +29,7 @@ a.mini-button.ui-btn.ui-mini {
 a.mini-button.ui-btn.ui-mini .ui-btn-inner {
     padding: 0.1em 8px 0.2em;
 }
+
 #repository_home .ui-content div.repo-main strong:first-of-type {
     font-size: larger;
 }
@@ -29,4 +37,29 @@ a.mini-button.ui-btn.ui-mini .ui-btn-inner {
     font-style: italic;
     text-align: right;
     margin-top: 1ex;
+}
+
+#account_home ul.account-main {
+    margin-bottom: 0;
+}
+#account_home ul.account-main li {
+    border-top-width: 0;
+}
+#account_home ul.account-main li img.ui-li-thumb {
+    left: 0;
+}
+#account_home ul.account-details {
+    margin-top: -1px;
+}
+#account_home ul.account-details li {
+    min-height: 18px;
+    padding-top: 0.4em;
+    padding-bottom: 0.3em;
+    font-weight: normal;
+}
+#account_home ul.account-details span.ui-li-icon {
+    max-height: 18px;
+    max-width: 18px;
+    top: 0.4em;
+    opacity: 0.5;
 }

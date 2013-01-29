@@ -290,10 +290,10 @@ var Reposio = (function() {
         if (account.details.email && account.details.email.indexOf('@') !== -1) {
             markup += '<li class="ui-li-has-icon"><span class="ui-li-icon ui-icon ui-icon-email ui-icon-shadow"></span>' + account.details.email + '</li>'
         }
-        if (account.details.blog) {
-            markup += '<li class="ui-li-has-icon"><span class="ui-li-icon ui-icon ui-icon-link ui-icon-shadow"></span>' + account.details.blog + '</li>'
-        }
         markup += '<li class="ui-li-has-icon"><span class="ui-li-icon ui-icon ui-icon-calendar ui-icon-shadow"></span>' + account.details.created_at + '</li>'
+        if (account.details.blog) {
+            markup += '<li class="ui-li-has-icon"><span class="ui-li-icon ui-icon ui-icon-link ui-icon-shadow"></span><a href="' + account.details.blog + '">' + account.details.blog + '</a></li>'
+        }
         markup += '</ul>'
         return markup;
     }

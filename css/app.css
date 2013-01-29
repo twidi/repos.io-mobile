@@ -49,6 +49,7 @@ a.mini-button.ui-btn.ui-mini .ui-btn-inner {
 }
 #account_home ul.account-main li {
     border-top-width: 0;
+    border-bottom-width: 0;
 }
 #account_home ul.account-main li img.ui-li-thumb {
     left: 0;
@@ -67,4 +68,11 @@ a.mini-button.ui-btn.ui-mini .ui-btn-inner {
     max-width: 18px;
     top: 0.4em;
     opacity: 0.5;
+}
+#account_home ul.account-details li.ui-li-has-arrow span.ui-li-icon {
+    top: 0;
+}
+#account_home ul.account-details li.ui-li-has-arrow a {
+    padding-top: 0;
+    padding-bottom: 0;
 }

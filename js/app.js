@@ -202,6 +202,7 @@ var Reposio = (function() {
             }
             this.nodes.account[page_name].header.html(this.controller.account.id);
             this.nodes.account[page_name].content.html(' ');
+            this.nodes.account[page_name].page.removeData('current-for');
         }
     };
 
@@ -217,6 +218,7 @@ var Reposio = (function() {
             }
             this.nodes.repository[page_name].header.html(this.controller.repository.id);
             this.nodes.repository[page_name].content.html(' ');
+            this.nodes.repository[page_name].page.removeData('current-for');
         }
     };
 
@@ -282,7 +284,16 @@ var Reposio = (function() {
     };
 
     Display.prototype.is_current_page = function(page, obj) {
-        return page.hasClass('current_page');
+        if (!page.hasClass('current_page')) { return false ;}
+        var current_for = page.data('current-for');
+        if (current_for && current_for != obj.id) { return false; }
+        return true;
+    }
+
+    Display.prototype.is_page_for = function(page, obj) {
+        var current_for = page.data('current-for');
+        if (current_for && current_for == obj.id) { return true; }
+        return false;
     }
 
     Display.prototype.render_page = function(type, name, obj) {
@@ -299,6 +310,11 @@ var Reposio = (function() {
         content.find(":jqmData(role=collapsible)").collapsible();
         content.find(":jqmData(role=button)").button();
 
+        page.data('current-for', obj.id);
+        this.post_render_page(page);
+    }
+
+    Display.prototype.post_render_page = function(page) {
         $.mobile.loading('hide');
         page.addClass('page_loaded');
     }
@@ -506,35 +522,45 @@ var Reposio = (function() {
         return changed;
     };
 
-    Controller.prototype.on_account_page_before_load = function(account_id, page) {
+    Controller.prototype.on_account_page_before_load = function(account_id, page_name) {
         var that = this,
             changed = this.set_account(account_id),
             account = this.account,
             render = function() {
                 that.display.update_account_navbar(account);
-                that.display.render_page('account', page, account);
+                that.display.render_page('account', page_name, account);
             },
-            fetch_type = this.mapping.account[page];
+            fetch_type = this.mapping.account[page_name],
+            page = $('#account_' + page_name);
 
         $('.current_page, .page_loaded').removeClass('current_page, page_loaded');
-        $('#account_' + page).addClass('current_page');
-        this.account.fetch(fetch_type, render);
+        page.addClass('current_page');
+        if (this.display.is_page_for(page, account)) {
+            this.display.post_render_page(page);
+        } else {
+            this.account.fetch(fetch_type, render);
+        }
     };
 
-    Controller.prototype.on_repository_page_before_load = function(repository_id, page) {
+    Controller.prototype.on_repository_page_before_load = function(repository_id, page_name) {
         repository_id = repository_id.replace(':', '/');
         var that = this,
             changed = this.set_repository(repository_id),
             repository = this.repository,
-            render = function() { 
+            render = function() {
                 that.display.update_repository_navbar(repository);
-                that.display.render_page('repository', page, repository); 
+                that.display.render_page('repository', page_name, repository); 
             },
-            fetch_type = this.mapping.repository[page];
+            fetch_type = this.mapping.repository[page_name],
+            page = $('#repository_' + page_name);
 
         $('.current_page, .page_loaded').removeClass('current_page, page_loaded');
-        $('#repository_' + page).addClass('current_page');
-        this.repository.fetch(fetch_type, render);
+        page.addClass('current_page');
+        if (this.display.is_page_for(page, repository)) {
+            this.display.post_render_page(page);
+        } else {
+            this.repository.fetch(fetch_type, render);
+        }
     };
 
     Controller.prototype.fetch_error = function(error, obj, fetch_type, original_callback, original_args) {

@@ -235,6 +235,19 @@ var Reposio = (function() {
                 $.mobile.loading('show');
             }
         });
+        $('.nav-menu').on("popupafterclose", function() {
+            // restore previous active link in navbar when closing popup menu
+            var menu = $(this),
+                link = $(this).find('a.ui-btn-active'),
+                href, parent;
+            if (link.length) {
+                parent = menu.parents('.ui-page');
+                if (parent.length) {
+                    href = link.attr('href');
+                    parent.find('.ui-header .ui-navbar a[href="' + href + '"]').addClass('ui-btn-active');
+                }
+            }
+        });
     };
 
     Display.prototype.on_before_page_change = function(e, data) {

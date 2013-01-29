@@ -191,6 +191,7 @@ var Reposio = (function() {
     }
 
     Display.prototype.change_account = function() {
+        $('.repos-count').hide();
         for (var page_name in this.nodes.account) {
             var links = this.nodes.account[page_name].links;
             for (var i=0; i<links.length; i++) {
@@ -434,7 +435,7 @@ var Reposio = (function() {
     };
 
     Display.prototype.update_account_navbar = function(account) {
-
+        $('.repos-count').html(account.details ? account.details.public_repos : '?').show();
     };
 
     Display.prototype.update_repository_navbar = function(repository) {

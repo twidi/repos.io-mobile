@@ -88,6 +88,14 @@ var Reposio = (function() {
         this.received_events = null;
     };
 
+    Account.cache = {};
+    Account.get = function(id, controller) {
+        if (!Account.cache[id]) {
+            Account.cache[id] = new Account(id, controller);
+        }
+        return Account.cache[id];
+    };
+
     Account.prototype.fetch = function(type, callback, args) {
         var that = this;
         if (type != 'details' && !that.details) {
@@ -124,6 +132,14 @@ var Reposio = (function() {
         this.details = null;
         this.activity = null;
         this.forks = null;
+    };
+
+    Repository.cache = {};
+    Repository.get = function(id, controller) {
+        if (!Repository.cache[id]) {
+            Repository.cache[id] = new Repository(id, controller);
+        }
+        return Repository.cache[id];
     };
 
     Repository.prototype.fetch = function(type, callback, args) {
@@ -505,7 +521,7 @@ var Reposio = (function() {
     Controller.prototype.set_account = function(account_id) {
         var changed = (this.account == null || this.account.id != account_id);
         if (changed) {
-            this.account = new Account(account_id, this);
+            this.account = Account.get(account_id, this);
             this.display.change_account();
         }
         this.display.update_account_navbar(this.account);
@@ -515,7 +531,7 @@ var Reposio = (function() {
     Controller.prototype.set_repository = function(repository_id) {
         var changed = (this.repository == null || this.repository.id != repository_id);
         if (changed) {
-            this.repository = new Repository(repository_id, this);
+            this.repository = Repository.get(repository_id, this);
             this.display.change_repository();
         }
         this.display.update_repository_navbar(this.repository);

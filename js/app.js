@@ -205,6 +205,7 @@ var Reposio = (function() {
     };
 
     Display.prototype.change_repository = function() {
+        $('.forks-count').hide();
         for (var page_name in this.nodes.repository) {
             var links = this.nodes.repository[page_name].links;
             for (var i=0; i<links.length; i++) {
@@ -437,6 +438,7 @@ var Reposio = (function() {
     };
 
     Display.prototype.update_repository_navbar = function(repository) {
+        $('.forks-count').html(repository.details ? repository.details.forks_count : '?').show();
     };
 
 

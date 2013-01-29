@@ -83,3 +83,10 @@ a.mini-button.ui-btn.ui-mini .ui-btn-inner {
 .repo-item-list .last-push {
     font-style: italic;
 }
+
+.ui-navbar span.ui-li-count {
+    font-size: 11px;
+    font-weight: bold;
+    padding: 0.1em 0.45em 0 0.35em;
+    margin-left: 1ex;
+}

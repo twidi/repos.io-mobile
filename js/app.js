@@ -88,10 +88,16 @@ var Reposio = (function() {
         this.received_events = null;
     };
 
-    Account.prototype.fetch = function(type, callback) {
+    Account.prototype.fetch = function(type, callback, args) {
         var that = this;
+        if (type != 'details' && !that.details) {
+            that.fetch('details', function() {
+                that.fetch(type, callback, args);
+            });
+            return;
+        }
         if (that[type] === null) {
-            that.controller.account.provider['get_account_' + type](that.username, function(err, data) {
+            that.provider['get_account_' + type](that.username, function(err, data) {
                 if (err) {
                     that.controller.fetch_error(err, that, type, callback);
                 } else {

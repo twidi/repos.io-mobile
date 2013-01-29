@@ -335,14 +335,14 @@ var Reposio = (function() {
         page.addClass('page_loaded');
     }
 
-    Display.prototype.get_markup_for_repositories = function(repositories) {
+    Display.prototype.get_markup_for_repositories = function(repositories, provider) {
         var markup = "<ul data-role='listview'>";
 
         for (var i=0; i<repositories.length; i++) {
             var repository = repositories[i],
                 path = repository.full_name || repository.name;
             markup += '<li class="repo-item-list">';
-            markup += '<a href="#repository_home!repository=' + path.replace('/', ':') + '@github">' ;
+            markup += '<a href="#repository_home!repository=' + path.replace('/', ':') + '@' + provider.name +'">' ;
             markup += '<h4>' + path + '</h4>';
             if (repository.description) {
                 markup += '<p class="repo-desc">' + repository.description + '</p>';
@@ -390,12 +390,12 @@ var Reposio = (function() {
     }
 
     Display.prototype.get_markup_for_account_repositories = function(account) {
-        var markup = this.get_markup_for_repositories(account.repositories);
+        var markup = this.get_markup_for_repositories(account.repositories, account.provider);
         return markup;
     };
 
     Display.prototype.get_markup_for_account_stars = function(account) {
-        var markup = this.get_markup_for_repositories(account.stars);
+        var markup = this.get_markup_for_repositories(account.stars, account.provider);
         return markup;
     };
 
@@ -463,7 +463,7 @@ var Reposio = (function() {
     };
 
     Display.prototype.get_markup_for_repository_forks = function(repository) {
-        var markup = this.get_markup_for_repositories(repository.forks);
+        var markup = this.get_markup_for_repositories(repository.forks, repository.provider);
         return markup;
     };
 

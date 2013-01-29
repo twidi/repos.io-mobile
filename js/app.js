@@ -432,6 +432,13 @@ var Reposio = (function() {
         return result;
     };
 
+    Display.prototype.update_account_navbar = function(account) {
+
+    };
+
+    Display.prototype.update_repository_navbar = function(repository) {
+    };
+
 
     var Controller = function() {
         this.providers = {
@@ -469,6 +476,7 @@ var Reposio = (function() {
             this.account = new Account(account_id, this);
             this.display.change_account();
         }
+        this.display.update_account_navbar(this.account);
         return changed;
     };
 
@@ -478,6 +486,7 @@ var Reposio = (function() {
             this.repository = new Repository(repository_id, this);
             this.display.change_repository();
         }
+        this.display.update_repository_navbar(this.repository);
         return changed;
     };
 
@@ -485,7 +494,10 @@ var Reposio = (function() {
         var that = this,
             changed = this.set_account(account_id),
             account = this.account,
-            render = function() { that.display.render_page('account', page, account); },
+            render = function() {
+                that.display.update_account_navbar(account);
+                that.display.render_page('account', page, account);
+            },
             fetch_type = this.mapping.account[page];
 
         $('.current_page, .page_loaded').removeClass('current_page, page_loaded');
@@ -498,7 +510,10 @@ var Reposio = (function() {
         var that = this,
             changed = this.set_repository(repository_id),
             repository = this.repository,
-            render = function() { that.display.render_page('repository', page, repository); },
+            render = function() { 
+                that.display.update_repository_navbar(repository);
+                that.display.render_page('repository', page, repository); 
+            },
             fetch_type = this.mapping.repository[page];
 
         $('.current_page, .page_loaded').removeClass('current_page, page_loaded');

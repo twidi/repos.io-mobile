@@ -43,17 +43,26 @@ var Reposio = (function() {
         this.user.userReceivedEvents(username, callback);
     };
 
-    Providers['github'].prototype.get_repository_details = function(path, callback) {
-        var repo = this.get_repo(path);
-        repo.show(function(err, data) {
-            if (err) { return callback(err, {}); }
-            repo.readme(function(err, readme) {
+    Providers['github'].prototype.get_repository_details = function(path, callback, args) {
+        var that = this,
+            repo = that.get_repo(path);
+        if (args && args.no_readme==true) {
+            repo.show(callback);
+        } else {
+            repo.show(function(err, data) {
                 if (err) { return callback(err, {}); }
-                data.readme = readme;
-                callback(null, data);
+                that.get_repository_readme(path, function(err, readme) {
+                    if (err) { return callback(err, {}); }
+                    data.readme = readme;
+                    callback(null, data);
+                });
             });
-        });
+        }
     };
+
+    Providers['github'].prototype.get_repository_readme = function(path, callback) {
+        this.get_repo(path).readme(callback);
+    }
 
     Providers['github'].prototype.get_repository_activity = function(path, callback) {
         this.get_repo(path).events(callback);
@@ -111,17 +120,33 @@ var Reposio = (function() {
         this.forks = null;
     };
 
-    Repository.prototype.fetch = function(type, callback) {
+    Repository.prototype.fetch = function(type, callback, args) {
         var that = this;
-        if (that[type] === null) {
-            that.controller.repository.provider['get_repository_' + type](that.path, function(err, data) {
+        if (type != 'details' && !that.details) {
+            that.fetch('details', function() {
+                that.fetch(type, callback, args);
+            }, {no_readme: true});
+            return;
+        }
+        if (type == 'details' && that.details && !that.details.readme) {
+            that.provider.get_repository_readme(that.path, function(err, data) {
                 if (err) {
-                    that.controller.fetch_error(err, that, type, callback);
+                    that.controller.fetch_error(err, that, type, callback, args);                    
+                } else {
+                    that.details.readme = data;
+                    callback();
+                }
+            }, args);
+        }
+        else if (that[type] === null) {
+            that.provider['get_repository_' + type](that.path, function(err, data) {
+                if (err) {
+                    that.controller.fetch_error(err, that, type, callback, args);
                 } else {
                     that[type] = data;
                     callback();
                 }
-            });
+            }, args);
         } else {
             callback();
         }
@@ -475,9 +500,9 @@ var Reposio = (function() {
         this.repository.fetch(fetch_type, render);
     };
 
-    Controller.prototype.fetch_error = function(error, obj, fetch_type, original_callback) {
+    Controller.prototype.fetch_error = function(error, obj, fetch_type, original_callback, original_args) {
         if (this.display.confirm_new_fech(error.error)) {
-            obj.fetch(fetch_type, original_callback);
+            obj.fetch(fetch_type, original_callback, original_args);
         }
     };
 

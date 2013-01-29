@@ -1,9 +1,9 @@
 var Reposio = (function() {
 
-    function format_date(str_date, show_time) {
+    function format_date(str_date, show_time, show_seconds) {
         var parts = str_date.split('T');
         if (show_time) {
-            return parts[0] + ' ' + parts[2].slice(0, 8);
+            return parts[0] + ' ' + parts[1].slice(0, show_seconds ? 8 : 5);
         } else {
             return parts[0];
         }
@@ -262,7 +262,7 @@ var Reposio = (function() {
         for (var i=0; i<repositories.length; i++) {
             var repository = repositories[i],
                 path = repository.full_name || repository.name;
-            markup += '<li>';
+            markup += '<li class="repo-item-list">';
             markup += '<a href="#repository_home!repository=' + path.replace('/', ':') + '@github">' ;
             markup += '<h4>' + path + '</h4>';
             if (repository.description) {
@@ -270,6 +270,9 @@ var Reposio = (function() {
             }
             if (repository.fork) {
                 markup += '<p class="ui-li-aside ui-btn-up-e ui-btn-corner-all fork">fork</p>'
+            }
+            if (repository.pushed_at) {
+                markup += '<p class="last-push">Last push: ' + format_date(repository.pushed_at, true) + '</p>';
             }
             markup += '</a>';
             markup += '</li>';

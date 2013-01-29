@@ -76,3 +76,6 @@ a.mini-button.ui-btn.ui-mini .ui-btn-inner {
     padding-top: 0;
     padding-bottom: 0;
 }
+.repo-item-list .last-push {
+    font-style: italic;
+}

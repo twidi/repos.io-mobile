@@ -1,5 +1,14 @@
 var Reposio = (function() {
 
+    function format_date(str_date, show_time) {
+        var parts = str_date.split('T');
+        if (show_time) {
+            return parts[0] + ' ' + parts[2].slice(0, 8);
+        } else {
+            return parts[0];
+        }
+    }
+
     var Providers = {}
 
     Providers['github'] = function(controller) {
@@ -290,7 +299,7 @@ var Reposio = (function() {
         if (account.details.email && account.details.email.indexOf('@') !== -1) {
             markup += '<li class="ui-li-has-icon"><span class="ui-li-icon ui-icon ui-icon-email ui-icon-shadow"></span>' + account.details.email + '</li>'
         }
-        markup += '<li class="ui-li-has-icon"><span class="ui-li-icon ui-icon ui-icon-calendar ui-icon-shadow"></span>' + account.details.created_at + '</li>'
+        markup += '<li class="ui-li-has-icon"><span class="ui-li-icon ui-icon ui-icon-calendar ui-icon-shadow"></span>Since ' + format_date(account.details.created_at) + '</li>'
         if (account.details.blog) {
             markup += '<li class="ui-li-has-icon"><span class="ui-li-icon ui-icon ui-icon-link ui-icon-shadow"></span><a href="' + account.details.blog + '">' + account.details.blog + '</a></li>'
         }

@@ -43,6 +43,10 @@ a.mini-button.ui-btn.ui-mini .ui-btn-inner {
     text-align: right;
     margin-top: 1ex;
 }
+#repository_home .ui-content .repo-main .last-push {
+    margin-top: 2ex;
+    font-style: italic;
+}
 
 #account_home ul.account-main {
     margin-bottom: 0;

@@ -1,6 +1,7 @@
 var Reposio = (function() {
 
     function format_date(str_date, show_time, show_seconds) {
+        if (!str_date) { return '' };
         var parts = str_date.split('T');
         if (show_time) {
             return parts[0] + ' ' + parts[1].slice(0, show_seconds ? 8 : 5);
@@ -356,6 +357,8 @@ var Reposio = (function() {
             markup += '<a class="mini-button" data-role="button" data-inline="true" data-mini="true" data-theme="a" href="#account_home!account=' + repository.details.parent.owner.login + '@' + repository.provider.name + '">' + repository.details.parent.owner.login + '</a>';
             markup += '</div>'
         }
+        markup += '<p class="last-push">Last push: ' + (repository.details.pushed_at ? format_date(repository.details.pushed_at, true) : 'never !') + '</p>';            
+        markup 
         markup += '<p class="ui-li-aside ui-btn-up-c ui-btn-corner-all provider">' + repository.provider.name + '</p>'
         markup += '</li></ul>';
 

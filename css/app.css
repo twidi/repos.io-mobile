@@ -29,6 +29,21 @@ a.mini-button.ui-btn.ui-mini {
 a.mini-button.ui-btn.ui-mini .ui-btn-inner {
     padding: 0.1em 8px 0.2em;
 }
+.ui-navbar.ui-mini span.ui-btn-inner {
+    padding-left: 1px;
+    padding-right: 1px;
+}
+
+.ui-navbar ul.extended.ui-grid-c > *:nth-child(n) {
+    width: 30%;
+}
+.ui-navbar ul.extended.ui-grid-c > *:last-child {
+    width: 10%;
+}
+
+.nav-menu .ui-li .ui-btn-inner a {
+    font-size: 12.5px;
+}
 
 #repository_home .ui-content .repo-main li {
     font-weight: normal;

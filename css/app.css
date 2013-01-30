@@ -83,7 +83,8 @@ span.repo-links > span {
     overflow: auto;
 }
 .list-events li p.ui-li-desc {
-    margin-top: 0;
+    margin-top: 3px;
+    margin-bottom: 0;
 }
 .list-events li span.repo-links > a + strong {
     padding-right: 5px;

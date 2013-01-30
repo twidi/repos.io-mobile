@@ -114,11 +114,15 @@ Reposio.Providers.github = (function() {
     };
 
     EventFormatter.prototype.IssueCommentEvent = function(event, source) {
-
+        var part = event.payload.action == 'created' ? 'commented an issue on' : event.payload.action + ' a comment on an issue on',
+            more = 'Issue: <strong>#' + event.payload.issue.number + ' - ' + event.payload.issue.title + '</strong>';
+        return this.base_format(event, source, part, more);
     };
 
     EventFormatter.prototype.IssuesEvent = function(event, source) {
-
+        var part = event.payload.action + ' an issue on',
+            more = 'Issue: <strong>#' + event.payload.issue.number + ' - ' + event.payload.issue.title + '</strong>';
+        return this.base_format(event, source, part, more);
     };
 
     EventFormatter.prototype.MemberEvent = function(event, source) {
@@ -136,7 +140,18 @@ Reposio.Providers.github = (function() {
     };
 
     EventFormatter.prototype.PullRequestReviewCommentEvent = function(event, source) {
-
+        var part = 'commented a pull request on',
+            PR_num = event.payload.comment._links.pull_request.href;
+        if (PR_num) { 
+            PR_num = PR_num.match(/(\d+)\/?$/);
+            if (PR_num) {
+                PR_num = PR_num[1];
+            }
+        }
+        if (PR_num) {
+            more = 'Pull request <strong>#' + PR_num + '</strong>';
+        }
+        return this.base_format(event, source, part, more);
     };
 
     EventFormatter.prototype.PushEvent = function(event, source) {

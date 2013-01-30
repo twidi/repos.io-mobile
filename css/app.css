@@ -106,12 +106,24 @@ a.mini-button.ui-btn.ui-mini .ui-btn-inner {
     margin-left: 1ex;
 }
 
+span.repo-links {
+    background: none repeat scroll 0 0 rgba(0, 0, 0, 0.1);
+    -moz-border-radius: 1em 1em 1em 1em;
+    -webkit-border-radius: 1em 1em 1em 1em;
+    -o-border-radius: 1em 1em 1em 1em;
+    border-radius: 1em 1em 1em 1em;
+    display: inline-block;
+    font-size: smaller;
+    padding: 0 2px;
+}
+
+
 .list-events li {
     font-weight: normal;
 }
-.list-events li span.repo {
-    /*white-space: nowrap;*/
-}
 .list-events li p.ui-li-desc {
     margin-top: 0;
+}
+.list-events li span.repo-links > a + strong {
+    padding-right: 5px;
 }

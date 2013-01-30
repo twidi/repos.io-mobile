@@ -31,7 +31,7 @@ Reposio.Providers.github = (function() {
                 result += ' by ';
                 result += '<strong>' + parts[0] + '</strong>'; //this.format_actor({login: parts[0]}, source);
             }
-            return '<span class="repo">' + result + '</span>';
+            return '<span class="repo-links">' + result + '</span>';
         } else {
             return '<strong>' + repository.name + '</strong>';
         }

@@ -282,14 +282,13 @@ Reposio.Display = (function() {
         markup += this.account_link(repository.details.owner.login, repository.provider.name);
         markup += '</strong></div>';
         if (repository.details.fork) {
-            markup += '<div>Fork ok ';
+            markup += '<div>Fork ok <span class="repo-links">';
             markup += this.repository_link(repository.details.parent.full_name, repository.details.parent.name, repository.provider.name);
             markup += ' by ';
             markup += this.account_link(repository.details.parent.owner.login, repository.provider.name);
-            markup += '</div>'
+            markup += '</span></div>';
         }
         markup += '<p class="last-push">Last push: ' + (repository.details.pushed_at ? format_date(repository.details.pushed_at, true) : 'never !') + '</p>';            
-        markup 
         markup += '<p class="ui-li-aside ui-btn-up-c ui-btn-corner-all provider">' + repository.provider.name + '</p>'
         markup += '</li></ul>';
 

@@ -25,13 +25,18 @@ Reposio.Providers.github = (function() {
 
     EventFormatter.prototype.format_repo  = function(repository, actor, source) {
         if (source.name != 'Repository' || source.path != repository.name) {
-            var parts = repository.name.split('/');
-            var result = this.provider.controller.display.repository_link(repository.name, parts[1], source.provider.name);
+            var parts = repository.name.split('/'),
+                result = this.provider.controller.display.repository_link(repository.name, parts[1], source.provider.name),
+                with_owner = false;
             if (actor.login != parts[0] && (source.name != 'Account' || source.username != parts[0])) {
-                result += ' by ';
-                result += '<strong>' + parts[0] + '</strong>'; //this.format_actor({login: parts[0]}, source);
+                with_owner = true;
+                result += '<span> by <strong>' + parts[0] + '</strong></span>'; //this.format_actor({login: parts[0]}, source);
             }
-            return '<span class="repo-links">' + result + '</span>';
+            if (with_owner) {
+                return '<span class="repo-links">' + result + '</span>';
+            } else {
+                return result;
+            }
         } else {
             return '<strong>' + repository.name + '</strong>';
         }

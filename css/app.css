@@ -44,6 +44,54 @@ a.mini-button.ui-btn.ui-mini .ui-btn-inner {
 .nav-menu .ui-li .ui-btn-inner a {
     font-size: 12.5px;
 }
+.repo-item-list .last-push {
+    font-style: italic;
+}
+
+.ui-navbar span.ui-li-count {
+    font-size: 11px;
+    font-weight: bold;
+    padding: 0.1em 0.45em 0 0.35em;
+    margin-left: 1ex;
+}
+
+span.repo-links {
+    background: none repeat scroll 0 0 rgba(0, 0, 0, 0.1);
+    -moz-border-radius: 1em 1em 1em 1em;
+    -webkit-border-radius: 1em 1em 1em 1em;
+    -o-border-radius: 1em 1em 1em 1em;
+    border-radius: 1em 1em 1em 1em;
+    -moz-box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.25) inset;
+    -webkit-box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.25) inset;
+    -o-box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.25) inset;
+    box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.25) inset;
+    display: inline-block;
+    padding: 0;
+    font-style: normal;
+}
+span.repo-links a.mini-button.ui-btn.ui-mini {
+    margin: 0 1px 0 0;
+}
+span.repo-links > span {
+    font-size: 75%;    
+    margin-right: 1.5ex;
+    font-weight: normal;
+}
+
+.list-events li {
+    font-weight: normal;
+    overflow: auto;
+}
+.list-events li p.ui-li-desc {
+    margin-top: 0;
+}
+.list-events li span.repo-links > a + strong {
+    padding-right: 5px;
+}
+.list-events li .ui-li-aside {
+    font-size: smaller;
+    width: 5ex;
+}
 
 #repository_home .ui-content .repo-main li {
     font-weight: normal;
@@ -61,6 +109,9 @@ a.mini-button.ui-btn.ui-mini .ui-btn-inner {
 #repository_home .ui-content .repo-main .last-push {
     margin-top: 2ex;
     font-style: italic;
+}
+#repository_home .repo-main .repo-links {
+    margin-left: 1ex;
 }
 
 #account_home ul.account-main {
@@ -94,41 +145,4 @@ a.mini-button.ui-btn.ui-mini .ui-btn-inner {
 #account_home ul.account-details li.ui-li-has-arrow a {
     padding-top: 0;
     padding-bottom: 0;
-}
-.repo-item-list .last-push {
-    font-style: italic;
-}
-
-.ui-navbar span.ui-li-count {
-    font-size: 11px;
-    font-weight: bold;
-    padding: 0.1em 0.45em 0 0.35em;
-    margin-left: 1ex;
-}
-
-span.repo-links {
-    background: none repeat scroll 0 0 rgba(0, 0, 0, 0.1);
-    -moz-border-radius: 1em 1em 1em 1em;
-    -webkit-border-radius: 1em 1em 1em 1em;
-    -o-border-radius: 1em 1em 1em 1em;
-    border-radius: 1em 1em 1em 1em;
-    display: inline-block;
-    font-size: smaller;
-    padding: 0 2px;
-}
-
-
-.list-events li {
-    font-weight: normal;
-    overflow: auto;
-}
-.list-events li p.ui-li-desc {
-    margin-top: 0;
-}
-.list-events li span.repo-links > a + strong {
-    padding-right: 5px;
-}
-.list-events li .ui-li-aside {
-    font-size: smaller;
-    width: 5ex;
 }

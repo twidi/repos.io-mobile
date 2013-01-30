@@ -54,7 +54,8 @@ Reposio.Providers.github = (function() {
     };
 
     EventFormatter.prototype.CommitCommentEvent = function(event, source) {
-
+        var part = 'commented a commit on';
+        return this.base_format(event, source, part);
     };
 
     EventFormatter.prototype.CreateEvent = function(event, source) {

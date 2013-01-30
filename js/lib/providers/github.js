@@ -24,22 +24,17 @@ Reposio.Providers.github = (function() {
     };
 
     EventFormatter.prototype.format_repo  = function(repository, actor, source) {
+        var parts = repository.name.split('/'), result;
         if (source.name != 'Repository' || source.path != repository.name) {
-            var parts = repository.name.split('/'),
-                result = this.provider.controller.display.repository_link(repository.name, parts[1], source.provider.name),
-                with_owner = false;
+                result = this.provider.controller.display.repository_link(repository.name, parts[1], source.provider.name);
             if (actor.login != parts[0] && (source.name != 'Account' || source.username != parts[0])) {
-                with_owner = true;
                 result += '<span> by <strong>' + parts[0] + '</strong></span>'; //this.format_actor({login: parts[0]}, source);
-            }
-            if (with_owner) {
-                return '<span class="repo-links">' + result + '</span>';
-            } else {
-                return result;
+                result = '<span class="repo-links">' + result + '</span>';
             }
         } else {
-            return '<strong>' + repository.name + '</strong>';
+            result = '<strong>' + parts[1] + '</strong>';
         }
+        return result;
     };
 
     EventFormatter.prototype.base_format = function(event, source, middle_part, more) {

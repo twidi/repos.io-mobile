@@ -37,10 +37,13 @@ Reposio.Providers.github = (function() {
         return result;
     };
 
-    EventFormatter.prototype.base_format = function(event, source, middle_part, more) {
+    EventFormatter.prototype.base_format = function(event, source, middle_part, more, target) {
         var result = '';
         result += '<p class="ui-li-aside">' + this.provider.controller.display.format_date(event.created_at, 'show-time', null, 'time-only') + '</p>';
-        result += this.format_actor(event.actor, source) + ' ' + middle_part + ' ' + this.format_repo(event.repo, event.actor, source);
+        if (!target) { 
+            target = this.format_repo(event.repo, event.actor, source);
+        }
+        result += this.format_actor(event.actor, source) + ' ' + middle_part + ' ' + target;
         if (more) {
             result += '<p class="ui-li-desc">' + more + '</p>';
         }
@@ -75,7 +78,8 @@ Reposio.Providers.github = (function() {
     };
 
     EventFormatter.prototype.FollowEvent = function(event, source) {
-        // no repo, followed account is in payload.target
+        var target = this.format_actor(event.payload.target, source);
+        return this.base_format(event, source, 'started following', null, target);
     };
     
     EventFormatter.prototype.ForkEvent = function(event, source) {
@@ -129,6 +133,8 @@ Reposio.Providers.github = (function() {
     EventFormatter.prototype.WatchEvent = function(event, source) {
         return this.base_format(event, source, 'watched');
     };
+
+
 
     var Provider = function(controller) {
         this.name = 'github';

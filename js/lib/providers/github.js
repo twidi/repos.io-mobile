@@ -66,16 +66,24 @@ Reposio.Providers.github = (function() {
                     more = 'Description: <strong>' + event.payload.description + '</strong>';
                 }
                 break;
+            case 'tag':
+                more = 'Created tag: <strong>' + event.payload.ref + '</strong>';
+                break;
         };
         return this.base_format(event, source, part, more);
     };
 
     EventFormatter.prototype.DeleteEvent = function(event, source) {
         var part = 'deleted', more;
-        if (event.payload.ref_type == 'branch') {
-            part += ' a branch on';
-            more = 'Deleted branch: <strong>' + event.payload.ref + '</strong>';
-        }
+        switch(event.payload.ref_type) {
+            case 'branch':
+                part += ' a branch on';
+                more = 'Deleted branch: <strong>' + event.payload.ref + '</strong>';
+                break;
+            case 'tag':
+                more = 'Deleted tag: <strong>' + event.payload.ref + '</strong>';
+                break;
+        };
         return this.base_format(event, source, part, more);
 
     };

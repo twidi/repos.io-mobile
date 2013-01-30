@@ -1,15 +1,5 @@
 Reposio.Display = (function() {
 
-    function format_date(str_date, show_time, show_seconds) {
-        if (!str_date) { return '' };
-        var parts = str_date.split('T');
-        if (show_time) {
-            return parts[0] + ' ' + parts[1].slice(0, show_seconds ? 8 : 5);
-        } else {
-            return parts[0];
-        }
-    }
-
 
     var Display = function(controller) {
         this.controller = controller;
@@ -35,6 +25,17 @@ Reposio.Display = (function() {
         }
 
         this.init_events();
+    };
+
+    Display.prototype.format_date = function(str_date, show_time, show_seconds, time_only) {
+        if (!str_date) { return '' };
+        var parts = str_date.split('T');
+        if (show_time) {
+            var time = parts[1].slice(0, show_seconds ? 8 : 5);
+            return (time_only ? '' : parts[0] + ' ') + time;
+        } else {
+            return parts[0];
+        }
     };
 
     Display.prototype.pages = {
@@ -197,7 +198,7 @@ Reposio.Display = (function() {
                 markup += '<p class="ui-li-aside ui-btn-up-e ui-btn-corner-all fork">fork</p>'
             }
             if (repository.pushed_at) {
-                markup += '<p class="last-push">Last push: ' + format_date(repository.pushed_at, true) + '</p>';
+                markup += '<p class="last-push">Last push: ' + this.format_date(repository.pushed_at, true) + '</p>';
             }
             markup += '</a>';
             markup += '</li>';
@@ -209,10 +210,14 @@ Reposio.Display = (function() {
     };
 
     Display.prototype.get_markup_for_events = function(events) {
-        var markup = '<ul class="ui-listview list-events">';
+        var markup = '<ul class="ui-listview list-events">',
+            cur_day = null;
         for (var i=0; i<events.length; i++) {
-            var more_class = i == 0 ? ' ui-first-child' : i == events.length - 1 ? ' ui-last-child' : '';
-            markup += '<li class="ui-li ui-li-static ui-btn-up-c' + more_class + '">' + events[i] + '</li>';
+            if (events[i].day != cur_day) {
+                markup += '<li class="ui-li ui-li-divider ui-bar-d">' + events[i].day + '</li>';
+                cur_day = events[i].day;
+            }
+            markup += '<li class="ui-li ui-li-static ui-btn-up-c' + (i == events.length - 1 ? ' ui-last-child' : '') + '">' + events[i].str + '</li>';
         }
         markup += "</ul>";
 
@@ -238,7 +243,7 @@ Reposio.Display = (function() {
         if (account.details.email && account.details.email.indexOf('@') !== -1) {
             markup += '<li class="ui-li-has-icon"><span class="ui-li-icon ui-icon ui-icon-email ui-icon-shadow"></span>' + account.details.email + '</li>'
         }
-        markup += '<li class="ui-li-has-icon"><span class="ui-li-icon ui-icon ui-icon-calendar ui-icon-shadow"></span>Since ' + format_date(account.details.created_at) + '</li>'
+        markup += '<li class="ui-li-has-icon"><span class="ui-li-icon ui-icon ui-icon-calendar ui-icon-shadow"></span>Since ' + this.format_date(account.details.created_at) + '</li>'
         if (account.details.blog) {
             markup += '<li class="ui-li-has-icon"><span class="ui-li-icon ui-icon ui-icon-link ui-icon-shadow"></span><a href="' + account.details.blog + '">' + account.details.blog + '</a></li>'
         }
@@ -288,7 +293,7 @@ Reposio.Display = (function() {
             markup += this.account_link(repository.details.parent.owner.login, repository.provider.name);
             markup += '</span></div>';
         }
-        markup += '<p class="last-push">Last push: ' + (repository.details.pushed_at ? format_date(repository.details.pushed_at, true) : 'never !') + '</p>';            
+        markup += '<p class="last-push">Last push: ' + (repository.details.pushed_at ? this.format_date(repository.details.pushed_at, true) : 'never !') + '</p>';            
         markup += '<p class="ui-li-aside ui-btn-up-c ui-btn-corner-all provider">' + repository.provider.name + '</p>'
         markup += '</li></ul>';
 

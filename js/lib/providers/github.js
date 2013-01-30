@@ -10,7 +10,7 @@ Reposio.Providers.github = (function() {
             if (!result) {
                 result = this.base_format(event, source, '<em>(' + event.type.replace('Event', '').toLowerCase() + ')</em>');
             }
-            return result;
+            return { str: result, day: this.provider.controller.display.format_date(event.created_at) };
         }
         return null;
     };
@@ -38,7 +38,9 @@ Reposio.Providers.github = (function() {
     };
 
     EventFormatter.prototype.base_format = function(event, source, middle_part, more) {
-        var result = this.format_actor(event.actor, source) + ' ' + middle_part + ' ' + this.format_repo(event.repo, event.actor, source);
+        var result = '';
+        result += '<p class="ui-li-aside">' + this.provider.controller.display.format_date(event.created_at, 'show-time', null, 'time-only') + '</p>';
+        result += this.format_actor(event.actor, source) + ' ' + middle_part + ' ' + this.format_repo(event.repo, event.actor, source);
         if (more) {
             result += '<p class="ui-li-desc">' + more + '</p>';
         }

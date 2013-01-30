@@ -120,10 +120,15 @@ span.repo-links {
 
 .list-events li {
     font-weight: normal;
+    overflow: auto;
 }
 .list-events li p.ui-li-desc {
     margin-top: 0;
 }
 .list-events li span.repo-links > a + strong {
     padding-right: 5px;
+}
+.list-events li .ui-li-aside {
+    font-size: smaller;
+    width: 5ex;
 }

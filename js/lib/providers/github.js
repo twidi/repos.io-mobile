@@ -63,7 +63,7 @@ Reposio.Providers.github = (function() {
         switch(event.payload.ref_type) {
             case 'branch':
                 part += ' a branch on';
-                more = 'Created branch: <strong>' + event.payload.ref + '</strong>';
+                more = 'Branch: <strong>' + event.payload.ref + '</strong>';
                 break;
             case 'repository':
                 if (event.payload.description) {
@@ -71,7 +71,7 @@ Reposio.Providers.github = (function() {
                 }
                 break;
             case 'tag':
-                more = 'Created tag: <strong>' + event.payload.ref + '</strong>';
+                more = 'Tag: <strong>' + event.payload.ref + '</strong>';
                 break;
         };
         return this.base_format(event, source, part, more);
@@ -82,10 +82,10 @@ Reposio.Providers.github = (function() {
         switch(event.payload.ref_type) {
             case 'branch':
                 part += ' a branch on';
-                more = 'Deleted branch: <strong>' + event.payload.ref + '</strong>';
+                more = 'Branch: <strong>' + event.payload.ref + '</strong>';
                 break;
             case 'tag':
-                more = 'Deleted tag: <strong>' + event.payload.ref + '</strong>';
+                more = 'Tag: <strong>' + event.payload.ref + '</strong>';
                 break;
         };
         return this.base_format(event, source, part, more);

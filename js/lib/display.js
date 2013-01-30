@@ -40,7 +40,7 @@ Reposio.Display = (function() {
     Display.prototype.pages = {
         account: ['home', 'activity', 'repositories', 'stars', 'events'],
         repository: ['home', 'activity', 'forks']
-    }
+    };
 
     Display.prototype.change_account = function() {
         $('.repos-count').hide();
@@ -140,13 +140,13 @@ Reposio.Display = (function() {
         var current_for = page.data('current-for');
         if (current_for && current_for != obj.id) { return false; }
         return true;
-    }
+    };
 
     Display.prototype.is_page_for = function(page, obj) {
         var current_for = page.data('current-for');
         if (current_for && current_for == obj.id) { return true; }
         return false;
-    }
+    };
 
     Display.prototype.render_page = function(type, name, obj) {
         var full_name = type + '_' + name,
@@ -161,15 +161,25 @@ Reposio.Display = (function() {
         content.find(":jqmData(role=collapsible-set)").collapsibleset();
         content.find(":jqmData(role=collapsible)").collapsible();
         content.find(":jqmData(role=button)").button();
+        content.find(":jqmData(role=table)").table();
 
         page.data('current-for', obj.id);
         this.post_render_page(page);
-    }
+    };
 
     Display.prototype.post_render_page = function(page) {
         $.mobile.loading('hide');
         page.addClass('page_loaded');
-    }
+    };
+
+    Display.prototype.account_link = function(user_name, provider_name) {
+        return '<a class="mini-button" data-role="button" data-inline="true" data-mini="true" data-theme="a" href="#account_home!account=' + user_name + '@' + provider_name + '">' + user_name + '</a>'        
+    };
+
+    Display.prototype.repository_link = function(full_name, repo_name, provider_name) {
+        full_name = full_name.replace('/', ':');
+        return '<a class="mini-button" data-role="button" data-inline="true" data-mini="true" data-theme="b" href="#repository_home!repository=' + full_name + '@' + provider_name + '">' + repo_name + '</a>';
+    };
 
     Display.prototype.get_markup_for_repositories = function(repositories, provider) {
         var markup = "<ul data-role='listview'>";
@@ -196,7 +206,18 @@ Reposio.Display = (function() {
         markup += "</ul>";
 
         return markup;
-    }
+    };
+
+    Display.prototype.get_markup_for_events = function(events) {
+        var markup = '<ul class="ui-listview list-events">';
+        for (var i=0; i<events.length; i++) {
+            var more_class = i == 0 ? ' ui-first-child' : i == events.length - 1 ? ' ui-last-child' : '';
+            markup += '<li class="ui-li ui-li-static ui-btn-up-c' + more_class + '">' + events[i] + '</li>';
+        }
+        markup += "</ul>";
+
+        return markup;
+    };
 
     Display.prototype.get_markup_for_account_home = function(account) {
         var markup = '<ul data-role="listview" data-theme="e" class="account-main"><li>';
@@ -223,7 +244,7 @@ Reposio.Display = (function() {
         }
         markup += '</ul>'
         return markup;
-    }
+    };
 
     Display.prototype.get_markup_for_account_repositories = function(account) {
         var markup = this.get_markup_for_repositories(account.repositories, account.provider);
@@ -236,25 +257,21 @@ Reposio.Display = (function() {
     };
 
     Display.prototype.get_markup_for_account_activity = function(account) {
-        var markup = "<ul data-role='listview'>";
+        var events = [];
         for (var i=0; i<account.own_events.length; i++) {
-            var entry = account.own_events[i];
-            markup += '<li>' + entry.actor.login + ' | ' + entry.type.replace('Event', '').toLowerCase() + ' | ' + entry.repo.name + '</li>';
+            var event = account.provider.formatter.format(account.own_events[i], account);
+            if (event) { events.push(event); }
         }
-        markup += "</ul>";
-
-        return markup;
+        return this.get_markup_for_events(events);
     };
 
     Display.prototype.get_markup_for_account_events = function(account) {
-        var markup = "<ul data-role='listview'>";
+        var events = [];
         for (var i=0; i<account.received_events.length; i++) {
-            var entry = account.received_events[i];
-            markup += '<li>' + entry.actor.login + ' | ' + entry.type.replace('Event', '').toLowerCase() + ' | ' + entry.repo.name + '</li>';
+            var event = account.provider.formatter.format(account.received_events[i], account);
+            if (event) { events.push(event); }
         }
-        markup += "</ul>";
-
-        return markup;
+        return this.get_markup_for_events(events);
     };
 
     Display.prototype.get_markup_for_repository_home = function(repository) {
@@ -262,13 +279,13 @@ Reposio.Display = (function() {
         markup += '<div>';
         markup += '<strong>' + repository.details.name + '</strong>';
         markup += ' by ';
-        markup += '<a class="mini-button" data-role="button" data-inline="true" data-mini="true" data-theme="a" href="#account_home!account=' + repository.details.owner.login + '@' + repository.provider.name + '">' + repository.details.owner.login + '</a>';
+        markup += this.account_link(repository.details.owner.login, repository.provider.name);
         markup += '</strong></div>';
         if (repository.details.fork) {
             markup += '<div>Fork ok ';
-            markup += '<a class="mini-button" data-role="button" data-inline="true" data-mini="true" data-theme="b" href="#repository_home!repository=' + repository.details.parent.full_name.replace('/', ':') + '@' + repository.provider.name + '">' + repository.details.parent.name + '</a>';
+            markup += this.repository_link(repository.details.parent.full_name, repository.details.parent.name, repository.provider.name);
             markup += ' by ';
-            markup += '<a class="mini-button" data-role="button" data-inline="true" data-mini="true" data-theme="a" href="#account_home!account=' + repository.details.parent.owner.login + '@' + repository.provider.name + '">' + repository.details.parent.owner.login + '</a>';
+            markup += this.account_link(repository.details.parent.owner.login, repository.provider.name);
             markup += '</div>'
         }
         markup += '<p class="last-push">Last push: ' + (repository.details.pushed_at ? format_date(repository.details.pushed_at, true) : 'never !') + '</p>';            
@@ -285,17 +302,15 @@ Reposio.Display = (function() {
         }
         markup += '</div>';
         return markup;
-    }
+    };
 
     Display.prototype.get_markup_for_repository_activity = function(repository) {
-        var markup = "<ul data-role='listview'>";
+        var events = [];
         for (var i=0; i<repository.activity.length; i++) {
-            var entry = repository.activity[i];
-            markup += '<li>' + entry.actor.login + ' | ' + entry.type.replace('Event', '').toLowerCase();
+            var event = repository.provider.formatter.format(repository.activity[i], repository);
+            if (event) { events.push(event); }
         }
-        markup += "</ul>";
-
-        return markup;
+        return this.get_markup_for_events(events);
     };
 
     Display.prototype.get_markup_for_repository_forks = function(repository) {

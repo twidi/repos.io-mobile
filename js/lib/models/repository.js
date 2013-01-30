@@ -15,6 +15,7 @@ Reposio.Models.Repository = (function() {
         this.forks = null;
     };
 
+    Repository.prototype.name = 'Repository';
     Repository.cache = {};
     Repository.get = function(id, controller) {
         if (!Repository.cache[id]) {

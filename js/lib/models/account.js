@@ -15,6 +15,7 @@ Reposio.Models.Account = (function() {
         this.received_events = null;
     };
 
+    Account.prototype.name = 'Account';
     Account.cache = {};
     Account.get = function(id, controller) {
         if (!Account.cache[id]) {

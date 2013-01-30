@@ -1,9 +1,139 @@
 Reposio.Providers.github = (function() {
 
+    var EventFormatter = function(provider) {
+        this.provider = provider;
+    };
+
+    EventFormatter.prototype.format = function(event, source) {
+        if (event.type && this[event.type]) {
+            var result = this[event.type](event, source);
+            if (!result) {
+                result = this.base_format(event, source, '<em>(' + event.type.replace('Event', '').toLowerCase() + ')</em>');
+            }
+            return result;
+        }
+        return null;
+    };
+
+    EventFormatter.prototype.format_actor  = function(actor, source) {
+        if (source.name != 'Account' || source.username != actor.login) {
+            return this.provider.controller.display.account_link(actor.login, source.provider.name);
+        } else {
+            return '<strong>' + actor.login + '</strong>';
+        }
+    };
+
+    EventFormatter.prototype.format_repo  = function(repository, actor, source) {
+        if (source.name != 'Repository' || source.path != repository.name) {
+            var parts = repository.name.split('/');
+            var result = this.provider.controller.display.repository_link(repository.name, parts[1], source.provider.name);
+            if (actor.login != parts[0] && (source.name != 'Account' || source.username != parts[0])) {
+                result += ' by ';
+                result += '<strong>' + parts[0] + '</strong>'; //this.format_actor({login: parts[0]}, source);
+            }
+            return '<span class="repo">' + result + '</span>';
+        } else {
+            return '<strong>' + repository.name + '</strong>';
+        }
+    };
+
+    EventFormatter.prototype.base_format = function(event, source, middle_part, more) {
+        var result = this.format_actor(event.actor, source) + ' ' + middle_part + ' ' + this.format_repo(event.repo, event.actor, source);
+        if (more) {
+            result += '<p class="ui-li-desc">' + more + '</p>';
+        }
+        return result;
+    };
+
+    EventFormatter.prototype.CommitCommentEvent = function(event, source) {
+
+    };
+
+    EventFormatter.prototype.CreateEvent = function(event, source) {
+        var part = 'created', more;
+        if (event.payload.ref_type == 'branch') {
+            part += ' a branch on';
+            more = 'Created branch: <strong>' + event.payload.ref + '</strong>';
+        }
+        return this.base_format(event, source, part, more);
+    };
+
+    EventFormatter.prototype.DeleteEvent = function(event, source) {
+        var part = 'deleted', more;
+        if (event.payload.ref_type == 'branch') {
+            part += ' a branch on';
+            more = 'Deleted branch: <strong>' + event.payload.ref + '</strong>';
+        }
+        return this.base_format(event, source, part, more);
+
+    };
+
+    EventFormatter.prototype.DownloadEvent = function(event, source) {
+
+    };
+
+    EventFormatter.prototype.FollowEvent = function(event, source) {
+        // no repo, followed account is in payload.target
+    };
+    
+    EventFormatter.prototype.ForkEvent = function(event, source) {
+        return this.base_format(event, source, 'forked');
+    };
+    
+    EventFormatter.prototype.ForkApplyEvent = function(event, source) {
+
+    };
+    
+    EventFormatter.prototype.GistEvent = function(event, source) {
+
+    };
+    
+    EventFormatter.prototype.GollumEvent = function(event, source) {
+
+    };
+    
+    EventFormatter.prototype.IssueCommentEvent = function(event, source) {
+
+    };
+    
+    EventFormatter.prototype.IssuesEvent = function(event, source) {
+
+    };
+    
+    EventFormatter.prototype.MemberEvent = function(event, source) {
+
+    };
+    
+    EventFormatter.prototype.PublicEvent = function(event, source) {
+
+    };
+    
+    EventFormatter.prototype.PullRequestEvent = function(event, source) {
+
+    };
+    
+    EventFormatter.prototype.PullRequestReviewCommentEvent = function(event, source) {
+
+    };
+    
+    EventFormatter.prototype.PushEvent = function(event, source) {
+        return this.base_format(event, source, 'pushed to');
+    };
+    
+    EventFormatter.prototype.TeamAddEvent = function(event, source) {
+
+    };
+    
+    EventFormatter.prototype.WatchEvent = function(event, source) {
+        return this.base_format(event, source, 'watched');
+    };
+
     var Provider = function(controller) {
         this.name = 'github';
         this.engine = new Github(typeof providers_config == 'undefined' ? {} : providers_config.github);
         this.user = this.engine.getUser();
+        this.controller = controller;
+        this.formatter = new EventFormatter(this);
     };
 
     Provider.prototype.get_repo = function(path) {

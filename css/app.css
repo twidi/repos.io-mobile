@@ -105,3 +105,13 @@ a.mini-button.ui-btn.ui-mini .ui-btn-inner {
     padding: 0.1em 0.45em 0 0.35em;
     margin-left: 1ex;
 }
+
+.list-events li {
+    font-weight: normal;
+}
+.list-events li span.repo {
+    /*white-space: nowrap;*/
+}
+.list-events li p.ui-li-desc {
+    margin-top: 0;
+}

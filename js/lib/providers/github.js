@@ -139,11 +139,10 @@ Reposio.Providers.github = (function() {
     };
 
     EventFormatter.prototype.MemberEvent = function(event, source) {
-
     };
 
     EventFormatter.prototype.PublicEvent = function(event, source) {
-
+        return this.base_format(event, source, 'open sourced');
     };
 
     EventFormatter.prototype.PullRequestEvent = function(event, source) {

@@ -40,7 +40,7 @@ Reposio.Providers.github = (function() {
     EventFormatter.prototype.base_format = function(event, source, middle_part, more, target) {
         var result = '';
         result += '<p class="ui-li-aside">' + this.provider.controller.display.format_date(event.created_at, 'show-time', null, 'time-only') + '</p>';
-        if (!target) { 
+        if (!target) {
             target = this.format_repo(event.repo, event.actor, source);
         }
         result += this.format_actor(event.actor, source) + ' ' + middle_part + ' ' + target;
@@ -81,57 +81,57 @@ Reposio.Providers.github = (function() {
         var target = this.format_actor(event.payload.target, source);
         return this.base_format(event, source, 'started following', null, target);
     };
-    
+
     EventFormatter.prototype.ForkEvent = function(event, source) {
         return this.base_format(event, source, 'forked');
     };
-    
+
     EventFormatter.prototype.ForkApplyEvent = function(event, source) {
 
     };
-    
+
     EventFormatter.prototype.GistEvent = function(event, source) {
 
     };
-    
+
     EventFormatter.prototype.GollumEvent = function(event, source) {
 
     };
-    
+
     EventFormatter.prototype.IssueCommentEvent = function(event, source) {
 
     };
-    
+
     EventFormatter.prototype.IssuesEvent = function(event, source) {
 
     };
-    
+
     EventFormatter.prototype.MemberEvent = function(event, source) {
 
     };
-    
+
     EventFormatter.prototype.PublicEvent = function(event, source) {
 
     };
-    
+
     EventFormatter.prototype.PullRequestEvent = function(event, source) {
 
     };
-    
+
     EventFormatter.prototype.PullRequestReviewCommentEvent = function(event, source) {
 
     };
-    
+
     EventFormatter.prototype.PushEvent = function(event, source) {
         return this.base_format(event, source, 'pushed to');
     };
-    
+
     EventFormatter.prototype.TeamAddEvent = function(event, source) {
 
     };
-    
+
     EventFormatter.prototype.WatchEvent = function(event, source) {
-        return this.base_format(event, source, 'watched');
+        return this.base_format(event, source, 'starred');
     };
 
 

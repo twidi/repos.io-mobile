@@ -40,10 +40,13 @@ Reposio.Providers.github = (function() {
     EventFormatter.prototype.base_format = function(event, source, middle_part, more, target) {
         var result = '';
         result += '<p class="ui-li-aside">' + this.provider.controller.display.format_date(event.created_at, 'show-time', null, 'time-only') + '</p>';
-        if (!target) {
+        if (!target && event.repo && event.repo.name != '/') {
             target = this.format_repo(event.repo, event.actor, source);
         }
-        result += this.format_actor(event.actor, source) + ' ' + middle_part + ' ' + target;
+        result += this.format_actor(event.actor, source) + ' ' + middle_part;
+        if (target) {
+            result += ' ' + target;
+        }
         if (more) {
             result += '<p class="ui-li-desc">' + more + '</p>';
         }
@@ -106,7 +109,16 @@ Reposio.Providers.github = (function() {
     };
 
     EventFormatter.prototype.GistEvent = function(event, source) {
-
+        var action = event.payload.action, part, more;
+        if (!action.match(/d$/)) {
+            if (!action.match(/e$/)) {
+                action += 'e';  // fork
+            }
+            action += 'd';  // create/update
+        }
+        part = action + ' a gist',
+        more = 'Description: <strong>' + event.payload.gist.description + '</strong>';
+        return this.base_format(event, source, part, more, null);
     };
 
     EventFormatter.prototype.GollumEvent = function(event, source) {

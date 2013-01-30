@@ -130,7 +130,9 @@ Reposio.Providers.github = (function() {
     };
 
     EventFormatter.prototype.PullRequestEvent = function(event, source) {
-
+        var part = event.payload.action + ' a pull request on',
+            more = 'Pull request <strong>#' + event.payload.number + ' - ' + event.payload.pull_request.title + '</strong>';
+        return this.base_format(event, source, part, more);
     };
 
     EventFormatter.prototype.PullRequestReviewCommentEvent = function(event, source) {
@@ -138,7 +140,8 @@ Reposio.Providers.github = (function() {
     };
 
     EventFormatter.prototype.PushEvent = function(event, source) {
-        return this.base_format(event, source, 'pushed to');
+        var part = 'pushed ' + event.payload.size + ' commit' + (event.payload.size > 1 ? 's' : '') + ' to';
+        return this.base_format(event, source, part);
     };
 
     EventFormatter.prototype.TeamAddEvent = function(event, source) {
@@ -146,7 +149,7 @@ Reposio.Providers.github = (function() {
     };
 
     EventFormatter.prototype.WatchEvent = function(event, source) {
-        return this.base_format(event, source, 'starred');
+        return this.base_format(event, source, event.payload.action + ' watching');
     };
 
 

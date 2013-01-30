@@ -56,10 +56,17 @@ Reposio.Providers.github = (function() {
 
     EventFormatter.prototype.CreateEvent = function(event, source) {
         var part = 'created', more;
-        if (event.payload.ref_type == 'branch') {
-            part += ' a branch on';
-            more = 'Created branch: <strong>' + event.payload.ref + '</strong>';
-        }
+        switch(event.payload.ref_type) {
+            case 'branch':
+                part += ' a branch on';
+                more = 'Created branch: <strong>' + event.payload.ref + '</strong>';
+                break;
+            case 'repository':
+                if (event.payload.description) {
+                    more = 'Description: <strong>' + event.payload.description + '</strong>';
+                }
+                break;
+        };
         return this.base_format(event, source, part, more);
     };
 

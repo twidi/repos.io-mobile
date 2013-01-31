@@ -110,34 +110,45 @@ span.repo-links > span {
     display: none;
 }
 .list-events li .ui-collapsible .ui-collapsible-content {
+    padding: 0;
+    margin-top: 5px;
     background: none repeat scroll 0 0 transparent;
-    border-bottom-width: 1px;
     max-height: 1000px;
     overflow: hidden;
+    display: block;
+    border-width: 0;
+    -ms-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -o-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
     -ms-transition: all 0.2s ease 0s;
     -o-transition: all 0.2s ease 0s;
     -moz-transition: all 0.2s ease 0s;
     -webkit-transition: all 0.2s ease 0s;
     transition: all 0.2s ease 0s;
 }
-.list-events li .ui-collapsible .ui-collapsible-content-collapsed {
-    -ms-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -o-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    border-width: 0;
-    display: block;
-    max-height: 1px;
-    overflow: hidden;
-    padding-bottom: 0;
-    padding-top: 0;
-}
-.list-events li .ui-collapsible .ui-collapsible-content > ul {
+.list-events li .ui-collapsible .ui-collapsible-content > * {
+    margin: 1px 0 0 0;
+    margin-top: 1px;
     font-size: smaller;
 }
-.list-events li .ui-collapsible .ui-collapsible-content-collapsed > ul {
+.list-events li .ui-collapsible .ui-collapsible-content-collapsed > * {
+}
+.list-events li .ui-collapsible .ui-collapsible-content-collapsed {
     margin-top: 1px;
+    max-height: 1px;
+}
+.list-events li .ui-collapsible .ui-collapsible-content .ui-li {
+    font-weight: normal;
+    border-left-width: 1px !important;
+    border-right-width: 1px !important;
+}
+.list-events li .ui-collapsible .ui-collapsible-content .ui-li.ui-first-child {
+    border-top-width: 1px !important;
+}
+.list-events li .ui-collapsible .ui-collapsible-content .ui-li.ui-last-child {
+    border-bottom-width: 1px !important;
 }
 .list-events li .ui-collapsible .ui-collapsible-content > ul a .ui-btn-inner {
     font-size: smaller;
@@ -145,11 +156,11 @@ span.repo-links > span {
 .list-events li .ui-collapsible .ui-collapsible-content > ul li.ui-li {
     padding: 0.5em 10px;
 }
-.list-events li .ui-collapsible .ui-collapsible-content > ul > li.ui-li.ui-first-child {
-    border-top-width: 1px;
-}
 .list-events li .ui-collapsible .ui-collapsible-content > ul .ui-li-desc {
     white-space: normal;
+}
+.list-events li .ui-collapsible .ui-collapsible-content > p {
+    padding: 0.5em 10px;
 }
 
 .list-events li.with-extension > em {

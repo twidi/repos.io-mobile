@@ -57,8 +57,11 @@ Reposio.Providers.github = (function() {
     };
 
     EventFormatter.prototype.CommitCommentEvent = function(event, source) {
-        var part = 'commented a commit on';
-        return this.base_format(event, source, part);
+        var part = '<a href="#" class="collapsible-trigger">commented</a> a commit on',
+            more = '<div data-role="collapsible" data-content-theme="d" data-corners="false" data-mini="true"><h3>Comment</h3>';
+        more += '<p class="ui-li ui-li-static ui-btn-up-d ui-first-child ui-last-child"><em>' + event.payload.comment.body.replace(/\n/g, '<br />') + '</em></p>';
+        more += '</div>';
+        return this.base_format(event, source, part, null, null, more);
     };
 
     EventFormatter.prototype.CreateEvent = function(event, source) {
@@ -130,9 +133,15 @@ Reposio.Providers.github = (function() {
     };
 
     EventFormatter.prototype.IssueCommentEvent = function(event, source) {
-        var part = event.payload.action == 'created' ? 'commented an issue on' : event.payload.action + ' a comment on an issue on',
-            desc = 'Issue: <strong>#' + event.payload.issue.number + ' - ' + event.payload.issue.title + '</strong>';
-        return this.base_format(event, source, part, desc);
+        var part = event.payload.action == 'created' ? '<a href="#" class="collapsible-trigger">commented</a> an issue on' : event.payload.action + ' a ' + (event.payload.action == 'deleted' ? 'comment' : '<a href="#" class="collapsible-trigger">comment</a>') + ' on an issue on',
+            desc = 'Issue: <strong>#' + event.payload.issue.number + ' - ' + event.payload.issue.title + '</strong>',
+            more;
+        if (event.payload.action != 'deleted') {
+            more = '<div data-role="collapsible" data-content-theme="d" data-corners="false" data-mini="true"><h3>Comment</h3>';
+            more += '<p class="ui-li ui-li-static ui-btn-up-d ui-first-child ui-last-child"><em>' + event.payload.comment.body.replace(/\n/g, '<br />') + '</em></p>';
+            more += '</div>';
+        }
+        return this.base_format(event, source, part, desc, null, more);
     };
 
     EventFormatter.prototype.IssuesEvent = function(event, source) {
@@ -155,9 +164,13 @@ Reposio.Providers.github = (function() {
     };
 
     EventFormatter.prototype.PullRequestReviewCommentEvent = function(event, source) {
-        var part = 'commented a pull request on',
-            PR_num = event.payload.comment._links.pull_request.href;
-        if (PR_num) { 
+        var part = '<a href="#" class="collapsible-trigger">commented</a> a pull request on',
+            PR_num = event.payload.comment._links.pull_request.href,
+            more = '<div data-role="collapsible" data-content-theme="d" data-corners="false" data-mini="true"><h3>Comment</h3>';
+        more += '<p class="ui-li ui-li-static ui-btn-up-d ui-first-child ui-last-child"><em>' + event.payload.comment.body.replace(/\n/g, '<br />') + '</em></p>';
+        more += '</div>';
+        
+        if (PR_num) {
             PR_num = PR_num.match(/(\d+)\/?$/);
             if (PR_num) {
                 PR_num = PR_num[1];
@@ -166,7 +179,8 @@ Reposio.Providers.github = (function() {
         if (PR_num) {
             desc = 'Pull request <strong>#' + PR_num + '</strong>';
         }
-        return this.base_format(event, source, part, desc);
+        
+        return this.base_format(event, source, part, desc, null, more);
     };
 
     EventFormatter.prototype.PushEvent = function(event, source) {

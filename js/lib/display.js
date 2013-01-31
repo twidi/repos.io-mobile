@@ -106,6 +106,7 @@ Reposio.Display = (function() {
         $(document).on('click', '.list-events a.collapsible-trigger', function(e) {
             // open/close collapsible when clicking triggering links in list of events
             e.preventDefault();
+            e.stopPropagation();
             var link = $(this),
                 collapsible = link.data('collapsible'),
                 opened =link.data('opened') || false;
@@ -115,11 +116,13 @@ Reposio.Display = (function() {
             }
             collapsible.trigger(opened ? 'collapse' : 'expand');
             link.data('opened', !opened);
+            return false;
         });
         $(document).on('click', 'li.with-extension', function(e) {
             e.preventDefault();
             e.stopPropagation();
             $(this).toggleClass('extended');
+            return false;
         });
     };
 

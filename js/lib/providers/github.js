@@ -176,9 +176,10 @@ Reposio.Providers.github = (function() {
         more += '<ul data-role="listview" data-theme="d">';
         for (var i=0; i<event.payload.commits.length;i++) {
             var commit = event.payload.commits[i],
-                message = commit.message.replace('\n', '<br />'),
-                first_part = message.slice(0, 50),
-                other_part = message.slice(50);
+                lines = commit.message.split('\n'),
+                first_part = lines.shift(),
+                other_part = lines.length ? '<br />' + lines.join('<br />') : '';
+
             more += '<li' + (other_part.length ? ' class="with-extension"' : '') + '>';
             more += '<strong>' + commit.author.name + '</strong>'; // we have the name, not the username :(
             more += ' — <em>';

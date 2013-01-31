@@ -118,6 +118,7 @@ Reposio.Display = (function() {
         });
         $(document).on('click', 'li.with-extension', function(e) {
             e.preventDefault();
+            e.stopPropagation();
             $(this).toggleClass('extended');
         });
     };

@@ -180,7 +180,7 @@ Reposio.Providers.github = (function() {
                 first_part = message.slice(0, 50),
                 other_part = message.slice(50);
             more += '<li' + (other_part.length ? ' class="with-extension"' : '') + '>';
-            more += '<span>' + this.format_actor({login: commit.author.name}, source) + '</span>'; // {provider:source.provider}
+            more += '<strong>' + commit.author.name + '</strong>'; // we have the name, not the username :(
             more += ' — <em>';
             more += first_part;
             if (other_part) {

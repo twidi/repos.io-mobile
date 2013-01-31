@@ -103,6 +103,23 @@ Reposio.Display = (function() {
                 }
             }
         });
+        $(document).on('click', '.list-events a.collapsible-trigger', function(e) {
+            // open/close collapsible when clicking triggering links in list of events
+            e.preventDefault();
+            var link = $(this),
+                collapsible = link.data('collapsible'),
+                opened =link.data('opened') || false;
+            if (!collapsible) {
+                collapsible =  link.parents('li').find('.ui-collapsible');
+                link.data('collapsible', collapsible);
+            }
+            collapsible.trigger(opened ? 'collapse' : 'expand');
+            link.data('opened', !opened);
+        });
+        $(document).on('click', 'li.with-extension', function(e) {
+            e.preventDefault();
+            $(this).toggleClass('extended');
+        });
     };
 
     Display.prototype.on_before_page_change = function(e, data) {
@@ -210,7 +227,7 @@ Reposio.Display = (function() {
     };
 
     Display.prototype.get_markup_for_events = function(events) {
-        var markup = '<ul class="ui-listview list-events">',
+        var markup = '<ul class="ui-listview list-events" data-mobile-listview=\'{"options":{}}\'>',  // data needed to prevent a bug in listview filter plugin
             cur_day = null;
         for (var i=0; i<events.length; i++) {
             if (events[i].day != cur_day) {

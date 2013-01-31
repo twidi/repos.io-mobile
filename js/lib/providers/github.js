@@ -37,7 +37,7 @@ Reposio.Providers.github = (function() {
         return result;
     };
 
-    EventFormatter.prototype.base_format = function(event, source, middle_part, more, target) {
+    EventFormatter.prototype.base_format = function(event, source, middle_part, desc, target, more) {
         var result = '';
         result += '<p class="ui-li-aside">' + this.provider.controller.display.format_date(event.created_at, 'show-time', null, 'time-only') + '</p>';
         if (!target && event.repo && event.repo.name != '/') {
@@ -47,8 +47,11 @@ Reposio.Providers.github = (function() {
         if (target) {
             result += ' ' + target;
         }
+        if (desc) {
+            result += '<p class="ui-li-desc">' + desc + '</p>';
+        }
         if (more) {
-            result += '<p class="ui-li-desc">' + more + '</p>';
+            result += more;
         }
         return result;
     };
@@ -59,36 +62,36 @@ Reposio.Providers.github = (function() {
     };
 
     EventFormatter.prototype.CreateEvent = function(event, source) {
-        var part = 'created', more;
+        var part = 'created', desc;
         switch(event.payload.ref_type) {
             case 'branch':
                 part += ' a branch on';
-                more = 'Branch: <strong>' + event.payload.ref + '</strong>';
+                desc = 'Branch: <strong>' + event.payload.ref + '</strong>';
                 break;
             case 'repository':
                 if (event.payload.description) {
-                    more = 'Description: <strong>' + event.payload.description + '</strong>';
+                    desc = 'Description: <strong>' + event.payload.description + '</strong>';
                 }
                 break;
             case 'tag':
-                more = 'Tag: <strong>' + event.payload.ref + '</strong>';
+                desc = 'Tag: <strong>' + event.payload.ref + '</strong>';
                 break;
         };
-        return this.base_format(event, source, part, more);
+        return this.base_format(event, source, part, desc);
     };
 
     EventFormatter.prototype.DeleteEvent = function(event, source) {
-        var part = 'deleted', more;
+        var part = 'deleted', desc;
         switch(event.payload.ref_type) {
             case 'branch':
                 part += ' a branch on';
-                more = 'Branch: <strong>' + event.payload.ref + '</strong>';
+                desc = 'Branch: <strong>' + event.payload.ref + '</strong>';
                 break;
             case 'tag':
-                more = 'Tag: <strong>' + event.payload.ref + '</strong>';
+                desc = 'Tag: <strong>' + event.payload.ref + '</strong>';
                 break;
         };
-        return this.base_format(event, source, part, more);
+        return this.base_format(event, source, part, desc);
 
     };
 
@@ -110,7 +113,7 @@ Reposio.Providers.github = (function() {
     };
 
     EventFormatter.prototype.GistEvent = function(event, source) {
-        var action = event.payload.action, part, more;
+        var action = event.payload.action, part, desc;
         if (!action.match(/d$/)) {
             if (!action.match(/e$/)) {
                 action += 'e';  // fork
@@ -118,8 +121,8 @@ Reposio.Providers.github = (function() {
             action += 'd';  // create/update
         }
         part = action + ' a gist',
-        more = 'Description: <strong>' + event.payload.gist.description + '</strong>';
-        return this.base_format(event, source, part, more, null);
+        desc = 'Description: <strong>' + event.payload.gist.description + '</strong>';
+        return this.base_format(event, source, part, desc, null);
     };
 
     EventFormatter.prototype.GollumEvent = function(event, source) {
@@ -128,14 +131,14 @@ Reposio.Providers.github = (function() {
 
     EventFormatter.prototype.IssueCommentEvent = function(event, source) {
         var part = event.payload.action == 'created' ? 'commented an issue on' : event.payload.action + ' a comment on an issue on',
-            more = 'Issue: <strong>#' + event.payload.issue.number + ' - ' + event.payload.issue.title + '</strong>';
-        return this.base_format(event, source, part, more);
+            desc = 'Issue: <strong>#' + event.payload.issue.number + ' - ' + event.payload.issue.title + '</strong>';
+        return this.base_format(event, source, part, desc);
     };
 
     EventFormatter.prototype.IssuesEvent = function(event, source) {
         var part = event.payload.action + ' an issue on',
-            more = 'Issue: <strong>#' + event.payload.issue.number + ' - ' + event.payload.issue.title + '</strong>';
-        return this.base_format(event, source, part, more);
+            desc = 'Issue: <strong>#' + event.payload.issue.number + ' - ' + event.payload.issue.title + '</strong>';
+        return this.base_format(event, source, part, desc);
     };
 
     EventFormatter.prototype.MemberEvent = function(event, source) {
@@ -147,8 +150,8 @@ Reposio.Providers.github = (function() {
 
     EventFormatter.prototype.PullRequestEvent = function(event, source) {
         var part = event.payload.action + ' a pull request on',
-            more = 'Pull request <strong>#' + event.payload.number + ' - ' + event.payload.pull_request.title + '</strong>';
-        return this.base_format(event, source, part, more);
+            desc = 'Pull request <strong>#' + event.payload.number + ' - ' + event.payload.pull_request.title + '</strong>';
+        return this.base_format(event, source, part, desc);
     };
 
     EventFormatter.prototype.PullRequestReviewCommentEvent = function(event, source) {
@@ -161,14 +164,33 @@ Reposio.Providers.github = (function() {
             }
         }
         if (PR_num) {
-            more = 'Pull request <strong>#' + PR_num + '</strong>';
+            desc = 'Pull request <strong>#' + PR_num + '</strong>';
         }
-        return this.base_format(event, source, part, more);
+        return this.base_format(event, source, part, desc);
     };
 
     EventFormatter.prototype.PushEvent = function(event, source) {
-        var part = 'pushed ' + event.payload.size + ' commit' + (event.payload.size > 1 ? 's' : '') + ' to';
-        return this.base_format(event, source, part);
+        var part = 'pushed <a href="#" class="collapsible-trigger">' + event.payload.size + ' commit' + (event.payload.size > 1 ? 's' : '') + '</a> to',
+            more;
+        more = '<div data-role="collapsible" data-content-theme="d" data-corners="false" data-mini="true"><h3>Commits</h3>';
+        more += '<ul data-role="listview" data-theme="d">';
+        for (var i=0; i<event.payload.commits.length;i++) {
+            var commit = event.payload.commits[i],
+                message = commit.message.replace('\n', '<br />'),
+                first_part = message.slice(0, 50),
+                other_part = message.slice(50);
+            more += '<li' + (other_part.length ? ' class="with-extension"' : '') + '>';
+            more += '<span>' + this.format_actor({login: commit.author.name}, source) + '</span>'; // {provider:source.provider}
+            more += ' — <em>';
+            more += first_part;
+            if (other_part) {
+                more += '<span class="extension">' + other_part + '</span>';
+            }
+            more += '</em>';
+            more += '</li>';
+        }
+        more += '</ul></div>';
+        return this.base_format(event, source, part, null, null, more);
     };
 
     EventFormatter.prototype.TeamAddEvent = function(event, source) {

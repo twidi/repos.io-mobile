@@ -57,10 +57,12 @@ a.mini-button.ui-btn.ui-mini .ui-btn-inner {
 
 span.repo-links {
     background: none repeat scroll 0 0 rgba(0, 0, 0, 0.1);
+    -ms-border-radius: 1em 1em 1em 1em;
     -moz-border-radius: 1em 1em 1em 1em;
     -webkit-border-radius: 1em 1em 1em 1em;
     -o-border-radius: 1em 1em 1em 1em;
     border-radius: 1em 1em 1em 1em;
+    -ms-box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.25) inset;
     -moz-box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.25) inset;
     -webkit-box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.25) inset;
     -o-box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.25) inset;
@@ -92,6 +94,80 @@ span.repo-links > span {
 .list-events li .ui-li-aside {
     font-size: smaller;
     width: 5ex;
+}
+
+.list-events li a.collapsible-trigger {
+    border-bottom: 1px dashed;
+    color: inherit;
+    text-decoration: none;
+}
+.list-events li .ui-collapsible {
+    margin: 0;
+}
+.list-events li .ui-collapsible h3.ui-collapsible-heading {
+    display: none;
+}
+.list-events li .ui-collapsible .ui-collapsible-content {
+    background: none repeat scroll 0 0 transparent;
+    border-bottom-width: 1px;
+    max-height: 1000px;
+    overflow: hidden;
+    -ms-transition: all 0.2s ease 0s;
+    -o-transition: all 0.2s ease 0s;
+    -moz-transition: all 0.2s ease 0s;
+    -webkit-transition: all 0.2s ease 0s;
+    transition: all 0.2s ease 0s;
+}
+.list-events li .ui-collapsible .ui-collapsible-content-collapsed {
+    -ms-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -o-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    border-width: 0;
+    display: block;
+    max-height: 1px;
+    overflow: hidden;
+    padding-bottom: 0;
+    padding-top: 0;
+}
+.list-events li .ui-collapsible .ui-collapsible-content > ul {
+    font-size: smaller;
+}
+.list-events li .ui-collapsible .ui-collapsible-content-collapsed > ul {
+    margin-top: 1px;
+}
+.list-events li .ui-collapsible .ui-collapsible-content > ul a .ui-btn-inner {
+    font-size: smaller;
+}
+.list-events li .ui-collapsible .ui-collapsible-content > ul li.ui-li {
+    padding: 0.5em 10px;
+}
+.list-events li .ui-collapsible .ui-collapsible-content > ul > li.ui-li.ui-first-child {
+    border-top-width: 1px;
+}
+.list-events li .ui-collapsible .ui-collapsible-content > ul .ui-li-desc {
+    white-space: normal;
+}
+
+.list-events li.with-extension > em {
+    cursor: pointer;
+}
+.list-events li.with-extension > em .extension {
+    display: none;
+}
+.list-events li.with-extension > em:after {
+    content: " …";
+    font-weight: bold;
+}
+.list-events li.with-extension.extended > em {
+    cursor: default;
+}
+.list-events li.with-extension.extended > em .extension {
+    display: inline;
+}
+.list-events li.with-extension.extended > em:after {
+    display: none;
 }
 
 #repository_home .ui-content .repo-main li {

@@ -44,10 +44,29 @@ a.mini-button.ui-btn.ui-mini .ui-btn-inner {
 .nav-menu .ui-li .ui-btn-inner a {
     font-size: 12.5px;
 }
-.repo-item-list .last-push {
+ul.repos-list li .last-push {
     font-style: italic;
 }
 
+ul.accounts-list .ui-li-thumb {
+    max-height: 40px;
+    max-width: 40px;
+}
+ul.accounts-list .ui-li-has-thumb .ui-btn-inner a.ui-link-inherit, ul.accounts-list .ui-li-static.ui-li-has-thumb {
+    padding-left: 60px;
+    min-height: 40px;
+    max-height: 20px;
+    height: 40px;
+    padding-top: 10px;
+    -ms-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -o-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+ul.accounts-list .ui-btn-inner.ui-li {
+    border-top-width: 0;
+}
 .ui-navbar span.ui-li-count {
     font-size: 11px;
     font-weight: bold;

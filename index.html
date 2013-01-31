@@ -151,6 +151,8 @@
             <li><a href="#account_repositories" class="account_repositories-link">Repos<span class="repos-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span></a></li>
             <li><a href="#account_stars" class="account_stars-link">Stars</a></li>
             <li><a href="#account_activity" class="account_activity-link">Activity</a></li>
+            <li><a href="#account_following" class="account_following-link">Following<span class="following-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span></a></li>
+            <li><a href="#account_followers" class="account_followers-link">Followers<span class="followers-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span></a></li>
             <li><a href="#account_events" class="account_events-link">Events</a></li>
         </ul>
     </div>
@@ -183,6 +185,8 @@
             <li><a href="#account_repositories" class="ui-btn-active account_repositories-link">Repos<span class="repos-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span></a></li>
             <li><a href="#account_stars" class="account_stars-link">Stars</a></li>
             <li><a href="#account_activity" class="account_activity-link">Activity</a></li>
+            <li><a href="#account_following" class="account_following-link">Following<span class="following-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span></a></li>
+            <li><a href="#account_followers" class="account_followers-link">Followers<span class="followers-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span></a></li>
             <li><a href="#account_events" class="account_events-link">Events</a></li>
         </ul>
     </div>
@@ -216,6 +220,8 @@
             <li><a href="#account_repositories" class="account_repositories-link">Repos<span class="repos-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span></a></li>
             <li><a href="#account_stars" class="ui-btn-active account_stars-link">Stars</a></li>
             <li><a href="#account_activity" class="account_activity-link">Activity</a></li>
+            <li><a href="#account_following" class="account_following-link">Following<span class="following-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span></a></li>
+            <li><a href="#account_followers" class="account_followers-link">Followers<span class="followers-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span></a></li>
             <li><a href="#account_events" class="account_events-link">Events</a></li>
         </ul>
     </div>
@@ -249,6 +255,76 @@
             <li><a href="#account_repositories" class="account_repositories-link">Repos<span class="repos-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span></a></li>
             <li><a href="#account_stars" class="account_stars-link">Stars</a></li>
             <li><a href="#account_activity" class="ui-btn-active account_activity-link">Activity</a></li>
+            <li><a href="#account_following" class="account_following-link">Following<span class="following-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span></a></li>
+            <li><a href="#account_followers" class="account_followers-link">Followers<span class="followers-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span></a></li>
+            <li><a href="#account_events" class="account_events-link">Events</a></li>
+        </ul>
+    </div>
+
+</div>
+
+
+<!-- Account Following -->
+<div data-role="page" id="account_following">
+    <div data-theme="a" data-role="header" data-id="account_following" data-position="fixed">
+        <h3>
+            ???
+        </h3>
+
+        <div data-role="navbar">
+            <ul class="extended">
+                <li><a href="#account_home" data-direction="reverse" class="account_home-link">Details</a></li>
+                <li><a href="#account_repositories" data-direction="reverse" class="account_repositories-link">Repos<span class="repos-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span></a></li>
+                <li><a href="#account_following" class="ui-btn-active ui-state-persist account_following-link">Following<span class="following-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span></a></li>
+                <li><a data-rel="popup" href="#menu_account_following">...</a>
+            </ul>
+        </div>
+    </div>
+    <div data-role="content">
+    </div>
+
+    <div data-role="popup" id="menu_account_following" class="nav-menu" data-theme="a">
+        <ul data-role="listview" data-inset="true" data-theme="a">
+            <li><a href="#account_home" class="account_home-link">Details</a></li>
+            <li><a href="#account_repositories" class="account_repositories-link">Repos<span class="repos-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span></a></li>
+            <li><a href="#account_stars" class="account_stars-link">Stars</a></li>
+            <li><a href="#account_activity" class="account_activity-link">Activity</a></li>
+            <li><a href="#account_following" class="ui-btn-active account_following-link">Following<span class="following-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span></a></li>
+            <li><a href="#account_followers" class="account_followers-link">Followers<span class="followers-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span></a></li>
+            <li><a href="#account_events" class="account_events-link">Events</a></li>
+        </ul>
+    </div>
+
+</div>
+
+
+<!-- Account Followers -->
+<div data-role="page" id="account_followers">
+    <div data-theme="a" data-role="header" data-id="account_followers" data-position="fixed">
+        <h3>
+            ???
+        </h3>
+
+        <div data-role="navbar">
+            <ul class="extended">
+                <li><a href="#account_home" data-direction="reverse" class="account_home-link">Details</a></li>
+                <li><a href="#account_repositories" data-direction="reverse" class="account_repositories-link">Repos<span class="repos-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span></a></li>
+                <li><a href="#account_followers" class="ui-btn-active ui-state-persist account_following-link">Followers<span class="followers-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span></a></li>
+                <li><a data-rel="popup" href="#menu_account_followers">...</a>
+            </ul>
+        </div>
+    </div>
+    <div data-role="content">
+    </div>
+
+    <div data-role="popup" id="menu_account_followers" class="nav-menu" data-theme="a">
+        <ul data-role="listview" data-inset="true" data-theme="a">
+            <li><a href="#account_home" class="account_home-link">Details</a></li>
+            <li><a href="#account_repositories" class="account_repositories-link">Repos<span class="repos-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span></a></li>
+            <li><a href="#account_stars" class="account_stars-link">Stars</a></li>
+            <li><a href="#account_activity" class="account_activity-link">Activity</a></li>
+            <li><a href="#account_following" class="account_following-link">Following<span class="following-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span></a></li>
+            <li><a href="#account_followers" class="ui-btn-active account_followers-link">Followers<span class="followers-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span></a></li>
             <li><a href="#account_events" class="account_events-link">Events</a></li>
         </ul>
     </div>
@@ -281,6 +357,8 @@
             <li><a href="#account_repositories" class="account_repositories-link">Repos<span class="repos-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span></a></li>
             <li><a href="#account_stars" class="account_stars-link">Stars</a></li>
             <li><a href="#account_activity" class="account_activity-link">Activity</a></li>
+            <li><a href="#account_following" class="account_following-link">Following<span class="following-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span></a></li>
+            <li><a href="#account_followers" class="account_followers-link">Followers<span class="followers-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span></a></li>
             <li><a href="#account_events" class="ui-btn-active account_events-link">Events</a></li>
         </ul>
     </div>

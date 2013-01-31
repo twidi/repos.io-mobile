@@ -13,6 +13,8 @@ Reposio.Models.Account = (function() {
         this.stars = null;
         this.own_events = null;
         this.received_events = null;
+        this.followers = null;
+        this.following = null;
     };
 
     Account.prototype.name = 'Account';

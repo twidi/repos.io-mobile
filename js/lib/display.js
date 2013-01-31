@@ -39,12 +39,14 @@ Reposio.Display = (function() {
     };
 
     Display.prototype.pages = {
-        account: ['home', 'activity', 'repositories', 'stars', 'events'],
+        account: ['home', 'activity', 'repositories', 'stars', 'events', 'following', 'followers'],
         repository: ['home', 'activity', 'forks']
     };
 
     Display.prototype.change_account = function() {
         $('.repos-count').hide();
+        $('.followers-count').hide();
+        $('.following-count').hide();
         for (var page_name in this.nodes.account) {
             var links = this.nodes.account[page_name].links;
             for (var i=0; i<links.length; i++) {
@@ -204,12 +206,12 @@ Reposio.Display = (function() {
     };
 
     Display.prototype.get_markup_for_repositories = function(repositories, provider) {
-        var markup = "<ul data-role='listview'>";
+        var markup = "<ul data-role='listview' class='repos-list'>";
 
         for (var i=0; i<repositories.length; i++) {
             var repository = repositories[i],
                 path = repository.full_name || repository.name;
-            markup += '<li class="repo-item-list">';
+            markup += '<li>';
             markup += '<a href="#repository_home!repository=' + path.replace('/', ':') + '@' + provider.name +'">' ;
             markup += '<h4>' + path + '</h4>';
             if (repository.description) {
@@ -221,6 +223,24 @@ Reposio.Display = (function() {
             if (repository.pushed_at) {
                 markup += '<p class="last-push">Last push: ' + this.format_date(repository.pushed_at, true) + '</p>';
             }
+            markup += '</a>';
+            markup += '</li>';
+        }
+
+        markup += "</ul>";
+
+        return markup;
+    };
+
+    Display.prototype.get_markup_for_accounts = function(accounts, provider) {
+        var markup = "<ul data-role='listview' class='accounts-list'>";
+
+        for (var i=0; i<accounts.length; i++) {
+            var account = accounts[i];
+            markup += '<li>';
+            markup += '<a href="#account_home!account=' + account.login + '@' + provider.name +'">' ;
+            markup += '<img src="' + account.avatar_url + '" />';
+            markup += account.login;
             markup += '</a>';
             markup += '</li>';
         }
@@ -300,6 +320,16 @@ Reposio.Display = (function() {
         return this.get_markup_for_events(events);
     };
 
+    Display.prototype.get_markup_for_account_followers = function(account) {
+        var markup = this.get_markup_for_accounts(account.followers, account.provider);
+        return markup;
+    };
+
+    Display.prototype.get_markup_for_account_following = function(account) {
+        var markup = this.get_markup_for_accounts(account.following, account.provider);
+        return markup;
+    };
+
     Display.prototype.get_markup_for_repository_home = function(repository) {
         var markup = '<ul data-role="listview" data-theme="e" class="repo-main"><li>';
         markup += '<div>';
@@ -356,6 +386,8 @@ Reposio.Display = (function() {
 
     Display.prototype.update_account_navbar = function(account) {
         $('.repos-count').html(account.details ? account.details.public_repos : '?').show();
+        $('.followers-count').html(account.details ? account.details.followers : '?').show();
+        $('.following-count').html(account.details ? account.details.following : '?').show();
     };
 
     Display.prototype.update_repository_navbar = function(repository) {

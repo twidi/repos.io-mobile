@@ -251,6 +251,14 @@ Reposio.Providers.github = (function() {
         this.user.userReceivedEvents(username, callback);
     };
 
+    Provider.prototype.get_account_followers = function(username, callback) {
+        this.user.userFollowers(username, callback);
+    };
+
+    Provider.prototype.get_account_following = function(username, callback) {
+        this.user.userFollowing(username, callback);
+    };
+
     Provider.prototype.get_repository_details = function(path, callback, args) {
         var that = this,
             repo = that.get_repo(path);

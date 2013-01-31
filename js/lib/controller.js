@@ -16,7 +16,9 @@ Reposio.Controller = (function() {
             repositories: 'repositories',
             stars: 'stars',
             activity: 'own_events',
-            events: 'received_events'
+            events: 'received_events',
+            followers: 'followers',
+            following: 'following'
         },
         repository: {
             home: 'details',

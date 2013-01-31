@@ -160,6 +160,26 @@
           cb(err, res);
         });
       };
+
+      // User followers
+      // -------
+
+      this.userFollowers = function(username, cb) {
+        _request("GET", "/users/"+username+"/followers", null, function(err, res) {
+          cb(err,res);
+        });
+      };
+
+      // User following
+      // -------
+
+      this.userFollowing = function(username, cb) {
+        _request("GET", "/users/"+username+"/following", null, function(err, res) {
+          cb(err,res);
+        });
+      };
+
+
     };
 
 

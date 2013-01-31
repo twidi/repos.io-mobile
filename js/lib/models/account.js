@@ -1,6 +1,6 @@
-Reposio.Models.Account = (function() {
+(function(App) {
 
-    var Account = function(id, controller) {
+    var Model = function(id, controller) {
         var parts = id.split('@');
         this.id = id;
         this.username = parts[0];
@@ -17,16 +17,16 @@ Reposio.Models.Account = (function() {
         this.following = null;
     };
 
-    Account.prototype.name = 'Account';
-    Account.cache = {};
-    Account.get = function(id, controller) {
-        if (!Account.cache[id]) {
-            Account.cache[id] = new Account(id, controller);
+    Model.prototype.name = 'Account';
+    Model.cache = {};
+    Model.get = function(id, controller) {
+        if (!Model.cache[id]) {
+            Model.cache[id] = new Model(id, controller);
         }
-        return Account.cache[id];
+        return Model.cache[id];
     };
 
-    Account.prototype.fetch = function(type, callback, args) {
+    Model.prototype.fetch = function(type, callback, args) {
         var that = this;
         if (type != 'details' && !that.details) {
             that.fetch('details', function() {
@@ -48,6 +48,7 @@ Reposio.Models.Account = (function() {
         }
     };
 
-    return Account;
+    if (!App.Models) { App.Models = {}; }
+    App.Models.Account = Model;
 
-})();
+})(Reposio);

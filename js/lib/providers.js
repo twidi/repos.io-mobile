@@ -1,1 +1,0 @@
-Reposio.Providers = {};

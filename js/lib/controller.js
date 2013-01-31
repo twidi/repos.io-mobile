@@ -1,4 +1,4 @@
-Reposio.Controller = (function() {
+(function(App) {
 
     var Controller = function() {
         this.providers = {
@@ -102,6 +102,6 @@ Reposio.Controller = (function() {
     Controller.prototype.init_events = function() {
     };
 
-    return Controller;
+    App.Controller = Controller;
 
-})();
+})(Reposio);

@@ -1,6 +1,6 @@
-Reposio.Models.Repository = (function() {
+(function(App) {
 
-    var Repository = function(id, controller) {
+    var Model = function(id, controller) {
         var parts = id.split('@');
         this.id = id;
         this.path = parts[0];
@@ -15,16 +15,16 @@ Reposio.Models.Repository = (function() {
         this.forks = null;
     };
 
-    Repository.prototype.name = 'Repository';
-    Repository.cache = {};
-    Repository.get = function(id, controller) {
-        if (!Repository.cache[id]) {
-            Repository.cache[id] = new Repository(id, controller);
+    Model.prototype.name = 'Repository';
+    Model.cache = {};
+    Model.get = function(id, controller) {
+        if (!Model.cache[id]) {
+            Model.cache[id] = new Model(id, controller);
         }
-        return Repository.cache[id];
+        return Model.cache[id];
     };
 
-    Repository.prototype.fetch = function(type, callback, args) {
+    Model.prototype.fetch = function(type, callback, args) {
         var that = this;
         if (type != 'details' && !that.details) {
             that.fetch('details', function() {
@@ -56,6 +56,7 @@ Reposio.Models.Repository = (function() {
         }
     };
 
-    return Repository;
+    if (!App.Models) { App.Models = {}; }
+    App.Models.Repository = Model;
 
-})();
+})(Reposio);

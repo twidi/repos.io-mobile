@@ -1,4 +1,4 @@
-Reposio.Providers.github = (function() {
+(function(App) {
 
     var EventFormatter = function(provider) {
         this.provider = provider;
@@ -288,6 +288,7 @@ Reposio.Providers.github = (function() {
         this.get_repo(path).forks(callback);
     };
 
-    return Provider;
+    if (!App.Providers) { App.Providers = {}; }
+    App.Providers.github = Provider;
 
-})();
+})(Reposio);

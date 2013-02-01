@@ -390,6 +390,7 @@
             <li><a href="#repsitory_activity" class="repository_activity-link">Activity</a></li>
             <li><a href="#repository_forks" class="repository_forks-link">Forks<span class="forks-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span></a></li>
             <li><a href="#repsitory_stars" class="repository_stars-link">Stars<span class="stargazers-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span></a></li>
+            <li><a href="#repsitory_contributors" class="repository_contributors-link">Contributors</a></li>
         </ul>
     </div>
 </div>
@@ -420,6 +421,7 @@
             <li><a href="#repsitory_activity" class="ui-btn-active repository_activity-link">Activity</a></li>
             <li><a href="#repository_forks" class="repository_forks-link">Forks<span class="forks-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span></a></li>
             <li><a href="#repsitory_stars" class="repository_stars-link">Stars<span class="stargazers-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span></a></li>
+            <li><a href="#repsitory_contributors" class="repository_contributors-link">Contributors</a></li>
         </ul>
     </div>
 </div>
@@ -450,6 +452,7 @@
             <li><a href="#repsitory_activity" class="repository_activity-link">Activity</a></li>
             <li><a href="#repository_forks" class="ui-btn-active repository_forks-link">Forks<span class="forks-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span></a></li>
             <li><a href="#repsitory_stars" class="repository_stars-link">Stars<span class="stargazers-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span></a></li>
+            <li><a href="#repsitory_contributors" class="repository_contributors-link">Contributors</a></li>
         </ul>
     </div>
 </div>
@@ -480,9 +483,40 @@
             <li><a href="#repsitory_activity" class="repository_activity-link">Activity</a></li>
             <li><a href="#repository_forks" class="repository_forks-link">Forks<span class="forks-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span></a></li>
             <li><a href="#repsitory_stars" class="ui-btn-active repository_stars-link">Stars<span class="stargazers-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span></a></li>
+            <li><a href="#repsitory_contributors" class="repository_contributors-link">Contributors</a></li>
         </ul>
     </div>
 </div>
 
+
+<!-- Repository contributors -->
+<div data-role="page" id="repository_contributors">
+    <div data-theme="a" data-role="header" data-id="repository_pages" data-position="fixed">
+        <h3>
+            ???
+        </h3>
+
+        <div data-role="navbar">
+            <ul class="extended">
+                <li><a href="#repository_home" data-direction="reverse" class="repository_home-link">Details</a></li>
+                <li><a href="#repsitory_activity" data-direction="reverse" class="repository_activity-link">Activity</a></li>
+                <li><a href="#repsitory_contributors" class="ui-btn-active ui-state-persist repository_contributors-link">Contributors</a></li>
+                <li><a data-rel="popup" href="#menu_repository_contributors">...</a>
+            </ul>
+        </div><!-- /navbar -->
+    </div>
+    <div data-role="content">
+    </div>
+
+    <div data-role="popup" id="menu_repository_contributors" class="nav-menu" data-theme="a">
+        <ul data-role="listview" data-inset="true" data-theme="a">
+            <li><a href="#repository_home" class="repository_home-link">Details</a></li>
+            <li><a href="#repsitory_activity" class="repository_activity-link">Activity</a></li>
+            <li><a href="#repository_forks" class="repository_forks-link">Forks<span class="forks-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span></a></li>
+            <li><a href="#repsitory_stars" class="repository_stars-link">Stars<span class="stargazers-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span></a></li>
+            <li><a href="#repsitory_contributors" class="ui-btn-active repository_contributors-link">Contributors</a></li>
+        </ul>
+    </div>
+</div>
 </body>
 </html>

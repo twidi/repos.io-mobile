@@ -21,6 +21,9 @@ p.ui-li-aside.provider {
     text-align: center;
     margin: -0.5em -10px 0 0;
 }
+p.ui-li-aside.count {
+    width: auto;
+}
 
 a.mini-button.ui-btn.ui-mini {
     margin-left: 2px;

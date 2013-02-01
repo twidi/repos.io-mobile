@@ -25,7 +25,7 @@
         return '<a class="mini-button" data-role="button" data-inline="true" data-mini="true" data-theme="a" href="#account_home!account=' + user_name + '@' + provider_name + '">' + user_name + '</a>';
     };
 
-    App.Display.prototype.get_markup_for_accounts = function(accounts, provider) {
+    App.Display.prototype.get_markup_for_accounts = function(accounts, provider, more_callback) {
         var markup = "<ul data-role='listview' class='accounts-list'>";
 
         for (var i=0; i<accounts.length; i++) {
@@ -34,6 +34,9 @@
             markup += '<a href="#account_home!account=' + account.login + '@' + provider.name +'">' ;
             markup += '<img src="' + account.avatar_url + '" />';
             markup += account.login;
+            if (more_callback) {
+                markup += more_callback(account, provider);
+            }
             markup += '</a>';
             markup += '</li>';
         }

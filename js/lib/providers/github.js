@@ -292,6 +292,10 @@
         this.get_repo(path).stargazers(callback);
     };
 
+    Provider.prototype.get_repository_contributors = function(path, callback) {
+        this.get_repo(path).contributors(callback);
+    };
+
     if (!App.Providers) { App.Providers = {}; }
     App.Providers.github = Provider;
 

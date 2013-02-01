@@ -399,6 +399,13 @@
         _request("GET", repoPath + "/stargazers", null, cb);
       };
 
+      // List repository contributors
+      // -------
+
+      this.contributors = function(cb) {
+        _request("GET", repoPath + "/contributors", null, cb);
+      };
+
       // Get contents
       // --------
 

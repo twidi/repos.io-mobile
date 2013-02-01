@@ -24,7 +24,8 @@
             home: 'details',
             activity: 'activity',
             forks: 'forks',
-            stars: 'stars'
+            stars: 'stars',
+            contributors: 'contributors'
         }
     };
 

@@ -7,9 +7,13 @@
     };
 
     Display.prototype.init = function() {
-        // cache some page nodes
         var page_name, full_name, links, page, header;
-        for (var obj_type in this.pages) {
+
+        for (var obj_type in this.all_pages) {
+            // create pages
+            this.construct_pages(obj_type, this.all_pages[obj_type]);
+    
+            // cache some page nodes
             this.nodes[obj_type] = {};
             for (var page_index in this.pages[obj_type]) {
                 page_name = this.pages[obj_type][page_index];
@@ -38,7 +42,86 @@
         }
     };
 
+    Display.prototype.all_pages = {};
     Display.prototype.pages = {};
+
+    Display.prototype.construct_pages = function(type, pages) {
+
+        this.controller.mapping[type] = {};
+
+        for (var l=0; l<pages.length; l++) {
+            var page = pages[l];
+            if (!page.name) { page.name = page.id[0].toUpperCase() + page.id.slice(1); }
+            if (!page.method) { page.method = page.id; }
+            this.controller.mapping[type][page.id] = page.method;
+        }
+
+        var all_markup = '';
+            extended_navbar = (pages.length > 4);
+
+        for (var i=0; i<pages.length; i++) {
+            var cur_page = pages[i],
+                id_page  = type + '_' + cur_page.id,
+                markup = '',
+                navbar_pages = [];
+
+            if (extended_navbar) {
+                navbar_pages.push(pages[0]);
+                navbar_pages.push(pages[1]);
+                navbar_pages.push(pages[(i < 2) ? 2 : i]);  // if the current page is not in the navbar by default, display it in the third place
+            } else {
+                navbar_pages = pages;
+            }
+
+            markup = '<div data-role="page" id="' + id_page + '">';
+            
+                markup += '<div data-role="header" data-id="' + type + '_pages" data-position="fixed" data-theme="a">';
+                    markup += '<h3></h3>';
+                    markup += '<div data-role="navbar">';
+                        markup += '<ul' + (extended_navbar ? ' class="extended"' : '') + '>';
+                        for (var j=0; j<navbar_pages.length; j++) {
+                            var navbar_page = navbar_pages[j];
+                            markup += '<li>';
+                                markup += '<a href="#' + type + '_' + navbar_page.id + '" class="' + (navbar_page.id == cur_page.id ? 'ui-btn-active ui-state-persist ' : '') + type + '_' + navbar_page.id + '-link">';
+                                    markup += navbar_page.name;
+                                markup += '</a>';
+                            markup += '</li>';
+                        }
+                        if (extended_navbar) {
+                            markup += '<li><a data-rel="popup" href="#menu_' + id_page + '">...</a>';
+                        }
+                        markup += '</ul>';
+                    markup += '</div>';
+                markup += '</div>';
+
+                markup += '<div data-role="content"></div>';
+
+                if (extended_navbar) {
+                    markup += '<div data-role="popup" id="menu_' + id_page + '" data-theme="a" class="nav-menu">';
+                        markup += '<ul data-role="listview" data-inset="true" data-theme="a">';
+
+                        for (var k=0; k<pages.length; k++) {
+                            var ext_page = pages[k];
+                            markup += '<li>';
+                                markup += '<a href="#' + type + '_' + ext_page.id + '" class="' + (ext_page.id == cur_page.id ? 'ui-btn-active ': '') + type + '_' + ext_page.id + '-link">';
+                                    markup += ext_page.name;
+                                markup += '</a>';
+                            markup += '</li>';
+                        }
+
+                        markup += '</ul>';
+                    markup += '</div>';
+                }
+
+            markup += '</div>';
+
+            all_markup += markup;
+
+        }
+
+        $('body').append(all_markup);
+
+    };
 
     Display.prototype.init_events = function() {
         var that = this;

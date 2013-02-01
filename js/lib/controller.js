@@ -9,25 +9,7 @@
         this.display = new Reposio.Display(this);
     };
 
-    Controller.prototype.mapping = {
-        account: {
-            // page : object method
-            home: 'details',
-            repositories: 'repositories',
-            stars: 'stars',
-            activity: 'own_events',
-            events: 'received_events',
-            followers: 'followers',
-            following: 'following'
-        },
-        repository: {
-            home: 'details',
-            activity: 'activity',
-            forks: 'forks',
-            stars: 'stars',
-            contributors: 'contributors'
-        }
-    };
+    Controller.prototype.mapping = {};
 
     Controller.prototype.init = function() {
         this.display.init();

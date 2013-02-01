@@ -1,5 +1,13 @@
 (function(App) {
 
+    App.Display.prototype.all_pages.repository = [
+        { id: 'home', name: 'Details',  method: 'details' },
+        { id: 'activity' },
+        { id: 'forks' },
+        { id: 'stars' },
+        { id: 'contributors' }
+    ];
+
     App.Display.prototype.pages.repository = ['home', 'activity', 'forks', 'stars', 'contributors'];
 
     App.Display.prototype.change_repository = function() {

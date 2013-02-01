@@ -1,5 +1,15 @@
 (function(App) {
 
+    App.Display.prototype.all_pages.account = [
+        { id: 'home', name: 'Details',  method: 'details' },
+        { id: 'repositories', name: 'Repos' },
+        { id: 'activity', method: 'own_events' },
+        { id: 'stars' },
+        { id: 'following' },
+        { id: 'followers' },
+        { id: 'events', method: 'received_events' }
+    ];
+
     App.Display.prototype.pages.account = ['home', 'activity', 'repositories', 'stars', 'events', 'following', 'followers'];
 
     App.Display.prototype.change_account = function() {

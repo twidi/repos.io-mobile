@@ -28,6 +28,9 @@
             }
         }
 
+        $('body > p.loading').remove();
+        $('html').removeClass('loading');
+
         this.init_events();
     };
 

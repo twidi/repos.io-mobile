@@ -373,15 +373,24 @@
         </h3>
 
         <div data-role="navbar">
-            <ul>
+            <ul class="extended">
                 <li><a href="#repository_home" class="ui-btn-active ui-state-persist repository_home-link">Details</a></li>
                 <li><a href="#repsitory_activity" class="repository_activity-link">Activity</a></li>
                 <li><a href="#repository_forks" class="repository_forks-link">Forks<span class="forks-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span></a></li>
-                <li><a href="#repsitory_stars" class="repository_stars-link">Stars<span class="stargazers-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span></a></li>
+                <li><a data-rel="popup" href="#menu_repository_home">...</a>
             </ul>
         </div><!-- /navbar -->
     </div>
     <div data-role="content">
+    </div>
+
+    <div data-role="popup" id="menu_repository_home" class="nav-menu" data-theme="a">
+        <ul data-role="listview" data-inset="true" data-theme="a">
+            <li><a href="#repository_home" class="ui-btn-active repository_home-link">Details</a></li>
+            <li><a href="#repsitory_activity" class="repository_activity-link">Activity</a></li>
+            <li><a href="#repository_forks" class="repository_forks-link">Forks<span class="forks-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span></a></li>
+            <li><a href="#repsitory_stars" class="repository_stars-link">Stars<span class="stargazers-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span></a></li>
+        </ul>
     </div>
 </div>
 
@@ -394,15 +403,24 @@
         </h3>
 
         <div data-role="navbar">
-            <ul>
+            <ul class="extended">
                 <li><a href="#repository_home" data-direction="reverse" class="repository_home-link">Details</a></li>
                 <li><a href="#repsitory_activity" class="ui-btn-active ui-state-persist repository_activity-link">Activity</a></li>
                 <li><a href="#repository_forks" class="repository_forks-link">Forks<span class="forks-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span></a></li>
-                <li><a href="#repsitory_stars" class="repository_stars-link">Stars<span class="stargazers-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span></a></li>
+                <li><a data-rel="popup" href="#menu_repository_activity">...</a>
             </ul>
         </div><!-- /navbar -->
     </div>
     <div data-role="content">
+    </div>
+
+    <div data-role="popup" id="menu_repository_activity" class="nav-menu" data-theme="a">
+        <ul data-role="listview" data-inset="true" data-theme="a">
+            <li><a href="#repository_home" class="repository_home-link">Details</a></li>
+            <li><a href="#repsitory_activity" class="ui-btn-active repository_activity-link">Activity</a></li>
+            <li><a href="#repository_forks" class="repository_forks-link">Forks<span class="forks-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span></a></li>
+            <li><a href="#repsitory_stars" class="repository_stars-link">Stars<span class="stargazers-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span></a></li>
+        </ul>
     </div>
 </div>
 
@@ -415,15 +433,24 @@
         </h3>
 
         <div data-role="navbar">
-            <ul>
+            <ul class="extended">
                 <li><a href="#repository_home" data-direction="reverse" class="repository_home-link">Details</a></li>
                 <li><a href="#repsitory_activity" data-direction="reverse" class="repository_activity-link">Activity</a></li>
                 <li><a href="#repsitory_forks" class="ui-btn-active ui-state-persist repository_forks-link">Forks<span class="forks-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span></a></li>
-                <li><a href="#repsitory_stars" class="repository_stars-link">Stars<span class="stargazers-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span></a></li>
+                <li><a data-rel="popup" href="#menu_repository_forks">...</a>
             </ul>
         </div><!-- /navbar -->
     </div>
     <div data-role="content">
+    </div>
+
+    <div data-role="popup" id="menu_repository_forks" class="nav-menu" data-theme="a">
+        <ul data-role="listview" data-inset="true" data-theme="a">
+            <li><a href="#repository_home" class="repository_home-link">Details</a></li>
+            <li><a href="#repsitory_activity" class="repository_activity-link">Activity</a></li>
+            <li><a href="#repository_forks" class="ui-btn-active repository_forks-link">Forks<span class="forks-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span></a></li>
+            <li><a href="#repsitory_stars" class="repository_stars-link">Stars<span class="stargazers-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span></a></li>
+        </ul>
     </div>
 </div>
 
@@ -436,15 +463,24 @@
         </h3>
 
         <div data-role="navbar">
-            <ul>
+            <ul class="extended">
                 <li><a href="#repository_home" data-direction="reverse" class="repository_home-link">Details</a></li>
                 <li><a href="#repsitory_activity" data-direction="reverse" class="repository_activity-link">Activity</a></li>
-                <li><a href="#repsitory_forks" data-direction="reverse" class="repository_forks-link">Forks<span class="forks-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span></a></li>
                 <li><a href="#repsitory_stars" class="ui-btn-active ui-state-persist repository_stars-link">Stars<span class="stargazers-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span></a></li>
+                <li><a data-rel="popup" href="#menu_repository_stars">...</a>
             </ul>
         </div><!-- /navbar -->
     </div>
     <div data-role="content">
+    </div>
+
+    <div data-role="popup" id="menu_repository_stars" class="nav-menu" data-theme="a">
+        <ul data-role="listview" data-inset="true" data-theme="a">
+            <li><a href="#repository_home" class="repository_home-link">Details</a></li>
+            <li><a href="#repsitory_activity" class="repository_activity-link">Activity</a></li>
+            <li><a href="#repository_forks" class="repository_forks-link">Forks<span class="forks-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span></a></li>
+            <li><a href="#repsitory_stars" class="ui-btn-active repository_stars-link">Stars<span class="stargazers-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span></a></li>
+        </ul>
     </div>
 </div>
 

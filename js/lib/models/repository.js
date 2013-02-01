@@ -13,6 +13,7 @@
         this.details = null;
         this.activity = null;
         this.forks = null;
+        this.stars = null;
     };
 
     Model.prototype.name = 'Repository';

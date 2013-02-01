@@ -392,6 +392,13 @@
         _request("GET", repoPath + "/forks", null, cb);
       };
 
+      // List repository stargazers
+      // -------
+
+      this.stargazers = function(cb) {
+        _request("GET", repoPath + "/stargazers", null, cb);
+      };
+
       // Get contents
       // --------
 

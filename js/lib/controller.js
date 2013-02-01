@@ -23,7 +23,8 @@
         repository: {
             home: 'details',
             activity: 'activity',
-            forks: 'forks'
+            forks: 'forks',
+            stars: 'stars'
         }
     };
 

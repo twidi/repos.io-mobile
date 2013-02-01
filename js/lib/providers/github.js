@@ -288,6 +288,10 @@
         this.get_repo(path).forks(callback);
     };
 
+    Provider.prototype.get_repository_stars = function(path, callback) {
+        this.get_repo(path).stargazers(callback);
+    };
+
     if (!App.Providers) { App.Providers = {}; }
     App.Providers.github = Provider;
 

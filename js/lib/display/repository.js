@@ -1,9 +1,10 @@
 (function(App) {
 
-    App.Display.prototype.pages.repository = ['home', 'activity', 'forks'];
+    App.Display.prototype.pages.repository = ['home', 'activity', 'forks', 'stars'];
 
     App.Display.prototype.change_repository = function() {
         $('.forks-count').hide();
+        $('.stargazers-count').hide();
         for (var page_name in this.nodes.repository) {
             var links = this.nodes.repository[page_name].links;
             for (var i=0; i<links.length; i++) {
@@ -93,8 +94,14 @@
         return markup;
     };
 
+    App.Display.prototype.get_markup_for_repository_stars = function(repository) {
+        var markup = this.get_markup_for_accounts(repository.stars, repository.provider);
+        return markup;
+    };
+
     App.Display.prototype.update_repository_navbar = function(repository) {
         $('.forks-count').html(repository.details ? repository.details.forks_count : '?').show();
+        $('.stargazers-count').html(repository.details ? repository.details.watchers_count : '?').show();
     };
 
 })(Reposio);

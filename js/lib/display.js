@@ -13,7 +13,7 @@
             this.nodes[obj_type] = {};
             for (var page_index in this.pages[obj_type]) {
                 page_name = this.pages[obj_type][page_index];
-                full_page_name = obj_type + '_' + page_name
+                full_page_name = obj_type + '_' + page_name;
                 page = $('#' + full_page_name);
                 this.nodes[obj_type][full_page_name] = {
                     links: $('a.' + full_page_name + '-link'),
@@ -28,7 +28,7 @@
     };
 
     Display.prototype.format_date = function(str_date, show_time, show_seconds, time_only) {
-        if (!str_date) { return '' };
+        if (!str_date) { return ''; }
         var parts = str_date.split('T');
         if (show_time) {
             var time = parts[1].slice(0, show_seconds ? 8 : 5);
@@ -99,7 +99,7 @@
         if (url.hash && data.options) {
             page = url.hash.slice(1);
             for (var obj_type in this.pages) {
-                if (page.indexOf(obj_type + '_') == 0) {
+                if (page.indexOf(obj_type + '_') === 0) {
                     type = obj_type;
                     break;
                 }

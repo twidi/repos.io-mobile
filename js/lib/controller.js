@@ -25,7 +25,7 @@
             activity: 'activity',
             forks: 'forks'
         }
-    }
+    };
 
     Controller.prototype.init = function() {
         this.display.init();
@@ -33,7 +33,7 @@
     };
 
     Controller.prototype.set_account = function(account_id) {
-        var changed = (this.account == null || this.account.id != account_id);
+        var changed = (this.account === null || this.account.id != account_id);
         if (changed) {
             this.account = Reposio.Models.Account.get(account_id, this);
             this.display.change_account();
@@ -43,7 +43,7 @@
     };
 
     Controller.prototype.set_repository = function(repository_id) {
-        var changed = (this.repository == null || this.repository.id != repository_id);
+        var changed = (this.repository === null || this.repository.id != repository_id);
         if (changed) {
             this.repository = Reposio.Models.Repository.get(repository_id, this);
             this.display.change_repository();
@@ -79,7 +79,7 @@
             repository = this.repository,
             render = function() {
                 that.display.update_repository_navbar(repository);
-                that.display.render_page('repository', page_name, repository); 
+                that.display.render_page('repository', page_name, repository);
             },
             fetch_type = this.mapping.repository[page_name],
             page = $('#repository_' + page_name);

@@ -37,7 +37,7 @@
                 markup += '<p class="repo-desc">' + repository.description + '</p>';
             }
             if (repository.fork) {
-                markup += '<p class="ui-li-aside ui-btn-up-e ui-btn-corner-all fork">fork</p>'
+                markup += '<p class="ui-li-aside ui-btn-up-e ui-btn-corner-all fork">fork</p>';
             }
             if (repository.pushed_at) {
                 markup += '<p class="last-push">Last push: ' + this.format_date(repository.pushed_at, true) + '</p>';
@@ -64,8 +64,8 @@
             markup += '<span> by <strong>' + repository.details.parent.owner.login + '</strong></span>';
             markup += '</span></div>';
         }
-        markup += '<p class="last-push">Last push: ' + (repository.details.pushed_at ? this.format_date(repository.details.pushed_at, true) : 'never !') + '</p>';            
-        markup += '<p class="ui-li-aside ui-btn-up-c ui-btn-corner-all provider">' + repository.provider.name + '</p>'
+        markup += '<p class="last-push">Last push: ' + (repository.details.pushed_at ? this.format_date(repository.details.pushed_at, true) : 'never !') + '</p>';
+        markup += '<p class="ui-li-aside ui-btn-up-c ui-btn-corner-all provider">' + repository.provider.name + '</p>';
         markup += '</li></ul>';
 
          markup += '<div data-role="collapsible-set" data-corners="false" data-theme="c" data-content-theme="d" data-inset="false" data-mini="true">';

@@ -40,7 +40,7 @@
                     that.controller.fetch_error(err, that, type, callback);
                 } else {
                     that[type] = data;
-                    callback();                    
+                    callback();
                 }
             });
         } else {

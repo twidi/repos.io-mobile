@@ -35,7 +35,7 @@
         if (type == 'details' && that.details && !that.details.readme) {
             that.provider.get_repository_readme(that.path, function(err, data) {
                 if (err) {
-                    that.controller.fetch_error(err, that, type, callback, args);                    
+                    that.controller.fetch_error(err, that, type, callback, args);
                 } else {
                     that.details.readme = data;
                     callback();

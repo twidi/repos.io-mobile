@@ -1,15 +1,13 @@
-
 $(document).bind("mobileinit", function(){
     $.mobile.page.prototype.options.addBackBtn = true;
     $.mobile.defaultPageTransition = 'slide';
 });
 
-
 function querystringize(hash) {
     if (hash.indexOf('!') != -1) {
-        return hash.replace('!', '?')
+        return hash.replace('!', '?');
     }
-    return hash
+    return hash;
 }
 location.hash = querystringize(location.hash);
 

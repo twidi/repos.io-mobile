@@ -79,7 +79,7 @@
             case 'tag':
                 desc = 'Tag: <strong>' + event.payload.ref + '</strong>';
                 break;
-        };
+        }
         return this.base_format(event, source, part, desc);
     };
 
@@ -93,7 +93,7 @@
             case 'tag':
                 desc = 'Tag: <strong>' + event.payload.ref + '</strong>';
                 break;
-        };
+        }
         return this.base_format(event, source, part, desc);
 
     };
@@ -229,7 +229,7 @@
     Provider.prototype.get_repo = function(path) {
         var parts = path.split('/');
         return this.engine.getRepo(parts[0], parts[1]);
-    }
+    };
 
     Provider.prototype.get_account_details = function(username, callback) {
         this.user.show(username, callback);
@@ -262,7 +262,7 @@
     Provider.prototype.get_repository_details = function(path, callback, args) {
         var that = this,
             repo = that.get_repo(path);
-        if (args && args.no_readme==true) {
+        if (args && args.no_readme === true) {
             repo.show(callback);
         } else {
             repo.show(function(err, data) {
@@ -278,7 +278,7 @@
 
     Provider.prototype.get_repository_readme = function(path, callback) {
         this.get_repo(path).readme(callback);
-    }
+    };
 
     Provider.prototype.get_repository_activity = function(path, callback) {
         this.get_repo(path).events(callback);

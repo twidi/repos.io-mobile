@@ -15,6 +15,7 @@
         this.received_events = null;
         this.followers = null;
         this.following = null;
+        this.org_members = null;
     };
 
     Model.prototype.name = 'Account';

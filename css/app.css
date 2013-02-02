@@ -226,6 +226,11 @@ span.repo-links > span {
     margin-left: 1ex;
 }
 
+#account_home h3 span {
+    font-weight: normal;
+    font-size: smaller;
+    font-style: italic;
+}
 #account_home ul.account-main {
     margin-bottom: 0;
 }

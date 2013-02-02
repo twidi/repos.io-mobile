@@ -4,13 +4,14 @@
         { id: 'home', name: 'Details',  method: 'details' },
         { id: 'repositories', name: 'Repos', count: true },
         { id: 'activity', method: 'own_events' },
+        { id: 'members', method: 'org_members' },
         { id: 'stars' },
         { id: 'following', count: true },
         { id: 'followers', count: true },
         { id: 'events', method: 'received_events' }
     ];
 
-    App.Display.prototype.pages.account = ['home', 'activity', 'repositories', 'stars', 'events', 'following', 'followers'];
+    App.Display.prototype.pages.account = ['home', 'activity', 'repositories', 'stars', 'members', 'events', 'following', 'followers'];
 
     App.Display.prototype.change_account = function() {
         $('.account_repositories-count').hide();
@@ -59,7 +60,7 @@
     App.Display.prototype.get_markup_for_account_home = function(account) {
         var markup = '<ul data-role="listview" data-theme="e" class="account-main"><li>';
         markup += '<img src="' + account.details.avatar_url + '" />';
-        markup += '<h3>' + account.username + '</h3>';
+        markup += '<h3>' + account.username + (account.details.type.toLowerCase() == 'organization' ? '<span> (organization)</span>' : '') + '</h3>';
         if (account.details.name) {
             markup += '<p>' + account.details.name + '</p>';
         }
@@ -121,7 +122,13 @@
         return markup;
     };
 
+    App.Display.prototype.get_markup_for_account_members = function(account) {
+        var markup = this.get_markup_for_accounts(account.org_members, account.provider);
+        return markup;
+    };
+
     App.Display.prototype.update_account_navbar = function(account) {
+        $('.account_members-link').closest('li').toggle(account.details && account.details.type.toLowerCase() == 'organization');
         $('.account_repositories-count').html(account.details ? account.details.public_repos : '?').show();
         $('.account_followers-count').html(account.details ? account.details.followers : '?').show();
         $('.account_following-count').html(account.details ? account.details.following : '?').show();

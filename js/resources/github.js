@@ -143,6 +143,15 @@
         });
       };
 
+      // List organization members
+      // -------
+      this.orgMembers = function(orgname, cb) {
+        _request("GET", "/orgs/"+orgname+"/members", null, function(err, res) {
+          cb(err,res);
+        });
+      };
+
+
       // Follow user
       // -------
 

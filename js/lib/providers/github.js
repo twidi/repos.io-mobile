@@ -24,9 +24,10 @@
     };
 
     EventFormatter.prototype.format_repo  = function(repository, actor, source) {
-        var parts = repository.name.split('/'), result;
-        if (source.name != 'Repository' || source.path != repository.name) {
-                result = this.provider.controller.display.repository_link(repository.name, parts[1], source.provider.name);
+        var full_name = repository.full_name || repository.name,
+            parts = full_name.split('/'), result;
+        if (source.name != 'Repository' || source.path != full_name) {
+                result = this.provider.controller.display.repository_link(full_name, parts[1], source.provider.name);
             if (actor.login != parts[0] && (source.name != 'Account' || source.username != parts[0])) {
                 result += '<span> by <strong>' + parts[0] + '</strong></span>'; //this.format_actor({login: parts[0]}, source);
                 result = '<span class="repo-links">' + result + '</span>';
@@ -108,7 +109,12 @@
     };
 
     EventFormatter.prototype.ForkEvent = function(event, source) {
-        return this.base_format(event, source, 'forked');
+        var part = '<a href="#" class="collapsible-trigger">forked</a>',
+            more;
+        more = '<div data-role="collapsible" data-content-theme="d" data-corners="false" data-mini="true"><h3>Fork</h3>';
+        more += '<p class="ui-li ui-li-static ui-btn-up-d ui-first-child ui-last-child">Fork: ' + this.format_repo(event.payload.forkee, event.actor, source) + '</p>';
+        more += '</div>';
+        return this.base_format(event, source, part, null, null, more);
     };
 
     EventFormatter.prototype.ForkApplyEvent = function(event, source) {

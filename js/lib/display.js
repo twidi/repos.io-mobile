@@ -85,7 +85,7 @@
                         for (var j=0; j<navbar_pages.length; j++) {
                             var navbar_page = navbar_pages[j];
                             markup += '<li>';
-                                markup += '<a href="#' + type + '_' + navbar_page.id + '" class="' + (navbar_page.id == cur_page.id ? 'ui-btn-active ui-state-persist ' : '') + type + '_' + navbar_page.id + '-link">';
+                                markup += '<a href="#' + type + '_' + navbar_page.id + '"' + (j < i ?  ' data-direction="reverse"' : '') + ' class="' + (navbar_page.id == cur_page.id ? 'ui-btn-active ui-state-persist ' : '') + type + '_' + navbar_page.id + '-link">';
                                     markup += navbar_page.name;
                                     if (navbar_page.count) {
                                         markup += '<span class="' + type + '_' + navbar_page.id + '-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span>';

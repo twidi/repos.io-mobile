@@ -151,6 +151,10 @@
     };
 
     EventFormatter.prototype.MemberEvent = function(event, source) {
+        var part = event.payload.action + ' ';
+        part += this.format_actor(event.payload.member, source);
+        part += ' as a member ' + (event.payload.action == 'added' ? 'to' : 'from');
+        return this.base_format(event, source, part);
     };
 
     EventFormatter.prototype.PublicEvent = function(event, source) {

@@ -3,9 +3,9 @@
     App.Display.prototype.all_pages.repository = [
         { id: 'home', name: 'Details',  method: 'details' },
         { id: 'activity' },
+        { id: 'contributors' },
         { id: 'forks', count: true },
-        { id: 'stars', count: true },
-        { id: 'contributors' }
+        { id: 'stars', count: true }
     ];
 
     App.Display.prototype.pages.repository = ['home', 'activity', 'forks', 'stars', 'contributors'];

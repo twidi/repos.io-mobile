@@ -133,8 +133,8 @@
     };
 
     EventFormatter.prototype.IssueCommentEvent = function(event, source) {
-        var part = event.payload.action == 'created' ? '<a href="#" class="collapsible-trigger">commented</a> an issue on' : event.payload.action + ' a ' + (event.payload.action == 'deleted' ? 'comment' : '<a href="#" class="collapsible-trigger">comment</a>') + ' on an issue on',
-            desc = 'Issue: <strong>#' + event.payload.issue.number + ' - ' + event.payload.issue.title + '</strong>',
+        var part = event.payload.action == 'created' ? '<a href="#" class="collapsible-trigger">commented</a> ' + (event.payload.issue.pull_request ? 'a pull request' : 'an issue') + ' on' : event.payload.action + ' a ' + (event.payload.action == 'deleted' ? 'comment' : '<a href="#" class="collapsible-trigger">comment</a>') + ' on an issue on',
+            desc = (event.payload.issue.pull_request ? 'Pull request' : 'Issue') + ': <strong>#' + event.payload.issue.number + ' - ' + event.payload.issue.title + '</strong>',
             more;
         if (event.payload.action != 'deleted') {
             more = '<div data-role="collapsible" data-content-theme="d" data-corners="false" data-mini="true"><h3>Comment</h3>';

@@ -7,25 +7,8 @@
     };
 
     Display.prototype.init = function() {
-        var page_name, full_name, links, page, header;
-
-        for (var obj_type in this.all_pages) {
-            // create pages
-            this.construct_pages(obj_type, this.all_pages[obj_type]);
-    
-            // cache some page nodes
-            this.nodes[obj_type] = {};
-            for (var page_index in this.pages[obj_type]) {
-                page_name = this.pages[obj_type][page_index];
-                full_page_name = obj_type + '_' + page_name;
-                page = $('#' + full_page_name);
-                this.nodes[obj_type][full_page_name] = {
-                    links: $('a.' + full_page_name + '-link'),
-                    page: page,
-                    header: page.find(':jqmData(role=header)').find('h3'),
-                    content: page.children(":jqmData(role=content)")
-                };
-            }
+        for (var obj_type in this.pages) {
+            this.construct_pages(obj_type, this.pages[obj_type]);
         }
 
         $('body > p.loading').remove();
@@ -51,12 +34,14 @@
     Display.prototype.construct_pages = function(type, pages) {
 
         this.controller.mapping[type] = {};
+        this.all_pages[type] = [];
 
         for (var l=0; l<pages.length; l++) {
             var page = pages[l];
             if (!page.name) { page.name = page.id[0].toUpperCase() + page.id.slice(1); }
             if (!page.method) { page.method = page.id; }
             this.controller.mapping[type][page.id] = page.method;
+            this.all_pages[type].push(page.id);
         }
 
         var all_markup = '';
@@ -130,6 +115,21 @@
 
         $('body').append(all_markup);
 
+        // cache some page nodes
+        this.nodes[type] = {};
+        for (var m=0; m<this.pages[type].length; m++) {
+            var final_page = this.pages[type][m],
+                full_page_name = type + '_' + final_page.id,
+                page_node = $('#' + full_page_name);
+            this.nodes[type][full_page_name] = {
+                links: $('a.' + full_page_name + '-link'),
+                page: page_node,
+                header: page_node.find(':jqmData(role=header)').find('h3'),
+                content: page_node.children(":jqmData(role=content)")
+            };
+        }
+
+
     };
 
     Display.prototype.init_events = function() {
@@ -198,7 +198,7 @@
             }
             if (type && data.options.pageData && data.options.pageData[type]) {
                 page = page.slice(type.length+1);
-                if (this.pages[type].indexOf(page) !== -1) {
+                if (this.all_pages[type].indexOf(page) !== -1) {
                     obj = data.options.pageData[type];
                     page_ok = true;
                 }

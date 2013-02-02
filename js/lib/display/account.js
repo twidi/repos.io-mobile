@@ -1,6 +1,6 @@
 (function(App) {
 
-    App.Display.prototype.all_pages.account = [
+    App.Display.prototype.pages.account = [
         { id: 'home', name: 'Details',  method: 'details' },
         { id: 'repositories', name: 'Repos', count: true },
         { id: 'activity', method: 'own_events' },
@@ -11,8 +11,6 @@
         { id: 'orgs', method: 'orgs' },
         { id: 'events', method: 'received_events' }
     ];
-
-    App.Display.prototype.pages.account = ['home', 'activity', 'repositories', 'stars', 'members', 'events', 'following', 'followers', 'orgs'];
 
     App.Display.prototype.change_account = function() {
         $('.account_repositories-count').hide();

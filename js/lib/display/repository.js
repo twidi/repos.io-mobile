@@ -1,14 +1,12 @@
 (function(App) {
 
-    App.Display.prototype.all_pages.repository = [
+    App.Display.prototype.pages.repository = [
         { id: 'home', name: 'Details',  method: 'details' },
         { id: 'activity' },
         { id: 'contributors' },
         { id: 'forks', count: true },
         { id: 'stars', count: true }
     ];
-
-    App.Display.prototype.pages.repository = ['home', 'activity', 'forks', 'stars', 'contributors'];
 
     App.Display.prototype.change_repository = function() {
         $('.repository_forks-count').hide();

@@ -286,6 +286,10 @@
         this.user.orgMembers(username, callback);
     };
 
+    Provider.prototype.get_account_orgs = function(username, callback) {
+        this.user.userOrgs(username, callback);
+    };
+
     Provider.prototype.get_repository_details = function(path, callback, args) {
         var that = this,
             repo = that.get_repo(path);

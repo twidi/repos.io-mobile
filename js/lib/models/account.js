@@ -16,6 +16,7 @@
         this.followers = null;
         this.following = null;
         this.org_members = null;
+        this.orgs = null;
     };
 
     Model.prototype.name = 'Account';

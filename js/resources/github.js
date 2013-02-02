@@ -67,6 +67,14 @@
           cb(err, res);
         });
       };
+      // List user organizations
+      // -------
+
+      this.userOrgs = function(username, cb) {
+        _request("GET", "/users/"+username+"/orgs", null, function(err, res) {
+          cb(err, res);
+        });
+      };
 
       // List authenticated user's gists
       // -------

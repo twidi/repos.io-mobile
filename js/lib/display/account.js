@@ -8,10 +8,11 @@
         { id: 'stars' },
         { id: 'following', count: true },
         { id: 'followers', count: true },
+        { id: 'orgs', method: 'orgs' },
         { id: 'events', method: 'received_events' }
     ];
 
-    App.Display.prototype.pages.account = ['home', 'activity', 'repositories', 'stars', 'members', 'events', 'following', 'followers'];
+    App.Display.prototype.pages.account = ['home', 'activity', 'repositories', 'stars', 'members', 'events', 'following', 'followers', 'orgs'];
 
     App.Display.prototype.change_account = function() {
         $('.account_repositories-count').hide();
@@ -127,8 +128,15 @@
         return markup;
     };
 
+    App.Display.prototype.get_markup_for_account_orgs = function(account) {
+        var markup = this.get_markup_for_accounts(account.orgs, account.provider);
+        return markup;
+    };
+
     App.Display.prototype.update_account_navbar = function(account) {
-        $('.account_members-link').closest('li').toggle(account.details && account.details.type.toLowerCase() == 'organization');
+        var is_org = (account.details && account.details.type.toLowerCase() == 'organization');
+        $('.account_members-link').closest('li').toggle(is_org);
+        $('.account_orgs-link').closest('li').toggle(!is_org);
         $('.account_repositories-count').html(account.details ? account.details.public_repos : '?').show();
         $('.account_followers-count').html(account.details ? account.details.followers : '?').show();
         $('.account_following-count').html(account.details ? account.details.following : '?').show();

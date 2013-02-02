@@ -135,7 +135,20 @@
     };
 
     EventFormatter.prototype.GollumEvent = function(event, source) {
-
+        var target = this.format_repo(event.repo, event.actor, source),
+            part = '<a href="#" class="collapsible-trigger">edited</a> the ' + target + ' wiki';
+            more = '';
+        more = '<div data-role="collapsible" data-content-theme="d" data-corners="false" data-mini="true"><h3>Actions</h3>';
+        more += '<ul data-role="listview" data-theme="d">';
+        for (var i=0; i<event.payload.pages.length; i++) {
+            var page = event.payload.pages[i];
+            more += '<li>';
+            more += '<em>' + page.title + '</em> — <strong>' + page.action + '</strong>';
+            more += '</li>';
+        }
+        more += '</ul>';
+        more += '</div>';
+        return this.base_format(event, source, part, null, ' ', more);
     };
 
     EventFormatter.prototype.IssueCommentEvent = function(event, source) {

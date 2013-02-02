@@ -3,16 +3,16 @@
     App.Display.prototype.all_pages.repository = [
         { id: 'home', name: 'Details',  method: 'details' },
         { id: 'activity' },
-        { id: 'forks' },
-        { id: 'stars' },
+        { id: 'forks', count: true },
+        { id: 'stars', count: true },
         { id: 'contributors' }
     ];
 
     App.Display.prototype.pages.repository = ['home', 'activity', 'forks', 'stars', 'contributors'];
 
     App.Display.prototype.change_repository = function() {
-        $('.forks-count').hide();
-        $('.stargazers-count').hide();
+        $('.repository_forks-count').hide();
+        $('.repository_stars-count').hide();
         for (var page_name in this.nodes.repository) {
             var links = this.nodes.repository[page_name].links;
             for (var i=0; i<links.length; i++) {
@@ -116,8 +116,7 @@
     };
 
     App.Display.prototype.update_repository_navbar = function(repository) {
-        $('.forks-count').html(repository.details ? repository.details.forks_count : '?').show();
-        $('.stargazers-count').html(repository.details ? repository.details.watchers_count : '?').show();
-    };
+        $('.repository_forks-count').html(repository.details ? repository.details.forks_count : '?').show();
+        $('.repository_stars-count').html(repository.details ? repository.details.watchers_count : '?').show(); };
 
 })(Reposio);

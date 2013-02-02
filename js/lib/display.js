@@ -87,6 +87,9 @@
                             markup += '<li>';
                                 markup += '<a href="#' + type + '_' + navbar_page.id + '" class="' + (navbar_page.id == cur_page.id ? 'ui-btn-active ui-state-persist ' : '') + type + '_' + navbar_page.id + '-link">';
                                     markup += navbar_page.name;
+                                    if (navbar_page.count) {
+                                        markup += '<span class="' + type + '_' + navbar_page.id + '-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span>';
+                                    }
                                 markup += '</a>';
                             markup += '</li>';
                         }
@@ -108,6 +111,9 @@
                             markup += '<li>';
                                 markup += '<a href="#' + type + '_' + ext_page.id + '" class="' + (ext_page.id == cur_page.id ? 'ui-btn-active ': '') + type + '_' + ext_page.id + '-link">';
                                     markup += ext_page.name;
+                                    if (ext_page.count) {
+                                        markup += '<span class="' + type + '_' + ext_page.id + '-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span>';
+                                    }
                                 markup += '</a>';
                             markup += '</li>';
                         }

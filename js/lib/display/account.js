@@ -2,20 +2,20 @@
 
     App.Display.prototype.all_pages.account = [
         { id: 'home', name: 'Details',  method: 'details' },
-        { id: 'repositories', name: 'Repos' },
+        { id: 'repositories', name: 'Repos', count: true },
         { id: 'activity', method: 'own_events' },
         { id: 'stars' },
-        { id: 'following' },
-        { id: 'followers' },
+        { id: 'following', count: true },
+        { id: 'followers', count: true },
         { id: 'events', method: 'received_events' }
     ];
 
     App.Display.prototype.pages.account = ['home', 'activity', 'repositories', 'stars', 'events', 'following', 'followers'];
 
     App.Display.prototype.change_account = function() {
-        $('.repos-count').hide();
-        $('.followers-count').hide();
-        $('.following-count').hide();
+        $('.account_repositories-count').hide();
+        $('.account_followers-count').hide();
+        $('.account_following-count').hide();
         for (var page_name in this.nodes.account) {
             var links = this.nodes.account[page_name].links;
             for (var i=0; i<links.length; i++) {
@@ -122,9 +122,9 @@
     };
 
     App.Display.prototype.update_account_navbar = function(account) {
-        $('.repos-count').html(account.details ? account.details.public_repos : '?').show();
-        $('.followers-count').html(account.details ? account.details.followers : '?').show();
-        $('.following-count').html(account.details ? account.details.following : '?').show();
+        $('.account_repositories-count').html(account.details ? account.details.public_repos : '?').show();
+        $('.account_followers-count').html(account.details ? account.details.followers : '?').show();
+        $('.account_following-count').html(account.details ? account.details.following : '?').show();
     };
 
 })(Reposio);

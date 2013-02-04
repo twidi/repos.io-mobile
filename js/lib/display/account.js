@@ -55,7 +55,26 @@
         return markup;
     };
 
-    App.Display.prototype.views = App.Display.prototype.views || {};
+    App.Display.prototype.create_accounts_list_items = function(accounts, provider) {
+        var template = this.get_template('account-list-item'),
+            items = [];
+        for (var i=0; i<accounts.length; i++) {
+            var account = accounts[i],
+                href = '#account_home!account=' + account.login + '@' + provider.name,
+                li = template.clone(),
+                a = li.children('a'),
+                img = a.children('img'),
+                username_holder = a.children('.account-username');
+
+            a.attr('href', href);
+            username_holder.html(account.login);
+            img.attr('src', account.avatar_url);
+
+            items.push(li);
+        }
+
+        return items;
+    };
 
     App.Display.prototype.views.account_home = {
         cache_nodes: function(display) {
@@ -103,7 +122,7 @@
             nodes.username.html('loading...');
             nodes.name.html('');
             nodes.organization.hide();
-            nodes.avatar.attr('src', 'https://a248.e.akamai.net/assets.github.com/images/gravatars/gravatar-user-420.png');
+            nodes.avatar.attr('src', 'img/default-avatar.png');
             nodes.infos.hide();
 
         },
@@ -207,6 +226,70 @@
         }
     };
 
+    App.Display.prototype.views.account_followers = {
+        cache_nodes: function(display) {
+            var container = display.nodes.account.account_followers.content,
+                nodes = display.nodes.account.account_followers.nodes;
+
+            if (!nodes) {
+                nodes = display.nodes.account.account_followers.nodes = {};
+
+                nodes.list = container.children('ul');
+            }
+
+            return nodes;
+        },
+
+        reset: function(display) {
+            var container = display.nodes.account.account_followers.content,
+                nodes = display.views.account_followers.cache_nodes(display);
+
+            nodes.list.empty();
+        },
+
+        update: function(display, account) {
+            var container = display.nodes.account.account_followers.content,
+                nodes = display.views.account_followers.cache_nodes(display);
+
+            nodes.list.empty();
+            nodes.list.append(display.create_accounts_list_items(account.followers, account.provider));
+
+            nodes.list.listview('refresh');
+        }
+    };
+
+    App.Display.prototype.views.account_following = {
+        cache_nodes: function(display) {
+            var container = display.nodes.account.account_following.content,
+                nodes = display.nodes.account.account_following.nodes;
+
+            if (!nodes) {
+                nodes = display.nodes.account.account_following.nodes = {};
+
+                nodes.list = container.children('ul');
+            }
+
+            return nodes;
+        },
+
+        reset: function(display) {
+            var container = display.nodes.account.account_following.content,
+                nodes = display.views.account_following.cache_nodes(display);
+
+            nodes.list.empty();
+        },
+
+        update: function(display, account) {
+            var container = display.nodes.account.account_following.content,
+                nodes = display.views.account_following.cache_nodes(display);
+
+            nodes.list.empty();
+            nodes.list.append(display.create_accounts_list_items(account.following, account.provider));
+
+            nodes.list.listview('refresh');
+        }
+    };
+
     App.Display.prototype.get_markup_for_account_activity = function(account) {
         var events = [];
         for (var i=0; i<account.own_events.length; i++) {
@@ -223,16 +306,6 @@
             if (event) { events.push(event); }
         }
         return this.get_markup_for_events(events);
-    };
-
-    App.Display.prototype.get_markup_for_account_followers = function(account) {
-        var markup = this.get_markup_for_accounts(account.followers, account.provider);
-        return markup;
-    };
-
-    App.Display.prototype.get_markup_for_account_following = function(account) {
-        var markup = this.get_markup_for_accounts(account.following, account.provider);
-        return markup;
     };
 
     App.Display.prototype.get_markup_for_account_members = function(account) {

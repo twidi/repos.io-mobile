@@ -175,7 +175,7 @@
     <div data-template-for="account_home">
         <ul data-role="listview" data-theme="e" class="account-main">
             <li>
-                <img src="https://a248.e.akamai.net/assets.github.com/images/gravatars/gravatar-user-420.png" />
+                <img src="img/default-avatar.png" />
                 <h3><strong></strong><span> (organization)</span></h3>
                 <p class="account-name"></p>
                 <p class="ui-li-aside ui-btn-up-c ui-btn-corner-all provider">...</p>
@@ -200,6 +200,16 @@
         </ul>
     </div>
 
+    <div data-template-for="account_followers">
+        <ul data-role='listview' class='accounts-list'>
+        </ul>
+    </div>
+
+    <div data-template-for="account_following">
+        <ul data-role='listview' class='accounts-list'>
+        </ul>
+    </div>
+
     <ul>
         <li data-template-for="repository-list-item">
             <a href="#repository_home">
@@ -207,6 +217,12 @@
                 <p class="repo-desc"></p>
                 <p class="ui-li-aside ui-btn-up-e ui-btn-corner-all repo-is-fork">fork</p>
                 <p class="repo-last-push">Last push: <span></span></p>
+            </a>
+        </li>
+        <li data-template-for="account-list-item">
+            <a href="#account_home">
+                <img src="img/default-avatar.png" />
+                <span class="account-username">loading...</span>
             </a>
         </li>
     </ul>

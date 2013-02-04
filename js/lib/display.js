@@ -29,6 +29,7 @@
         }
     };
 
+    Display.prototype.views = {};
     Display.prototype.nodes = {};
     Display.prototype.templates = {};
     Display.prototype.all_pages = {};

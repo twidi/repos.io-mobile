@@ -175,9 +175,36 @@
         }
     };
 
-    App.Display.prototype.get_markup_for_account_stars = function(account) {
-        var markup = this.get_markup_for_repositories(account.stars, account.provider);
-        return markup;
+    App.Display.prototype.views.account_stars = {
+        cache_nodes: function(display) {
+            var container = display.nodes.account.account_stars.content,
+                nodes = display.nodes.account.account_stars.nodes;
+
+            if (!nodes) {
+                nodes = display.nodes.account.account_stars.nodes = {};
+
+                nodes.list = container.children('ul');
+            }
+
+            return nodes;
+        },
+
+        reset: function(display) {
+            var container = display.nodes.account.account_stars.content,
+                nodes = display.views.account_stars.cache_nodes(display);
+
+            nodes.list.empty();
+        },
+
+        update: function(display, account) {
+            var container = display.nodes.account.account_stars.content,
+                nodes = display.views.account_stars.cache_nodes(display);
+
+            nodes.list.empty();
+            nodes.list.append(display.create_repositories_list_items(account.stars, account.provider));
+
+            nodes.list.listview('refresh');
+        }
     };
 
     App.Display.prototype.get_markup_for_account_activity = function(account) {

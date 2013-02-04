@@ -290,6 +290,70 @@
         }
     };
 
+    App.Display.prototype.views.account_members = {
+        cache_nodes: function(display) {
+            var container = display.nodes.account.account_members.content,
+                nodes = display.nodes.account.account_members.nodes;
+
+            if (!nodes) {
+                nodes = display.nodes.account.account_members.nodes = {};
+
+                nodes.list = container.children('ul');
+            }
+
+            return nodes;
+        },
+
+        reset: function(display) {
+            var container = display.nodes.account.account_members.content,
+                nodes = display.views.account_members.cache_nodes(display);
+
+            nodes.list.empty();
+        },
+
+        update: function(display, account) {
+            var container = display.nodes.account.account_members.content,
+                nodes = display.views.account_members.cache_nodes(display);
+
+            nodes.list.empty();
+            nodes.list.append(display.create_accounts_list_items(account.org_members, account.provider));
+
+            nodes.list.listview('refresh');
+        }
+    };
+
+    App.Display.prototype.views.account_orgs = {
+        cache_nodes: function(display) {
+            var container = display.nodes.account.account_orgs.content,
+                nodes = display.nodes.account.account_orgs.nodes;
+
+            if (!nodes) {
+                nodes = display.nodes.account.account_orgs.nodes = {};
+
+                nodes.list = container.children('ul');
+            }
+
+            return nodes;
+        },
+
+        reset: function(display) {
+            var container = display.nodes.account.account_orgs.content,
+                nodes = display.views.account_orgs.cache_nodes(display);
+
+            nodes.list.empty();
+        },
+
+        update: function(display, account) {
+            var container = display.nodes.account.account_orgs.content,
+                nodes = display.views.account_orgs.cache_nodes(display);
+
+            nodes.list.empty();
+            nodes.list.append(display.create_accounts_list_items(account.orgs, account.provider));
+
+            nodes.list.listview('refresh');
+        }
+    };
+
     App.Display.prototype.get_markup_for_account_activity = function(account) {
         var events = [];
         for (var i=0; i<account.own_events.length; i++) {
@@ -306,16 +370,6 @@
             if (event) { events.push(event); }
         }
         return this.get_markup_for_events(events);
-    };
-
-    App.Display.prototype.get_markup_for_account_members = function(account) {
-        var markup = this.get_markup_for_accounts(account.org_members, account.provider);
-        return markup;
-    };
-
-    App.Display.prototype.get_markup_for_account_orgs = function(account) {
-        var markup = this.get_markup_for_accounts(account.orgs, account.provider);
-        return markup;
     };
 
     App.Display.prototype.update_account_navbar = function(account) {

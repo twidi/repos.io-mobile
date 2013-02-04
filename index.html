@@ -43,6 +43,9 @@
             -ms-text-shadow: 0 1px 1px #3E6790;
             text-shadow: 0 1px 1px #3E6790;
         }
+        #templates {
+            display: none;
+        }
     </style>
     <link rel="stylesheet" href="css/resources/jquery.mobile-1.3.0-beta.1.min.css" />
     <link rel="stylesheet" href="css/resources/jqm-icon-pack-2.0-original.css" />
@@ -166,39 +169,42 @@
 
 </div>
 
-<div class="template" data-template-for="account_home">
-    <ul data-role="listview" data-theme="e" class="account-main">
-        <li>
-            <img src="https://a248.e.akamai.net/assets.github.com/images/gravatars/gravatar-user-420.png" />
-            <h3><strong></strong><span> (organization)</span></h3>
-            <p class="account-name"></p>
-            <p class="ui-li-aside ui-btn-up-c ui-btn-corner-all provider"></p>
+
+<div id="templates">
+    <div data-template-for="account_home">
+        <ul data-role="listview" data-theme="e" class="account-main">
+            <li>
+                <img src="https://a248.e.akamai.net/assets.github.com/images/gravatars/gravatar-user-420.png" />
+                <h3><strong></strong><span> (organization)</span></h3>
+                <p class="account-name"></p>
+                <p class="ui-li-aside ui-btn-up-c ui-btn-corner-all provider"></p>
+            </li>
+        </ul>
+        <ul data-role="listview" data-theme="d" class="account-details">
+            <li class="ui-li-has-icon account-company"><span class="ui-li-icon ui-icon ui-icon-gear ui-icon-shadow"></span><span></span></li>
+            <li class="ui-li-has-icon account-location"><span class="ui-li-icon ui-icon ui-icon-mappin ui-icon-shadow"></span><span></span></li>
+            <li class="ui-li-has-icon account-email"><span class="ui-li-icon ui-icon ui-icon-email ui-icon-shadow"></span><span></span></li>
+            <li class="ui-li-has-icon account-created_at"><span class="ui-li-icon ui-icon ui-icon-calendar ui-icon-shadow"></span><span></span></li>
+            <li class="ui-li-has-icon account-site"><span class="ui-li-icon ui-icon ui-icon-link ui-icon-shadow"></span><a href="/">...</a></li>
+        </ul>
+    </div>
+
+    <div data-template-for="account_repositories">
+        <ul data-role='listview' class='repos-list'>
+        </ul>
+    </div>
+
+    <ul>
+        <li data-template-for="repository-list-item">
+            <a href="#repository_home">
+                <h4>loading...</h4>
+                <p class="repo-desc"></p>
+                <p class="ui-li-aside ui-btn-up-e ui-btn-corner-all repo-is-fork">fork</p>
+                <p class="repo-last-push">Last push: <span></span></p>
+            </a>
         </li>
     </ul>
-    <ul data-role="listview" data-theme="d" class="account-details">
-        <li class="ui-li-has-icon account-company"><span class="ui-li-icon ui-icon ui-icon-gear ui-icon-shadow"></span><span></span></li>
-        <li class="ui-li-has-icon account-location"><span class="ui-li-icon ui-icon ui-icon-mappin ui-icon-shadow"></span><span></span></li>
-        <li class="ui-li-has-icon account-email"><span class="ui-li-icon ui-icon ui-icon-email ui-icon-shadow"></span><span></span></li>
-        <li class="ui-li-has-icon account-created_at"><span class="ui-li-icon ui-icon ui-icon-calendar ui-icon-shadow"></span><span></span></li>
-        <li class="ui-li-has-icon account-site"><span class="ui-li-icon ui-icon ui-icon-link ui-icon-shadow"></span><a href="/">...</a></li>
-    </ul>
 </div>
-
-<div class="template" data-template-for="account_repositories">
-    <ul data-role='listview' class='repos-list'>
-    </ul>
-</div>
-
-<ul class="template">
-    <li data-template-for="repository-list-item">
-        <a href="#repository_home">
-            <h4>loading...</h4>
-            <p class="repo-desc"></p>
-            <p class="ui-li-aside ui-btn-up-e ui-btn-corner-all repo-is-fork">fork</p>
-            <p class="repo-last-push">Last push: <span></span></p>
-        </a>
-    </li>
-</ul>
 
 </body>
 </html>

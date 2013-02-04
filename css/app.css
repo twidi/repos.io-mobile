@@ -1,4 +1,4 @@
-.template {
+#templates {
     display: none !important;
 }
 div[data-role="popup"] > div.ui-bar {

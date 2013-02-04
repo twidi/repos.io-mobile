@@ -3,10 +3,11 @@
 
     var Display = function(controller) {
         this.controller = controller;
-        this.nodes = {};
     };
 
     Display.prototype.init = function() {
+        this.templates_container = $('#templates');
+
         for (var obj_type in this.pages) {
             this.construct_pages(obj_type, this.pages[obj_type]);
         }
@@ -28,6 +29,8 @@
         }
     };
 
+    Display.prototype.nodes = {};
+    Display.prototype.templates = {};
     Display.prototype.all_pages = {};
     Display.prototype.pages = {};
 
@@ -121,7 +124,7 @@
             var final_page = this.pages[type][m],
                 full_page_name = type + '_' + final_page.id,
                 page_node = $('#' + full_page_name),
-                template = $('body > div.template[data-template-for='+full_page_name+']');
+                template = this.templates_container.children('div[data-template-for='+full_page_name+']');
 
             // cache some page nodes
             this.nodes[type][full_page_name] = {
@@ -304,10 +307,9 @@
         return result;
     };
 
-    Display.prototype.templates = {};
     Display.prototype.get_template = function(name) {
         if (!this.templates[name]) {
-            this.templates[name] = $('[data-template-for=' + name + ']');
+            this.templates[name] = this.templates_container.find('[data-template-for=' + name + ']');
         }
         return this.templates[name];
     };

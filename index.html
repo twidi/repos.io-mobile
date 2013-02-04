@@ -71,6 +71,7 @@
     <script src="js/lib/display/account.js"></script>
     <script src="js/lib/display/repository.js"></script>
     <script src="js/lib/display/views/account.js"></script>
+    <script src="js/lib/display/views/repository.js"></script>
     <script src="js/lib/controller.js"></script>
 
     <script src="js/resources/jquery.mobile-1.3.0-beta.1.min.js"></script>
@@ -227,6 +228,11 @@
     </div>
 
     <div data-template-for="account_events">
+        <ul class="ui-listview list-events" data-mobile-listview='{"options":{}}'>
+        </ul>
+    </div>
+
+    <div data-template-for="repository_activity">
         <ul class="ui-listview list-events" data-mobile-listview='{"options":{}}'>
         </ul>
     </div>

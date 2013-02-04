@@ -65,18 +65,22 @@
         var that = this,
             changed = this.set_repository(repository_id),
             repository = this.repository,
+            full_name = 'repository_' + page_name,
             render = function() {
                 that.display.update_repository_navbar(repository);
                 that.display.render_page('repository', page_name, repository);
             },
             fetch_type = this.mapping.repository[page_name],
-            page = $('#repository_' + page_name);
+            page = $('#' + full_name);
 
         $('.current_page, .page_loaded').removeClass('current_page, page_loaded');
         page.addClass('current_page');
         if (this.display.is_page_for(page, repository)) {
             this.display.post_render_page(page);
         } else {
+            if (this.display.has_view(full_name)) {
+                this.display.reset_view(full_name);
+            }
             this.repository.fetch(fetch_type, render);
         }
     };

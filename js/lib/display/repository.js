@@ -20,7 +20,6 @@
 
             }
             this.nodes.repository[page_name].header.html(this.controller.repository.id);
-            this.nodes.repository[page_name].content.html(' ');
             this.nodes.repository[page_name].page.removeData('current-for');
         }
     };
@@ -123,15 +122,6 @@
         }
         markup += '</div>';
         return markup;
-    };
-
-    App.Display.prototype.get_markup_for_repository_activity = function(repository) {
-        var events = [];
-        for (var i=0; i<repository.activity.length; i++) {
-            var event = repository.provider.formatter.format(repository.activity[i], repository);
-            if (event) { events.push(event); }
-        }
-        return this.get_markup_for_events(events);
     };
 
     App.Display.prototype.get_markup_for_repository_forks = function(repository) {

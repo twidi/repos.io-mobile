@@ -30,6 +30,45 @@
         return '<a class="mini-button" data-role="button" data-inline="true" data-mini="true" data-theme="b" href="#repository_home!repository=' + full_name + '@' + provider_name + '">' + repo_name + '</a>';
     };
 
+    App.Display.prototype.create_repositories_list_items = function(repositories, provider) {
+        var template = this.get_template('repository-list-item'),
+            items = [];
+        for (var i=0; i<repositories.length; i++) {
+            var repository = repositories[i],
+                path = repository.full_name || repository.name,
+                href = '#repository_home!repository=' + path.replace('/', ':') + '@' + provider.name,
+                li = template.clone(),
+                a = li.children('a'),
+                path_holder = a.children('h4'),
+                desc_holder = a.children('.repo-desc'),
+                fork_holder = a.children('.repo-is-fork'),
+                push_holder = a.children('.repo-last-push');
+
+            a.attr('href', href);
+            path_holder.html(path);
+
+            if (repository.description) {
+                desc_holder.html(repository.description);
+            } else {
+                desc_holder.remove();
+            }
+
+            if (!repository.fork) {
+                fork_holder.remove();
+            }
+
+            if (repository.pushed_at) {
+                push_holder.children('span').html(this.format_date(repository.pushed_at, true));
+            } else {
+                push_holder.remove();
+            }
+
+            items.push(li);
+        }
+
+        return items;
+    };
+
 
     App.Display.prototype.get_markup_for_repositories = function(repositories, provider) {
         var markup = "<ul data-role='listview' class='repos-list'>";

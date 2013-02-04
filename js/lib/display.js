@@ -304,6 +304,14 @@
         return result;
     };
 
+    Display.prototype.templates = {};
+    Display.prototype.get_template = function(name) {
+        if (!this.templates[name]) {
+            this.templates[name] = $('[data-template-for=' + name + ']');
+        }
+        return this.templates[name];
+    };
+
     App.Display = Display;
 
 })(Reposio);

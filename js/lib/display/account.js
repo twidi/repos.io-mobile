@@ -142,6 +142,38 @@
         }
     };
 
+    App.Display.prototype.views.account_repositories = {
+        cache_nodes: function(display) {
+            var container = display.nodes.account.account_repositories.content,
+                nodes = display.nodes.account.account_repositories.nodes;
+
+            if (!nodes) {
+                nodes = display.nodes.account.account_home.nodes = {};
+
+                nodes.list = container.children('ul');
+            }
+
+            return nodes;
+        },
+
+        reset: function(display) {
+            var container = display.nodes.account.account_repositories.content,
+                nodes = display.views.account_repositories.cache_nodes(display);
+
+            nodes.list.empty();
+        },
+
+        update: function(display, account) {
+            var container = display.nodes.account.account_repositories.content,
+                nodes = display.views.account_repositories.cache_nodes(display);
+
+            nodes.list.empty();
+            nodes.list.append(display.create_repositories_list_items(account.repositories, account.provider));
+
+            nodes.list.listview('refresh');
+        }
+    };
+
     App.Display.prototype.get_markup_for_account_repositories = function(account) {
         var markup = this.get_markup_for_repositories(account.repositories, account.provider);
         return markup;

@@ -1,5 +1,5 @@
-div.template {
-    display: none;
+.template {
+    display: none !important;
 }
 div[data-role="popup"] > div.ui-bar {
     text-align: center;
@@ -12,7 +12,7 @@ p.ui-li-desc.repo-desc {
     overflow-x: auto;
 }
 
-p.ui-li-aside.fork {
+p.ui-li-aside.repo-is-fork {
     width: auto;
     padding: 0.2em 0.5em;
     text-align: center;
@@ -84,7 +84,7 @@ a.mini-button.ui-btn.ui-mini .ui-btn-inner {
 .nav-menu .ui-li .ui-btn-inner a {
     font-size: 12.5px;
 }
-ul.repos-list li .last-push {
+ul.repos-list li .repo-last-push {
     font-style: italic;
 }
 

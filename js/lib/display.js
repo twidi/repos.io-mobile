@@ -12,8 +12,6 @@
             this.construct_pages(obj_type, this.pages[obj_type]);
         }
 
-        $.mobile.initializePage();
-
         $('body > p.loading').remove();
         $('html').removeClass('loading');
 
@@ -142,8 +140,6 @@
                 template.remove();
             }
 
-            page_node.page();
-
         }
 
     };
@@ -248,6 +244,10 @@
     };
 
     Display.prototype.reset_view = function(name) {
+        var page = $('#' + name);
+        if (!page.data('mobile-page')) {
+            page.page();
+        }
         this.views[name].reset(this);
     };
 

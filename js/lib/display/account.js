@@ -101,6 +101,7 @@
                 nodes = display.views.account_home.cache_nodes(display);
 
             nodes.username.html('loading...');
+            nodes.name.html('');
             nodes.organization.hide();
             nodes.avatar.attr('src', 'https://a248.e.akamai.net/assets.github.com/images/gravatars/gravatar-user-420.png');
             nodes.infos.hide();

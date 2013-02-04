@@ -1,3 +1,6 @@
+div.template {
+    display: none;
+}
 div[data-role="popup"] > div.ui-bar {
     text-align: center;
 }

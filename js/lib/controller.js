@@ -2,11 +2,11 @@
 
     var Controller = function() {
         this.providers = {
-            github: new Reposio.Providers.github(this)
+            github: new App.Providers.github(this)
         };
         this.account = null;
         this.repository = null;
-        this.display = new Reposio.Display(this);
+        this.display = new App.Display(this);
     };
 
     Controller.prototype.mapping = {};
@@ -19,7 +19,7 @@
     Controller.prototype.set_account = function(account_id) {
         var changed = (this.account === null || this.account.id != account_id);
         if (changed) {
-            this.account = Reposio.Models.Account.get(account_id, this);
+            this.account = App.Models.Account.get(account_id, this);
             this.display.change_account();
         }
         this.display.update_account_navbar(this.account);
@@ -29,7 +29,7 @@
     Controller.prototype.set_repository = function(repository_id) {
         var changed = (this.repository === null || this.repository.id != repository_id);
         if (changed) {
-            this.repository = Reposio.Models.Repository.get(repository_id, this);
+            this.repository = App.Models.Repository.get(repository_id, this);
             this.display.change_repository();
         }
         this.display.update_repository_navbar(this.repository);
@@ -40,18 +40,22 @@
         var that = this,
             changed = this.set_account(account_id),
             account = this.account,
+            full_name = 'account_' + page_name,
             render = function() {
                 that.display.update_account_navbar(account);
                 that.display.render_page('account', page_name, account);
             },
             fetch_type = this.mapping.account[page_name],
-            page = $('#account_' + page_name);
+            page = $('#' + full_name);
 
         $('.current_page, .page_loaded').removeClass('current_page, page_loaded');
         page.addClass('current_page');
         if (this.display.is_page_for(page, account)) {
             this.display.post_render_page(page);
         } else {
+            if (this.display.has_view(full_name)) {
+                this.display.reset_view(full_name);
+            }
             this.account.fetch(fetch_type, render);
         }
     };

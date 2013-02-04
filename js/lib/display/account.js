@@ -25,7 +25,6 @@
 
             }
             this.nodes.account[page_name].header.html(this.controller.account.id);
-            this.nodes.account[page_name].content.html(' ');
             this.nodes.account[page_name].page.removeData('current-for');
         }
     };
@@ -56,31 +55,91 @@
         return markup;
     };
 
-    App.Display.prototype.get_markup_for_account_home = function(account) {
-        var markup = '<ul data-role="listview" data-theme="e" class="account-main"><li>';
-        markup += '<img src="' + account.details.avatar_url + '" />';
-        markup += '<h3>' + account.username + (account.details.type.toLowerCase() == 'organization' ? '<span> (organization)</span>' : '') + '</h3>';
-        if (account.details.name) {
-            markup += '<p>' + account.details.name + '</p>';
+    App.Display.prototype.views = App.Display.prototype.views || {};
+
+    App.Display.prototype.views.account_home = {
+        cache_nodes: function(display) {
+            var container = display.nodes.account.account_home.content,
+                nodes = display.nodes.account.account_home.nodes;
+
+            if (!nodes) {
+                nodes = display.nodes.account.account_home.nodes = {};
+
+                var main = container.children('.account-main').children();
+                nodes.avatar = main.children('img');
+                nodes.provider = main.children('p.provider');
+                nodes.name = main.children('p.account-name');
+
+                var username_container = main.children('h3');
+                nodes.username = username_container.children('strong');
+                nodes.organization = username_container.children('span');
+
+                nodes.infos = container.children('.account-details');
+
+                nodes.company_container = nodes.infos.children('li.account-company');
+                nodes.company = nodes.company_container.children(':last');
+
+                nodes.location_container = nodes.infos.children('li.account-location');
+                nodes.location = nodes.location_container.children(':last');
+
+                nodes.email_container = nodes.infos.children('li.account-email');
+                nodes.email = nodes.email_container.children(':last');
+
+                nodes.created_at_container = nodes.infos.children('li.account-created_at');
+                nodes.created_at = nodes.created_at_container.children(':last');
+
+                nodes.site_container = nodes.infos.children('li.account-site');
+                nodes.site = nodes.site_container.find('a');
+            }
+
+            return nodes;
+
+        },
+
+        reset: function(display) {
+            var container = display.nodes.account.account_home.content,
+                nodes = display.views.account_home.cache_nodes(display);
+
+            nodes.username.html('loading...');
+            nodes.organization.hide();
+            nodes.avatar.attr('src', 'https://a248.e.akamai.net/assets.github.com/images/gravatars/gravatar-user-420.png');
+            nodes.infos.hide();
+
+        },
+
+        update: function(display, account) {
+            var container = display.nodes.account.account_home.content,
+            nodes = display.views.account_home.cache_nodes(display);
+
+            nodes.username.html(account.username);
+            nodes.organization.toggle(account.details.type == 'Organization');
+            nodes.provider.html(account.provider.name);
+            nodes.avatar.attr('src', account.details.avatar_url);
+
+            nodes.name.html(account.details.name || '');
+            nodes.name.toggle(!!account.details.name);
+
+            nodes.company.html(account.details.company || '');
+            nodes.company_container.toggle(!!account.details.company);
+
+            nodes.location.html(account.details.location || '');
+            nodes.location_container.toggle(!!account.details.location);
+
+            var has_email = !!(account.details.email && account.details.email.indexOf('@') !== -1);
+            nodes.email.html(has_email ? account.details.email : '');
+            nodes.email_container.toggle(has_email);
+
+            nodes.created_at.html(display.format_date(account.details.created_at));
+
+            nodes.site.html(account.details.blog || '');
+            nodes.site_container.toggle(!!account.details.blog);
+            nodes.site.attr('href', account.details.blog || '/');
+
+            nodes.infos.show();
+
+            container.children('ul[data-role=listview]').listview('refresh');
+
         }
-        markup += '<p class="ui-li-aside ui-btn-up-c ui-btn-corner-all provider">' + account.provider.name + '</p>';
-        markup += '</li></ul>';
-        markup += '<ul data-role="listview" data-theme="d" class="account-details">';
-        if (account.details.company) {
-            markup += '<li class="ui-li-has-icon"><span class="ui-li-icon ui-icon ui-icon-gear ui-icon-shadow"></span>' + account.details.company + '</li>';
-        }
-        if (account.details.location) {
-            markup += '<li class="ui-li-has-icon"><span class="ui-li-icon ui-icon ui-icon-mappin ui-icon-shadow"></span>' + account.details.location + '</li>';
-        }
-        if (account.details.email && account.details.email.indexOf('@') !== -1) {
-            markup += '<li class="ui-li-has-icon"><span class="ui-li-icon ui-icon ui-icon-email ui-icon-shadow"></span>' + account.details.email + '</li>';
-        }
-        markup += '<li class="ui-li-has-icon"><span class="ui-li-icon ui-icon ui-icon-calendar ui-icon-shadow"></span>Since ' + this.format_date(account.details.created_at) + '</li>';
-        if (account.details.blog) {
-            markup += '<li class="ui-li-has-icon"><span class="ui-li-icon ui-icon ui-icon-link ui-icon-shadow"></span><a href="' + account.details.blog + '">' + account.details.blog + '</a></li>';
-        }
-        markup += '</ul>';
-        return markup;
     };
 
     App.Display.prototype.get_markup_for_account_repositories = function(account) {

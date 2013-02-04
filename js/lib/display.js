@@ -116,20 +116,28 @@
 
         $('body').append(all_markup);
 
-        // cache some page nodes
         this.nodes[type] = {};
         for (var m=0; m<this.pages[type].length; m++) {
             var final_page = this.pages[type][m],
                 full_page_name = type + '_' + final_page.id,
-                page_node = $('#' + full_page_name);
+                page_node = $('#' + full_page_name),
+                template = $('body > div.template[data-template-for='+full_page_name+']');
+
+            // cache some page nodes
             this.nodes[type][full_page_name] = {
                 links: $('a.' + full_page_name + '-link'),
                 page: page_node,
                 header: page_node.find(':jqmData(role=header)').find('h3'),
                 content: page_node.children(":jqmData(role=content)")
             };
-        }
 
+            // insert page content
+            if (template.length) {
+                this.nodes[type][full_page_name].content.prepend(template.children());
+                template.remove();
+            }
+
+        }
 
     };
 
@@ -228,20 +236,37 @@
         return false;
     };
 
+    Display.prototype.has_view = function(name) {
+        return !!this.views[name];
+    };
+
+    Display.prototype.reset_view = function(name) {
+        this.views[name].reset(this);
+    };
+
+    Display.prototype.update_view = function(name, obj) {
+        this.views[name].update(this, obj);
+    };
+
     Display.prototype.render_page = function(type, name, obj) {
         var full_name = type + '_' + name,
             page = $('#' + full_name);
         if (!this.is_current_page(page, obj)) { return; }
-        var content = this.nodes[type][full_name].content,
-            markup = this['get_markup_for_' + full_name](obj);
-        
-        content.html(markup);
-        page.page();
-        content.find(":jqmData(role=listview)").listview();
-        content.find(":jqmData(role=collapsible-set)").collapsibleset();
-        content.find(":jqmData(role=collapsible)").collapsible();
-        content.find(":jqmData(role=button)").button();
-        content.find(":jqmData(role=table)").table();
+        var content = this.nodes[type][full_name].content;
+
+        if (this.has_view(full_name)) {
+            this.update_view(full_name, obj);
+        } else {
+            var markup = this['get_markup_for_' + full_name](obj);
+
+            content.html(markup);
+            page.page();
+            content.find(":jqmData(role=listview)").listview();
+            content.find(":jqmData(role=collapsible-set)").collapsibleset();
+            content.find(":jqmData(role=collapsible)").collapsible();
+            content.find(":jqmData(role=button)").button();
+            content.find(":jqmData(role=table)").table();
+        }
 
         page.data('current-for', obj.id);
         this.post_render_page(page);

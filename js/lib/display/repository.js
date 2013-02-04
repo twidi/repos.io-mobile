@@ -124,24 +124,6 @@
         return markup;
     };
 
-    App.Display.prototype.get_markup_for_repository_forks = function(repository) {
-        var markup = this.get_markup_for_repositories(repository.forks, repository.provider);
-        return markup;
-    };
-
-    App.Display.prototype.get_markup_for_repository_stars = function(repository) {
-        var markup = this.get_markup_for_accounts(repository.stars, repository.provider);
-        return markup;
-    };
-
-    App.Display.prototype.get_markup_for_repository_contributors = function(repository) {
-        var aside_callback = function(account) {
-                return '<p class="ui-li-aside count">' + account.contributions + '</p>';
-            },
-            markup = this.get_markup_for_accounts(repository.contributors, repository.provider, aside_callback);
-        return markup;
-    };
-
     App.Display.prototype.update_repository_navbar = function(repository) {
         $('.repository_forks-count').html(repository.details ? repository.details.forks_count : '?').show();
         $('.repository_stars-count').html(repository.details ? repository.details.watchers_count : '?').show(); };

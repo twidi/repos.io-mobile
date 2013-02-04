@@ -70,6 +70,10 @@
             username_holder.html(account.login);
             img.attr('src', account.avatar_url);
 
+            if (account.html_extended) {
+                a.append(account.html_extended);
+            }
+
             items.push(li);
         }
 

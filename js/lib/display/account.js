@@ -148,7 +148,7 @@
                 nodes = display.nodes.account.account_repositories.nodes;
 
             if (!nodes) {
-                nodes = display.nodes.account.account_home.nodes = {};
+                nodes = display.nodes.account.account_repositories.nodes = {};
 
                 nodes.list = container.children('ul');
             }
@@ -172,11 +172,6 @@
 
             nodes.list.listview('refresh');
         }
-    };
-
-    App.Display.prototype.get_markup_for_account_repositories = function(account) {
-        var markup = this.get_markup_for_repositories(account.repositories, account.provider);
-        return markup;
     };
 
     App.Display.prototype.get_markup_for_account_stars = function(account) {

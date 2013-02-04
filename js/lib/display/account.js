@@ -354,22 +354,78 @@
         }
     };
 
-    App.Display.prototype.get_markup_for_account_activity = function(account) {
-        var events = [];
-        for (var i=0; i<account.own_events.length; i++) {
-            var event = account.provider.formatter.format(account.own_events[i], account);
-            if (event) { events.push(event); }
+    App.Display.prototype.views.account_activity = {
+        cache_nodes: function(display) {
+            var container = display.nodes.account.account_activity.content,
+                nodes = display.nodes.account.account_activity.nodes;
+
+            if (!nodes) {
+                nodes = display.nodes.account.account_activity.nodes = {};
+
+                nodes.list = container.children('ul');
+            }
+
+            return nodes;
+        },
+
+        reset: function(display) {
+            var container = display.nodes.account.account_activity.content,
+                nodes = display.views.account_activity.cache_nodes(display);
+
+            nodes.list.empty();
+        },
+
+        update: function(display, account) {
+            var container = display.nodes.account.account_activity.content,
+                nodes = display.views.account_activity.cache_nodes(display),
+                events = [];
+
+            for (var i=0; i<account.own_events.length; i++) {
+                var event = account.provider.formatter.format(account.own_events[i], account);
+                if (event) { events.push(event); }
+            }
+
+            nodes.list.empty();
+            nodes.list.append(display.create_events_list_items(events));
+            display.render_widgets(nodes.list);
         }
-        return this.get_markup_for_events(events);
     };
 
-    App.Display.prototype.get_markup_for_account_events = function(account) {
-        var events = [];
-        for (var i=0; i<account.received_events.length; i++) {
-            var event = account.provider.formatter.format(account.received_events[i], account);
-            if (event) { events.push(event); }
+    App.Display.prototype.views.account_events = {
+        cache_nodes: function(display) {
+            var container = display.nodes.account.account_events.content,
+                nodes = display.nodes.account.account_events.nodes;
+
+            if (!nodes) {
+                nodes = display.nodes.account.account_events.nodes = {};
+
+                nodes.list = container.children('ul');
+            }
+
+            return nodes;
+        },
+
+        reset: function(display) {
+            var container = display.nodes.account.account_events.content,
+                nodes = display.views.account_events.cache_nodes(display);
+
+            nodes.list.empty();
+        },
+
+        update: function(display, account) {
+            var container = display.nodes.account.account_events.content,
+                nodes = display.views.account_events.cache_nodes(display),
+                events = [];
+
+            for (var i=0; i<account.received_events.length; i++) {
+                var event = account.provider.formatter.format(account.received_events[i], account);
+                if (event) { events.push(event); }
+            }
+
+            nodes.list.empty();
+            nodes.list.append(display.create_events_list_items(events));
+            display.render_widgets(nodes.list);
         }
-        return this.get_markup_for_events(events);
     };
 
     App.Display.prototype.update_account_navbar = function(account) {

@@ -10,7 +10,7 @@
             if (!result) {
                 result = this.base_format(event, source, '<em>(' + event.type.replace('Event', '').toLowerCase() + ')</em>');
             }
-            return { str: result, day: this.provider.controller.display.format_date(event.created_at) };
+            return { html: result, day: this.provider.controller.display.format_date(event.created_at) };
         }
         return null;
     };

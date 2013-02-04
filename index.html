@@ -220,6 +220,16 @@
         </ul>
     </div>
 
+    <div data-template-for="account_activity">
+        <ul class="ui-listview list-events" data-mobile-listview='{"options":{}}'>
+        </ul>
+    </div>
+
+    <div data-template-for="account_events">
+        <ul class="ui-listview list-events" data-mobile-listview='{"options":{}}'>
+        </ul>
+    </div>
+
     <ul>
         <li data-template-for="repository-list-item">
             <a href="#repository_home">
@@ -235,7 +245,10 @@
                 <span class="account-username">loading...</span>
             </a>
         </li>
+        <li data-template-for="event-list-day" class="ui-li ui-li-divider ui-bar-d"></li>
+        <li data-template-for="event-list-item" class="ui-li ui-li-static ui-btn-up-c"></li>
     </ul>
+
 </div>
 
 </body>

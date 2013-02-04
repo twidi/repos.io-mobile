@@ -285,6 +285,14 @@
         page.addClass('page_loaded');
     };
 
+    Display.prototype.render_widgets = function(node) {
+        node.find(":jqmData(role=listview)").listview();
+        node.find(":jqmData(role=collapsible-set)").collapsibleset();
+        node.find(":jqmData(role=collapsible)").collapsible();
+        node.find(":jqmData(role=button)").button();
+        node.find(":jqmData(role=table)").table();
+    };
+
     Display.prototype.get_markup_for_events = function(events) {
         var markup = '<ul class="ui-listview list-events" data-mobile-listview=\'{"options":{}}\'>',  // data needed to prevent a bug in listview filter plugin
             cur_day = null;
@@ -293,11 +301,38 @@
                 markup += '<li class="ui-li ui-li-divider ui-bar-d">' + events[i].day + '</li>';
                 cur_day = events[i].day;
             }
-            markup += '<li class="ui-li ui-li-static ui-btn-up-c' + (i == events.length - 1 ? ' ui-last-child' : '') + '">' + events[i].str + '</li>';
+            markup += '<li class="ui-li ui-li-static ui-btn-up-c' + (i == events.length - 1 ? ' ui-last-child' : '') + '">' + events[i].html + '</li>';
         }
         markup += "</ul>";
 
         return markup;
+    };
+
+    Display.prototype.create_events_list_items = function(events) {
+        var day_template = this.get_template('event-day-item'),
+            event_template = this.get_template('event-list-item'),
+            items = [],
+            cur_day = null,
+            li, event;
+
+        for (var i=0; i<events.length; i++) {
+            event = events[i];
+            if (event.day != cur_day) {
+                li = day_template.clone();
+                li.html(event.day);
+                cur_day = event.day;
+                items.push(li);
+            }
+
+            li = event_template.clone();
+            li.html(event.html);
+            if (i == events.length - 1 ) {
+                li.addClass('ui-last-child');
+            }
+            items.push(li);
+        }
+
+        return items;
     };
 
     Display.prototype.confirm_new_fech = function(error) {

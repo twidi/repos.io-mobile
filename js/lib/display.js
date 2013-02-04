@@ -12,6 +12,8 @@
             this.construct_pages(obj_type, this.pages[obj_type]);
         }
 
+        $.mobile.initializePage();
+
         $('body > p.loading').remove();
         $('html').removeClass('loading');
 
@@ -139,6 +141,8 @@
                 this.nodes[type][full_page_name].content.prepend(template.children());
                 template.remove();
             }
+
+            page_node.page();
 
         }
 

@@ -207,27 +207,29 @@
     };
 
     EventFormatter.prototype.PushEvent = function(event, source) {
-        var part = 'pushed <a href="#" class="collapsible-trigger">' + event.payload.size + ' commit' + (event.payload.size > 1 ? 's' : '') + '</a> to',
+        var part = 'pushed ' + (event.payload.size ? '<a href="#" class="collapsible-trigger">' + event.payload.size + ' commit' + (event.payload.size > 1 ? 's' : '') + '</a> ' : '') + 'to',
             more;
-        more = '<div data-role="collapsible" data-content-theme="d" data-corners="false" data-mini="true"><h3>Commits</h3>';
-        more += '<ul data-role="listview" data-theme="d">';
-        for (var i=0; i<event.payload.commits.length;i++) {
-            var commit = event.payload.commits[i],
-                lines = commit.message.split('\n'),
-                first_part = lines.shift(),
-                other_part = lines.length ? '<br />' + lines.join('<br />') : '';
+        if (event.payload.size) {
+            more = '<div data-role="collapsible" data-content-theme="d" data-corners="false" data-mini="true"><h3>Commits</h3>';
+            more += '<ul data-role="listview" data-theme="d">';
+            for (var i=0; i<event.payload.commits.length;i++) {
+                var commit = event.payload.commits[i],
+                    lines = commit.message.split('\n'),
+                    first_part = lines.shift(),
+                    other_part = lines.length ? '<br />' + lines.join('<br />') : '';
 
-            more += '<li' + (other_part.length ? ' class="with-extension"' : '') + '>';
-            more += '<strong>' + commit.author.name + '</strong>'; // we have the name, not the username :(
-            more += ' — <em>';
-            more += first_part;
-            if (other_part) {
-                more += '<span class="extension">' + other_part + '</span>';
+                more += '<li' + (other_part.length ? ' class="with-extension"' : '') + '>';
+                more += '<strong>' + commit.author.name + '</strong>'; // we have the name, not the username :(
+                more += ' — <em>';
+                more += first_part;
+                if (other_part) {
+                    more += '<span class="extension">' + other_part + '</span>';
+                }
+                more += '</em>';
+                more += '</li>';
             }
-            more += '</em>';
-            more += '</li>';
+            more += '</ul></div>';
         }
-        more += '</ul></div>';
         return this.base_format(event, source, part, null, null, more);
     };
 

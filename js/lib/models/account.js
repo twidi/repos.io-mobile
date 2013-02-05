@@ -28,11 +28,11 @@
         return Model.cache[id];
     };
 
-    Model.prototype.fetch = function(type, callback, args) {
+    Model.prototype.fetch = function(type, callback) {
         var that = this;
         if (type != 'details' && !that.details) {
             that.fetch('details', function() {
-                that.fetch(type, callback, args);
+                that.fetch(type, callback);
             });
             return;
         }

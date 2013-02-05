@@ -290,21 +290,8 @@
         this.user.userOrgs(username, callback);
     };
 
-    Provider.prototype.get_repository_details = function(path, callback, args) {
-        var that = this,
-            repo = that.get_repo(path);
-        if (args && args.no_readme === true) {
-            repo.show(callback);
-        } else {
-            repo.show(function(err, data) {
-                if (err) { return callback(err, {}); }
-                that.get_repository_readme(path, function(err, readme) {
-                    if (err) { return callback(err, {}); }
-                    data.readme = readme;
-                    callback(null, data);
-                });
-            });
-        }
+    Provider.prototype.get_repository_details = function(path, callback) {
+        this.get_repo(path).show(callback);
     };
 
     Provider.prototype.get_repository_readme = function(path, callback) {

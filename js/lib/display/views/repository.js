@@ -71,12 +71,28 @@
             nodes.last_push_container.show();
 
             nodes.description.html(repository.details.description || '<em>No description!</em>');
-            nodes.readme.html(repository.details.readme || '<em>No readme!</em>');
+            nodes.readme.html(repository.readme || '<em>No readme!</em>');
             if (!repository.details.description) {
                 nodes.description_container.hide();
             }
-            if (!repository.details.readme) {
-                nodes.readme_container.hide();
+
+
+            var readme_success = function() {
+                if (!repository.readme && nodes.readme_container.hasClass('ui-collapsible-collapsed')) {
+                    nodes.readme_container.fadeOut();
+                } else {
+                    nodes.readme.html(repository.readme || '<em>No readme!</em>');
+                }
+            };
+
+            var readme_fail = function(err) {
+                nodes.readme.html('<em>Failed to load readme!</em>');
+            };
+
+            if (repository.readme === null) {
+                repository.fetch_readme(readme_success, readme_fail);
+            } else {
+                readme_success();
             }
 
             nodes.desc_readme.show();

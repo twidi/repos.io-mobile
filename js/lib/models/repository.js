@@ -11,6 +11,7 @@
         this.controller = controller;
 
         this.details = null;
+        this.readme = null;
         this.activity = null;
         this.forks = null;
         this.stars = null;
@@ -26,36 +27,42 @@
         return Model.cache[id];
     };
 
-    Model.prototype.fetch = function(type, callback, args) {
+    Model.prototype.fetch = function(type, callback) {
         var that = this;
         if (type != 'details' && !that.details) {
             that.fetch('details', function() {
-                that.fetch(type, callback, args);
-            }, {no_readme: true});
+                that.fetch(type, callback);
+            });
             return;
         }
-        if (type == 'details' && that.details && !that.details.readme) {
-            that.provider.get_repository_readme(that.path, function(err, data) {
-                if (err) {
-                    that.controller.fetch_error(err, that, type, callback, args);
-                } else {
-                    that.details.readme = data;
-                    callback();
-                }
-            }, args);
-        }
-        else if (that[type] === null) {
+        if (that[type] === null) {
             that.provider['get_repository_' + type](that.path, function(err, data) {
                 if (err) {
-                    that.controller.fetch_error(err, that, type, callback, args);
+                    that.controller.fetch_error(err, that, type, callback);
                 } else {
                     that[type] = data;
                     callback();
                 }
-            }, args);
+            });
         } else {
             callback();
         }
+    };
+
+    Model.prototype.fetch_readme = function(success, failure) {
+        var that = this;
+        that.provider.get_repository_readme(that.path, function(err, data) {
+            if (err && err.error == 404) {
+                data = '';
+                err = null;
+            }
+            if (err) {
+                failure(err.error);
+            } else {
+                that.readme = data;
+                success();
+            }
+        });
     };
 
     if (!App.Models) { App.Models = {}; }

@@ -85,9 +85,9 @@
         }
     };
 
-    Controller.prototype.fetch_error = function(error, obj, fetch_type, original_callback, original_args) {
+    Controller.prototype.fetch_error = function(error, obj, fetch_type, original_callback) {
         if (this.display.confirm_new_fech(error.error)) {
-            obj.fetch(fetch_type, original_callback, original_args);
+            obj.fetch(fetch_type, original_callback);
         }
     };
 

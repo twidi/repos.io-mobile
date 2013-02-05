@@ -309,7 +309,7 @@
     };
 
     Display.prototype.create_events_list_items = function(events) {
-        var day_template = this.get_template('event-day-item'),
+        var day_template = this.get_template('event-list-day'),
             event_template = this.get_template('event-list-item'),
             items = [],
             cur_day = null,

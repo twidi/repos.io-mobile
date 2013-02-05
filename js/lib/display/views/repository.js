@@ -1,6 +1,92 @@
 (function(App) {
 
 
+    App.Display.prototype.views.repository_home = {
+        cache_nodes: function(display) {
+            var container = display.nodes.repository.repository_home.content,
+                nodes = display.nodes.repository.repository_home.nodes;
+
+            if (!nodes) {
+                nodes = display.nodes.repository.repository_home.nodes = {};
+
+                var main = container.children('.repo-main').children('li');
+                nodes.provider = main.children('p.provider');
+
+                var repo = main.children('div.repo-path');
+                nodes.name = repo.children('strong.repo-name');
+                nodes.owner_container = repo.children('span.repo-owner-container');
+                nodes.owner = nodes.owner_container.children('span.repo-owner');
+
+                nodes.fork_container = main.children('div.repo-fork');
+                var fork = main.find('.repo-links');
+                nodes.fork_name = fork.children('span.repo-fork-name');
+                nodes.fork_owner = fork.find('span strong.repo-fork-owner');
+
+                nodes.last_push_container = main.children('p.repo-last-push');
+                nodes.last_push = nodes.last_push_container.children('span');
+
+                nodes.desc_readme = container.children('div');
+                nodes.description_container = nodes.desc_readme.children('div.repo-desc-container');
+                nodes.description = nodes.description_container.find('.repo-desc');
+
+                nodes.readme_container = nodes.desc_readme.children('div.repo-readme-container');
+                nodes.readme = nodes.readme_container.find('.repo-readme');
+            }
+
+            return nodes;
+
+        },
+
+        reset: function(display) {
+            var container = display.nodes.repository.repository_home.content,
+                nodes = display.views.repository_home.cache_nodes(display);
+
+            nodes.name.html('loading...');
+            nodes.owner_container.hide();
+            nodes.owner.html('...');
+            nodes.fork_container.hide();
+            nodes.last_push_container.hide();
+            nodes.desc_readme.hide();
+            nodes.description.html('');
+            nodes.readme.html('');
+
+        },
+
+        update: function(display, repository) {
+            var container = display.nodes.repository.repository_home.content,
+            nodes = display.views.repository_home.cache_nodes(display);
+
+            nodes.provider.html(repository.provider.name);
+            nodes.name.html(repository.details.name);
+            nodes.owner.html(display.account_link(repository.details.owner.login, repository.provider.name));
+            nodes.owner_container.show();
+
+            if (repository.details.fork) {
+                nodes.fork_name.html(display.repository_link(repository.details.parent.full_name, repository.details.parent.name, repository.provider.name));
+                nodes.fork_owner.html(repository.details.parent.owner.login);
+                nodes.fork_container.show();
+            }
+
+            nodes.last_push.html(repository.details.pushed_at ? display.format_date(repository.details.pushed_at, true) : 'never !');
+            nodes.last_push_container.show();
+
+            nodes.description.html(repository.details.description || '<em>No description!</em>');
+            nodes.readme.html(repository.details.readme || '<em>No readme!</em>');
+            if (!repository.details.description) {
+                nodes.description_container.hide();
+            }
+            if (!repository.details.readme) {
+                nodes.readme_container.hide();
+            }
+
+            nodes.desc_readme.show();
+
+            display.render_widgets(container);
+
+        }
+    };
+
+
     App.Display.prototype.views.repository_forks = {
         cache_nodes: function(display) {
             var container = display.nodes.repository.repository_forks.content,

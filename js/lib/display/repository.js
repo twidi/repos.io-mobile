@@ -68,7 +68,6 @@
         return items;
     };
 
-
     App.Display.prototype.get_markup_for_repositories = function(repositories, provider) {
         var markup = "<ul data-role='listview' class='repos-list'>";
 
@@ -93,34 +92,6 @@
 
         markup += "</ul>";
 
-        return markup;
-    };
-
-    App.Display.prototype.get_markup_for_repository_home = function(repository) {
-        var markup = '<ul data-role="listview" data-theme="e" class="repo-main"><li>';
-        markup += '<div>';
-        markup += '<strong>' + repository.details.name + '</strong>';
-        markup += ' by ';
-        markup += this.account_link(repository.details.owner.login, repository.provider.name);
-        markup += '</strong></div>';
-        if (repository.details.fork) {
-            markup += '<div>Fork of <span class="repo-links">';
-            markup += this.repository_link(repository.details.parent.full_name, repository.details.parent.name, repository.provider.name);
-            markup += '<span> by <strong>' + repository.details.parent.owner.login + '</strong></span>';
-            markup += '</span></div>';
-        }
-        markup += '<p class="last-push">Last push: ' + (repository.details.pushed_at ? this.format_date(repository.details.pushed_at, true) : 'never !') + '</p>';
-        markup += '<p class="ui-li-aside ui-btn-up-c ui-btn-corner-all provider">' + repository.provider.name + '</p>';
-        markup += '</li></ul>';
-
-         markup += '<div data-role="collapsible-set" data-corners="false" data-theme="c" data-content-theme="d" data-inset="false" data-mini="true">';
-        if (repository.details.description) {
-            markup += '<div data-role="collapsible" data-collapsed="false"><h3>Description</h3><p>' + repository.details.description + '</p></div>';
-        }
-        if (repository.details.readme) {
-            markup += '<div data-role="collapsible"' + (repository.details.description ? '' : ' data-collapsed="false"') + '><h3>Readme</h3><div class="readme-container">' + repository.details.readme + '</div></div>';
-        }
-        markup += '</div>';
         return markup;
     };
 

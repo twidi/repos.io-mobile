@@ -178,7 +178,7 @@
         <ul data-role="listview" data-theme="e" class="account-main">
             <li>
                 <img src="img/default-avatar.png" />
-                <h3><strong></strong><span> (organization)</span></h3>
+                <h3><strong>loading...</strong><span> (organization)</span></h3>
                 <p class="account-name"></p>
                 <p class="ui-li-aside ui-btn-up-c ui-btn-corner-all provider">...</p>
             </li>
@@ -230,6 +230,40 @@
     <div data-template-for="account_events">
         <ul class="ui-listview list-events" data-mobile-listview='{"options":{}}'>
         </ul>
+    </div>
+
+    <div data-template-for="repository_home">
+        <ul data-role="listview" data-theme="e" class="repo-main">
+            <li>
+                <div class="repo-path">
+                    <strong class="repo-name">loading...</strong>
+                    <span class="repo-owner-container">
+                        by
+                        <span class="repo-owner">...</span>
+                    </span>
+                </div>
+                <div class="repo-fork">
+                    Fork of 
+                    <span class="repo-links">
+                        <span class="repo-fork-name"></span>
+                        <span> by <strong class="repo-fork-owner"></strong></span>
+                    </span>
+                </div>
+                <p class="repo-last-push">Last push: <span></span></p>
+                <p class="ui-li-aside ui-btn-up-c ui-btn-corner-all provider">...</p>
+            </li>
+        </ul>
+
+        <div data-role="collapsible-set" data-corners="false" data-theme="c" data-content-theme="d" data-inset="false" data-mini="true">
+            <div data-role="collapsible" data-collapsed="false" class="repo-desc-container">
+                <h3>Description</h3>
+                <p class="repo-desc"></p>
+            </div>
+            <div data-role="collapsible" class="repo-readme-container">
+                <h3>Readme</h3>
+                <div class="repo-readme"></div>
+            </div>
+        </div>
     </div>
 
     <div data-template-for="repository_forks">

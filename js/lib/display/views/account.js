@@ -18,6 +18,8 @@
                 nodes.organization = username_container.children('span');
 
                 nodes.infos = container.children('.account-details');
+                nodes.infos_loading = nodes.infos.children('.failover');
+                nodes.infos_items = nodes.infos.children('.ui-li-has-icon');
 
                 nodes.company_container = nodes.infos.children('li.account-company');
                 nodes.company = nodes.company_container.children(':last');
@@ -33,6 +35,8 @@
 
                 nodes.site_container = nodes.infos.children('li.account-site');
                 nodes.site = nodes.site_container.find('a');
+
+                nodes.orgs_container = container.children('.account-orgs');
             }
 
             return nodes;
@@ -47,21 +51,34 @@
             nodes.name.html('');
             nodes.organization.hide();
             nodes.avatar.attr('src', 'img/default-avatar.png');
-            nodes.infos.hide();
+            nodes.infos_items.hide();
+            nodes.infos_loading.show();
+
+            display.clear_listview(nodes.orgs_container, 'Loading...', true);
+            nodes.orgs_container.show();
 
         },
 
         update: function(display, account) {
             var container = display.nodes.account.account_home.content,
-            nodes = display.views.account_home.cache_nodes(display);
+            nodes = display.views.account_home.cache_nodes(display),
+            is_org = (account.details.type == 'Organization');
+
+            if (is_org) {
+                nodes.orgs_container.hide();
+            }
 
             nodes.username.html(account.username);
-            nodes.organization.toggle(account.details.type == 'Organization');
+            nodes.organization.toggle(is_org);
             nodes.provider.html(account.provider.name);
             nodes.avatar.attr('src', account.details.avatar_url);
 
             nodes.name.html(account.details.name || '');
             nodes.name.toggle(!!account.details.name);
+
+            nodes.created_at.html(display.format_date(account.details.created_at));
+            nodes.created_at_container.show();
+            nodes.infos_loading.hide();
 
             nodes.company.html(account.details.company || '');
             nodes.company_container.toggle(!!account.details.company);
@@ -73,13 +90,33 @@
             nodes.email.html(has_email ? account.details.email : '');
             nodes.email_container.toggle(has_email);
 
-            nodes.created_at.html(display.format_date(account.details.created_at));
-
             nodes.site.html(account.details.blog || '');
             nodes.site_container.toggle(!!account.details.blog);
             nodes.site.attr('href', account.details.blog || '/');
 
-            nodes.infos.show();
+
+            if (!is_org) {
+                var orgs_success = function() {
+                    if (account.orgs && account.orgs.length) {
+                        display.clear_listview(nodes.orgs_container);
+                        nodes.orgs_container.append(display.create_accounts_list_items(account.orgs, account.provider));
+                        nodes.orgs_container.listview('refresh');
+                    } else {
+                        display.clear_listview(nodes.orgs_container, 'No organizations', true);
+                        nodes.orgs_container.fadeOut();
+                    }
+                };
+
+                var orgs_fail = function(err) {
+                    display.clear_listview(nodes.orgs_container, 'Failed to load organizations', true);
+                };
+
+                if (account.orgs === null) {
+                    account.fetch_orgs(orgs_success, orgs_fail);
+                } else {
+                    orgs_success();
+                }
+            }
 
             container.children('ul[data-role=listview]').listview('refresh');
 
@@ -246,39 +283,6 @@
 
             nodes.list.empty();
             nodes.list.append(display.create_accounts_list_items(account.org_members, account.provider));
-
-            nodes.list.listview('refresh');
-        }
-    };
-
-
-    App.Display.prototype.views.account_orgs = {
-        cache_nodes: function(display) {
-            var container = display.nodes.account.account_orgs.content,
-                nodes = display.nodes.account.account_orgs.nodes;
-
-            if (!nodes) {
-                nodes = display.nodes.account.account_orgs.nodes = {};
-
-                nodes.list = container.children('ul');
-            }
-
-            return nodes;
-        },
-
-        reset: function(display) {
-            var container = display.nodes.account.account_orgs.content,
-                nodes = display.views.account_orgs.cache_nodes(display);
-
-            nodes.list.empty();
-        },
-
-        update: function(display, account) {
-            var container = display.nodes.account.account_orgs.content,
-                nodes = display.views.account_orgs.cache_nodes(display);
-
-            nodes.list.empty();
-            nodes.list.append(display.create_accounts_list_items(account.orgs, account.provider));
 
             nodes.list.listview('refresh');
         }

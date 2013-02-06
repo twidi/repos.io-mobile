@@ -8,7 +8,6 @@
         { id: 'stars' },
         { id: 'following', count: true },
         { id: 'followers', count: true },
-        { id: 'orgs', method: 'orgs' },
         { id: 'events', method: 'received_events' }
     ];
 
@@ -83,7 +82,6 @@
     App.Display.prototype.update_account_navbar = function(account) {
         var is_org = (account.details && account.details.type.toLowerCase() == 'organization');
         $('.account_members-link').closest('li').toggle(is_org);
-        $('.account_orgs-link').closest('li').toggle(!is_org);
         $('.account_repositories-count').html(account.details ? account.details.public_repos : '?').show();
         $('.account_followers-count').html(account.details ? account.details.followers : '?').show();
         $('.account_following-count').html(account.details ? account.details.following : '?').show();

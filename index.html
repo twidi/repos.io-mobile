@@ -184,11 +184,17 @@
             </li>
         </ul>
         <ul data-role="listview" data-theme="d" class="account-details">
+            <li data-role="list-divider" data-theme="d">Informations</li>
+            <li class="failover">Loading...</li>
             <li class="ui-li-has-icon account-company"><span class="ui-li-icon ui-icon ui-icon-gear ui-icon-shadow"></span><span></span></li>
             <li class="ui-li-has-icon account-location"><span class="ui-li-icon ui-icon ui-icon-mappin ui-icon-shadow"></span><span></span></li>
             <li class="ui-li-has-icon account-email"><span class="ui-li-icon ui-icon ui-icon-email ui-icon-shadow"></span><span></span></li>
             <li class="ui-li-has-icon account-created_at"><span class="ui-li-icon ui-icon ui-icon-calendar ui-icon-shadow"></span><span></span></li>
             <li class="ui-li-has-icon account-site"><span class="ui-li-icon ui-icon ui-icon-link ui-icon-shadow"></span><a href="/">...</a></li>
+        </ul>
+        <ul data-role="listview" class="account-orgs accounts-list">
+            <li data-role="list-divider" data-theme="d">Organisations</li>
+            <li class="failover">Loading...</li>
         </ul>
     </div>
 
@@ -213,11 +219,6 @@
     </div>
 
     <div data-template-for="account_members">
-        <ul data-role='listview' class='accounts-list'>
-        </ul>
-    </div>
-
-    <div data-template-for="account_orgs">
         <ul data-role='listview' class='accounts-list'>
         </ul>
     </div>

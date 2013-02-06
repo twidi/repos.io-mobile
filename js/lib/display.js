@@ -354,6 +354,18 @@
         return this.templates[name];
     };
 
+
+    Display.prototype.clear_listview = function(node, failover, refresh) {
+        node.children(':not(.ui-li-divider)').remove();
+        if (failover) {
+            node.append('<li class="failover">' + failover + '</li>');
+        }
+        if (refresh) {
+            node.listview('refresh');
+        }
+    };
+
+
     App.Display = Display;
 
 })(Reposio);

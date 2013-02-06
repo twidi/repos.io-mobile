@@ -275,10 +275,12 @@ span.repo-links > span:last-of-type {
 #account_home ul.account-main li img.ui-li-thumb {
     left: 0;
 }
-#account_home ul.account-details {
+#account_home ul.account-details, #account_home ul.account-orgs {
     margin-top: -1px;
+    margin-bottom: 0;
 }
-#account_home ul.account-details li {
+ul li.ui-li.failover,
+#account_home ul.account-details li.ui-li-has-icon {
     min-height: 18px;
     padding-top: 0.4em;
     padding-bottom: 0.3em;

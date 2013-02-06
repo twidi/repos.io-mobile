@@ -50,6 +50,24 @@
         }
     };
 
+
+    Model.prototype.fetch_orgs = function(success, failure) {
+        var that = this;
+        that.provider.get_account_orgs(that.username, function(err, data) {
+            if (err && err.error == 404) {
+                data = [];
+                err = null;
+            }
+            if (err) {
+                failure(err.error);
+            } else {
+                that.orgs = data;
+                success();
+            }
+        });
+    };
+
+
     if (!App.Models) { App.Models = {}; }
     App.Models.Account = Model;
 

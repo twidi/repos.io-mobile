@@ -68,33 +68,6 @@
         return items;
     };
 
-    App.Display.prototype.get_markup_for_repositories = function(repositories, provider) {
-        var markup = "<ul data-role='listview' class='repos-list'>";
-
-        for (var i=0; i<repositories.length; i++) {
-            var repository = repositories[i],
-                path = repository.full_name || repository.name;
-            markup += '<li>';
-            markup += '<a href="#repository_home!repository=' + path.replace('/', ':') + '@' + provider.name +'">' ;
-            markup += '<h4>' + path + '</h4>';
-            if (repository.description) {
-                markup += '<p class="repo-desc">' + repository.description + '</p>';
-            }
-            if (repository.fork) {
-                markup += '<p class="ui-li-aside ui-btn-up-e ui-btn-corner-all fork">fork</p>';
-            }
-            if (repository.pushed_at) {
-                markup += '<p class="last-push">Last push: ' + this.format_date(repository.pushed_at, true) + '</p>';
-            }
-            markup += '</a>';
-            markup += '</li>';
-        }
-
-        markup += "</ul>";
-
-        return markup;
-    };
-
     App.Display.prototype.update_repository_navbar = function(repository) {
         $('.repository_forks-count').html(repository.details ? repository.details.forks_count : '?').show();
         $('.repository_stars-count').html(repository.details ? repository.details.watchers_count : '?').show(); };

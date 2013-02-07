@@ -47,9 +47,7 @@
         if (this.display.is_page_for(page, obj)) {
             this.display.post_render_page(page);
         } else {
-            if (this.display.has_view(full_name)) {
-                this.display.reset_view(full_name);
-            }
+            this.display.reset_view(full_name);
             this[type].fetch_full(fetch_type, render);
         }
     };

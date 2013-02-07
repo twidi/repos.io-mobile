@@ -240,10 +240,6 @@
         return false;
     };
 
-    Display.prototype.has_view = function(name) {
-        return !!this.views[name];
-    };
-
     Display.prototype.reset_view = function(name) {
         var page = $('#' + name);
         if (!page.data('mobile-page')) {
@@ -260,18 +256,7 @@
         var full_name = type + '_' + name,
             page = $('#' + full_name);
         if (!this.is_current_page(page, obj)) { return; }
-        var content = this.nodes[type][full_name].content;
-
-        if (this.has_view(full_name)) {
-            this.update_view(full_name, obj);
-        } else {
-            var markup = this['get_markup_for_' + full_name](obj);
-
-            content.html(markup);
-            page.page();
-            this.render_widgets(content);
-        }
-
+        this.update_view(full_name, obj);
         page.data('current-for', obj.id);
         this.post_render_page(page);
     };
@@ -287,21 +272,6 @@
         node.find(":jqmData(role=collapsible)").collapsible();
         node.find(":jqmData(role=button)").button();
         node.find(":jqmData(role=table)").table();
-    };
-
-    Display.prototype.get_markup_for_events = function(events) {
-        var markup = '<ul class="ui-listview list-events" data-mobile-listview=\'{"options":{}}\'>',  // data needed to prevent a bug in listview filter plugin
-            cur_day = null;
-        for (var i=0; i<events.length; i++) {
-            if (events[i].day != cur_day) {
-                markup += '<li class="ui-li ui-li-divider ui-bar-d">' + events[i].day + '</li>';
-                cur_day = events[i].day;
-            }
-            markup += '<li class="ui-li ui-li-static ui-btn-up-c' + (i == events.length - 1 ? ' ui-last-child' : '') + '">' + events[i].html + '</li>';
-        }
-        markup += "</ul>";
-
-        return markup;
     };
 
     Display.prototype.create_events_list_items = function(events) {

@@ -152,6 +152,10 @@
             if (data.options.dataUrl) {
                 data.options.dataUrl = data.options.dataUrl.replace('?', '!');
             }
+            data.options.allowSamePageTransition = true;
+            if (data.toPage == $.mobile.path.stripQueryParams(location.href.replace('!', '?'))) {
+                data.options.transition = 'none';  // we stay on the same view
+            }
             that.on_before_page_change(e, data);
         });
         $(document).on("pagechange", function() {

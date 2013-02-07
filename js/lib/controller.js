@@ -56,7 +56,7 @@
             if (this.display.has_view(full_name)) {
                 this.display.reset_view(full_name);
             }
-            this.account.fetch(fetch_type, render);
+            this.account.fetch_full(fetch_type, render);
         }
     };
 
@@ -81,13 +81,13 @@
             if (this.display.has_view(full_name)) {
                 this.display.reset_view(full_name);
             }
-            this.repository.fetch(fetch_type, render);
+            this.repository.fetch_full(fetch_type, render);
         }
     };
 
-    Controller.prototype.fetch_error = function(error, obj, fetch_type, original_callback) {
-        if (this.display.confirm_new_fech(error.error)) {
-            obj.fetch(fetch_type, original_callback);
+    Controller.prototype.fetch_full_error = function(error, obj, fetch_type, original_callback) {
+        if (this.display.confirm_new_fech_full(error.error)) {
+            obj.fetch_full(fetch_type, original_callback);
         }
     };
 

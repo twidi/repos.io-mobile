@@ -27,18 +27,18 @@
         return Model.cache[id];
     };
 
-    Model.prototype.fetch = function(type, callback) {
+    Model.prototype.fetch_full = function(type, callback) {
         var that = this;
         if (type != 'details' && !that.details) {
-            that.fetch('details', function() {
-                that.fetch(type, callback);
+            that.fetch_full('details', function() {
+                that.fetch_full(type, callback);
             });
             return;
         }
         if (that[type] === null) {
             that.provider['get_repository_' + type](that.path, function(err, data) {
                 if (err) {
-                    that.controller.fetch_error(err, that, type, callback);
+                    that.controller.fetch_full_error(err, that, type, callback);
                 } else {
                     that[type] = data;
                     callback();

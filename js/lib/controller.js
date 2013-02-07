@@ -55,7 +55,7 @@
     };
 
     Controller.prototype.fetch_full_error = function(error, obj, fetch_type, original_callback) {
-        if (this.display.confirm_new_fech_full(error.error)) {
+        if (this.display.confirm_new_fech_full(error)) {
             obj.fetch_full(fetch_type, original_callback);
         }
     };

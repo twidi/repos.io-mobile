@@ -331,7 +331,7 @@
         return items;
     };
 
-    Display.prototype.confirm_new_fech = function(error) {
+    Display.prototype.confirm_new_fech_full = function(error) {
         $.mobile.loading('hide');
         error = error || 'undefined error';
         var result = confirm('Unable to fetch (' + error + '), retry ?');

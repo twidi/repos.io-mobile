@@ -96,7 +96,8 @@
 
 
             if (!is_org) {
-                var orgs_success = function() {
+                var orgs_success = function(data) {
+                    account.orgs = data;
                     if (account.orgs && account.orgs.length) {
                         display.clear_listview(nodes.orgs_container);
                         nodes.orgs_container.append(display.create_accounts_list_items(account.orgs, account.provider));
@@ -112,7 +113,7 @@
                 };
 
                 if (account.orgs === null) {
-                    account.fetch_orgs(orgs_success, orgs_fail);
+                    account.fetch('orgs', orgs_success, orgs_fail);
                 } else {
                     orgs_success();
                 }

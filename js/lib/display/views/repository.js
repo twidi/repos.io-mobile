@@ -77,7 +77,8 @@
             }
 
 
-            var readme_success = function() {
+            var readme_success = function(data) {
+                repository.readme = data;
                 if (!repository.readme && nodes.readme_container.hasClass('ui-collapsible-collapsed')) {
                     nodes.readme_container.fadeOut();
                 } else {
@@ -90,7 +91,7 @@
             };
 
             if (repository.readme === null) {
-                repository.fetch_readme(readme_success, readme_fail);
+                repository.fetch('readme', readme_success, readme_fail);
             } else {
                 readme_success();
             }

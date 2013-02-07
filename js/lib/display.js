@@ -29,7 +29,6 @@
         }
     };
 
-    Display.prototype.views = {};
     Display.prototype.nodes = {};
     Display.prototype.templates = {};
     Display.prototype.all_pages = {};
@@ -245,11 +244,11 @@
         if (!page.data('mobile-page')) {
             page.page();
         }
-        this.views[name].reset(this);
+        App.View.get(name, this).reset();
     };
 
     Display.prototype.update_view = function(name, obj) {
-        this.views[name].update(this, obj);
+        App.View.get(name, this).update(obj);
     };
 
     Display.prototype.render_page = function(type, name, obj) {

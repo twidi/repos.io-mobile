@@ -18,7 +18,7 @@
         this.contributors = null;
     };
 
-    Model.prototype.name = 'Repository';
+    Model.prototype.name = 'repository';
     Model.cache = {};
     Model.get = function(id, controller) {
         if (!Model.cache[id]) {
@@ -66,6 +66,6 @@
     };
 
     if (!App.Models) { App.Models = {}; }
-    App.Models.Repository = Model;
+    App.Models.repository = Model;
 
 })(Reposio);

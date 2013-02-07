@@ -16,7 +16,7 @@
     };
 
     EventFormatter.prototype.format_actor  = function(actor, source) {
-        if (source.name != 'Account' || source.username != actor.login) {
+        if (source.name != 'account' || source.username != actor.login) {
             return this.provider.controller.display.account_link(actor.login, source.provider.name);
         } else {
             return '<strong>' + actor.login + '</strong>';
@@ -26,9 +26,9 @@
     EventFormatter.prototype.format_repo  = function(repository, actor, source) {
         var full_name = repository.full_name || repository.name,
             parts = full_name.split('/'), result;
-        if (source.name != 'Repository' || source.path != full_name) {
+        if (source.name != 'repository' || source.path != full_name) {
                 result = this.provider.controller.display.repository_link(full_name, parts[1], source.provider.name);
-            if (actor.login != parts[0] && (source.name != 'Account' || source.username != parts[0])) {
+            if (actor.login != parts[0] && (source.name != 'account' || source.username != parts[0])) {
                 result += '<span> by <strong>' + parts[0] + '</strong></span>'; //this.format_actor({login: parts[0]}, source);
                 result = '<span class="repo-links">' + result + '</span>';
             }

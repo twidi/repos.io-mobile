@@ -220,7 +220,7 @@
 
         if (page_ok) {
             $.mobile.loading('show');
-            this.controller['on_' + type + '_page_before_load'](obj, page);
+            this.controller.on_page_before_load(type, obj, page);
         } else if (type || !$(url.hash).length) {
             $.mobile.changePage($('#home'));
             e.preventDefault();
@@ -269,11 +269,7 @@
 
             content.html(markup);
             page.page();
-            content.find(":jqmData(role=listview)").listview();
-            content.find(":jqmData(role=collapsible-set)").collapsibleset();
-            content.find(":jqmData(role=collapsible)").collapsible();
-            content.find(":jqmData(role=button)").button();
-            content.find(":jqmData(role=table)").table();
+            this.render_widgets(content);
         }
 
         page.data('current-for', obj.id);

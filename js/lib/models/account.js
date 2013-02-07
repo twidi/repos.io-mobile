@@ -19,7 +19,7 @@
         this.orgs = null;
     };
 
-    Model.prototype.name = 'Account';
+    Model.prototype.name = 'account';
     Model.cache = {};
     Model.get = function(id, controller) {
         if (!Model.cache[id]) {
@@ -69,6 +69,6 @@
 
 
     if (!App.Models) { App.Models = {}; }
-    App.Models.Account = Model;
+    App.Models.account = Model;
 
 })(Reposio);

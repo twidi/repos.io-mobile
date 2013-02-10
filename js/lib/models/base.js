@@ -47,7 +47,7 @@
             });
         },
 
-        fetch_full: function(type, callback) {
+        fetch_full: function(type, callback, force) {
             var that = this;
             if (type != 'details' && !that.details) {
                 that.fetch_full('details', function() {
@@ -55,7 +55,7 @@
                 });
                 return;
             }
-            if (that[type] === null) {
+            if (that[type] === null || force) {
                 that.fetch(type,
                     function(data) {  // success
                         that[type] = data;

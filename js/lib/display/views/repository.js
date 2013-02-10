@@ -49,7 +49,7 @@
             nodes.readme.html('<em>Loading...</em>');
         },
 
-        update: function(repository) {
+        update: function(repository, force) {
             var nodes = this.nodes(),
                 that = this;
 
@@ -85,10 +85,10 @@
                 nodes.readme.html('<em>Failed to load readme!</em>');
             };
 
-            if (repository.readme === null) {
+            if (repository.readme === null || force) {
                 repository.fetch('readme', readme_success, readme_fail);
             } else {
-                readme_success();
+                readme_success(repository.readme);
             }
 
             nodes.desc_readme.show();

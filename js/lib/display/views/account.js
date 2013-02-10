@@ -57,7 +57,7 @@
             nodes.orgs_container.show();
         },
 
-        update: function(account) {
+        update: function(account, force) {
             var nodes = this.nodes(),
                 that = this,
                 is_org = (account.details.type == 'Organization');
@@ -110,10 +110,10 @@
                     that.display.clear_listview(nodes.orgs_container, 'Failed to load organizations', true);
                 };
 
-                if (account.orgs === null) {
+                if (account.orgs === null || force) {
                     account.fetch('orgs', orgs_success, orgs_fail);
                 } else {
-                    orgs_success();
+                    orgs_success(account.orgs);
                 }
             }
 

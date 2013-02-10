@@ -36,8 +36,7 @@
         reset: function() {
         },
 
-        update: function() {
-
+        update: function(obj, force) {
         }
 
     });
@@ -57,7 +56,7 @@
             nodes.list.empty();
         },
 
-        update: function(obj) {
+        update: function(obj, force) {
             var nodes = this.nodes();
             nodes.list.empty();
             nodes.list.append(this.get_items(obj));

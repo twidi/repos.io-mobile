@@ -29,7 +29,7 @@
 
     };
 
-    Controller.prototype.on_page_before_load = function(type, obj_id, page_name) {
+    Controller.prototype.on_page_before_load = function(type, obj_id, page_name, force) {
         obj_id = obj_id.replace(':', '/');
         var that = this,
             changed = this.set_current_object(type, obj_id),
@@ -37,18 +37,18 @@
             full_name = type + '_' + page_name,
             render = function() {
                 that.display['update_' + type + '_navbar'](obj);
-                that.display.render_page(type, page_name, obj);
+                that.display.render_page(type, page_name, obj, force);
             },
             fetch_type = this.mapping[type][page_name],
             page = $('#' + full_name);
 
         $('.current_page, .page_loaded').removeClass('current_page, page_loaded');
         page.addClass('current_page');
-        if (this.display.is_page_for(page, obj)) {
+        if (!force && this.display.is_page_for(page, obj)) {
             this.display.post_render_page(page);
         } else {
             this.display.reset_view(full_name);
-            this[type].fetch_full(fetch_type, render);
+            this[type].fetch_full(fetch_type, render, force);
         }
     };
 

@@ -91,9 +91,10 @@
 
                 markup += '<div data-role="content"></div>';
 
-                markup += '<div data-role="footer" data-position="fixed">';
-                    markup += '<div data-role="navbar" data-iconpos="left">';
+                markup += '<div data-role="footer" data-position="fixed" data-id="all">';
+                    markup += '<div data-role="navbar" data-iconpos="bottom">';
                         markup += '<ul>';
+                            markup += '<li><a href="#" data-icon="stop" class="fullscreen-button">Full screen</a></li>';
                             markup += '<li><a href="#" data-icon="refresh" class="refresh-button">Refresh</a></li>';
                             markup += '<li><a href="#" data-icon="arrow-r" class="go-button">View on <span class="provider"></span></a></li>';
                         markup += '</ul>';
@@ -228,6 +229,19 @@
             $.mobile.loading('show');
             that.controller.on_page_before_load(type, that.controller[type].id, page, 'force');
         });
+        if (screenfull.enabled) {
+            $(document).on('click', '.fullscreen-button', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                screenfull.toggle();
+            });
+            screenfull.onchange = function() {
+                $('.fullscreen-button').removeClass('ui-disabled').toggleClass('ui-btn-active ui-state-persist', screenfull.isFullscreen);
+            };
+
+        } else {
+            $('.fullscreen-button').addClass('ui-disabled');
+        }
     };
 
     Display.prototype.on_before_page_change = function(e, data) {

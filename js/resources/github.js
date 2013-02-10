@@ -17,8 +17,9 @@
 
     function _request(method, path, data, cb, raw, accept) {
       function getURL() {
-        var url = API_URL + path;
-        return url + ((/\?/).test(url) ? "&" : "?") + (new Date()).getTime();
+        var url = API_URL + path,
+            ts = ('' + (new Date()).getTime()).slice(0, 8);  // ugly hack to limit browser cache to 100 seconds
+        return url + ((/\?/).test(url) ? "&" : "?") + ts;
       }
 
       var xhr = new XMLHttpRequest();

@@ -240,7 +240,10 @@
             };
 
         } else {
-            $('.fullscreen-button').addClass('ui-disabled');
+            $('.fullscreen-button').addClass('ui-disabled').parent().remove();
+            var uls = $('div.ui-footer div.ui-navbar > ul').removeClass('ui-grid-a ui-grid-b ui-grid-c ui-grid-d ui-grid-e');
+            uls.children('li').removeClass('ui-block-a ui-block-b ui-block-c ui-block-d ui-block-e');
+            uls.grid();
         }
     };
 

@@ -309,12 +309,13 @@
         if (!this.is_current_page(page, obj)) { return; }
         this.update_view(full_name, obj, force);
         page.data('current-for', obj.id);
-        this.post_render_page(page);
+        this.post_render_page(page, type, full_name);
     };
 
-    Display.prototype.post_render_page = function(page) {
+    Display.prototype.post_render_page = function(page, type, full_name) {
         $.mobile.loading('hide');
         page.addClass('page_loaded');
+        this.nodes[type][full_name].refresh_button.removeClass('ui-disabled ui-btn-active');
     };
 
     Display.prototype.render_widgets = function(node) {

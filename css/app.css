@@ -84,6 +84,10 @@ a.mini-button.ui-btn.ui-mini .ui-btn-inner {
 .nav-menu .ui-li .ui-btn-inner a {
     font-size: 12.5px;
 }
+.go-button .provider {
+    text-transform: capitalize;
+}
+
 ul.repos-list li .repo-last-push {
     font-style: italic;
 }

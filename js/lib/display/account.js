@@ -60,10 +60,31 @@
 
     App.Display.prototype.update_account_navbar = function(account) {
         var is_org = (account.details && account.details.type.toLowerCase() == 'organization');
+        $('.go-button').find('.provider').html(account.provider.name);
         $('.account_members-link').closest('li').toggle(is_org);
         $('.account_repositories-count').html(account.details ? account.details.public_repos : '?').show();
         $('.account_followers-count').html(account.details ? account.details.followers : '?').show();
         $('.account_following-count').html(account.details ? account.details.following : '?').show();
+    };
+
+    App.Display.prototype.get_real_account_page = function(page, account) {
+        var is_org = (account.details && account.details.type.toLowerCase() == 'organization');
+        switch(page) {
+            case 'home':
+                return 'https://github.com/' + account.username;
+            case 'repositories':
+                return 'https://github.com/' + account.username + '?tab=repositories';
+            case 'activity':
+                return is_org ? null : 'https://github.com/' + account.username + '?tab=activity';
+            case 'followers':
+                return 'https://github.com/' + account.username + '/followers';
+            case 'stars':
+            case 'following':
+                return 'https://github.com/' + account.username + '/following';
+            case 'members':
+                return is_org ? 'https://github.com/' + account.username + '?tab=members' : null;
+        }
+        return null;
     };
 
 })(Reposio);

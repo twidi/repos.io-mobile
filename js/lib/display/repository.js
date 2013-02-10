@@ -69,7 +69,24 @@
     };
 
     App.Display.prototype.update_repository_navbar = function(repository) {
+        $('.go-button').find('.provider').html(repository.provider.name);
         $('.repository_forks-count').html(repository.details ? repository.details.forks_count : '?').show();
-        $('.repository_stars-count').html(repository.details ? repository.details.watchers_count : '?').show(); };
+        $('.repository_stars-count').html(repository.details ? repository.details.watchers_count : '?').show();
+    };
+
+    App.Display.prototype.get_real_repository_page = function(page, repository) {
+        switch(page) {
+            case 'home':
+            case 'activity':
+                return 'https://github.com/' + repository.path;
+            case 'contributors':
+                return 'https://github.com/' + repository.path + '/contributors';
+            case 'forks':
+                return 'https://github.com/' + repository.path + '/network';
+            case 'stars':
+                return 'https://github.com/' + repository.path + '/stargazers';
+        }
+        return null;
+    };
 
 })(Reposio);

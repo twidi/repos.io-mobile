@@ -95,7 +95,7 @@
                     markup += '<div data-role="navbar" data-iconpos="left">';
                         markup += '<ul>';
                             markup += '<li><a href="#" data-icon="refresh" class="refresh-button">Refresh</a></li>';
-                            markup += '<li><a href="#" data-icon="arrow-r" class="go-button">View on <span>Github</span></a></li>';
+                            markup += '<li><a href="#" data-icon="arrow-r" class="go-button">View on <span class="provider"></span></a></li>';
                         markup += '</ul>';
                     markup += '</div>';
                 markup += '</div>';
@@ -169,11 +169,20 @@
             }
             that.on_before_page_change(e, data);
         });
-        $(document).on("pagechange", function() {
-
+        $(document).on("pagechange", function(e, data) {
             if ($.mobile.activePage && $.mobile.activePage.hasClass('current_page') && !$.mobile.activePage.hasClass('page_loaded')) {
                 $.mobile.loading('show');
             }
+            try {
+                var url = data.toPage.data('url'),
+                    parts = url.split('_'),
+                    type = parts[0],
+                    page = parts[1],
+                    button = that.nodes[type][url].go_button,
+                    real_url = that['get_real_' + type + '_page'](page, that.controller[type]);
+                button.toggleClass('ui-disabled', !real_url);
+                button.attr('href', real_url || '');
+            } catch(ex) {}
         });
         $('.nav-menu').on("popupafterclose", function() {
             // restore previous active link in navbar when closing popup menu

@@ -91,6 +91,15 @@
 
                 markup += '<div data-role="content"></div>';
 
+                markup += '<div data-role="footer" data-position="fixed">';
+                    markup += '<div data-role="navbar" data-iconpos="left">';
+                        markup += '<ul>';
+                            markup += '<li><a href="#" data-icon="refresh" class="refresh-button">Refresh</a></li>';
+                            markup += '<li><a href="#" data-icon="arrow-r" class="go-button">View on <span>Github</span></a></li>';
+                        markup += '</ul>';
+                    markup += '</div>';
+                markup += '</div>';
+
                 if (extended_navbar) {
                     markup += '<div data-role="popup" id="menu_' + id_page + '" data-theme="a" class="nav-menu">';
                         markup += '<ul data-role="listview" data-inset="true" data-theme="a">';
@@ -124,6 +133,7 @@
             var final_page = this.pages[type][m],
                 full_page_name = type + '_' + final_page.id,
                 page_node = $('#' + full_page_name),
+                footer_node = page_node.find('[data-role=footer]'),
                 template = this.templates_container.children('div[data-template-for='+full_page_name+']');
 
             // cache some page nodes
@@ -131,7 +141,9 @@
                 links: $('a.' + full_page_name + '-link'),
                 page: page_node,
                 header: page_node.find(':jqmData(role=header)').find('h3'),
-                content: page_node.children(":jqmData(role=content)")
+                content: page_node.children(":jqmData(role=content)"),
+                refresh_button: footer_node.find('.refresh-button'),
+                go_button: footer_node.find('.go-button')
             };
 
             // insert page content

@@ -171,6 +171,7 @@
             that.on_before_page_change(e, data);
         });
         $(document).on("pagechange", function(e, data) {
+            that.update_fullscreen_button();
             if ($.mobile.activePage && $.mobile.activePage.hasClass('current_page') && !$.mobile.activePage.hasClass('page_loaded')) {
                 $.mobile.loading('show');
             }
@@ -235,9 +236,7 @@
                 e.stopPropagation();
                 screenfull.toggle();
             });
-            screenfull.onchange = function() {
-                $('.fullscreen-button').removeClass('ui-disabled').toggleClass('ui-btn-active ui-state-persist', screenfull.isFullscreen);
-            };
+            screenfull.onchange = that.update_fullscreen_button;
 
         } else {
             $('.fullscreen-button').addClass('ui-disabled').parent().remove();
@@ -245,6 +244,10 @@
             uls.children('li').removeClass('ui-block-a ui-block-b ui-block-c ui-block-d ui-block-e');
             uls.grid();
         }
+    };
+
+    Display.prototype.update_fullscreen_button = function() {
+        $('.fullscreen-button').toggleClass('ui-btn-active ui-state-persist', screenfull.isFullscreen);
     };
 
     Display.prototype.on_before_page_change = function(e, data) {

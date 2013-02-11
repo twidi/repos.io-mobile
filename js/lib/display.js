@@ -67,8 +67,8 @@
             markup = '<div data-role="page" id="' + id_page + '">';
 
                 markup += '<div data-role="header" data-id="' + type + '_pages" data-position="fixed" data-theme="a">';
-                markup += '<span class="nav-home"><a href="/" data-role="button" data-icon="home" data-iconpos="notext" data-rel="home">Home</a></span>';
                     markup += '<h3></h3>';
+                    markup += '<a href="/" data-role="button" data-icon="home" data-iconpos="notext" data-rel="home" class="ui-btn-right">Home</a>';
                     markup += '<div data-role="navbar">';
                         markup += '<ul' + (extended_navbar ? ' class="extended"' : '') + '>';
                         for (var j=0; j<navbar_pages.length; j++) {

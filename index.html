@@ -123,13 +123,10 @@
 <!-- Manage accounts -->
 <div data-role="page" id="accounts">
     <div data-theme="a" data-role="header">
-        <span class="nav-home"><a href="/" data-role="button" data-icon="home" data-iconpos="notext" data-rel="home">Home</a></span>
-        <a data-role="button" href="#account-new" data-icon="plus" data-iconpos="notext" class="ui-btn-right" data-rel="popup" data-position-to="window" data-transition="pop">
-            Add account
-        </a>
         <h3>
             Accounts
         </h3>
+        <a href="/" data-role="button" data-icon="home" data-iconpos="notext" data-rel="home" class="ui-btn-right">Home</a>
     </div>
     <div data-role="content">
         <ul data-role="listview" data-inset="true" data-split-icon="minus" data-split-theme="a">
@@ -142,6 +139,9 @@
                 </a>
             </li>
         </ul>
+        <a data-role="button" href="#account-new" data-icon="plus" data-iconpos="left" data-theme="b" data-rel="popup" data-position-to="window" data-transition="pop">
+            Add account
+        </a>
     </div>
     <div data-role="footer" data-position="fixed" data-id="all">
         <div data-role="navbar" data-iconpos="bottom">

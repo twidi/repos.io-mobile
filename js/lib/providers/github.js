@@ -244,76 +244,103 @@
 
 
     var Provider = function(controller) {
+        var authorization, conf = (providers_config ? providers_config.github || {} : {});
+
         this.name = 'github';
-        this.engine = new Github(typeof providers_config == 'undefined' ? {} : providers_config.github);
-        this.user = this.engine.getUser();
+
+        if (conf.auth == 'basic' && conf.username && conf.password) {
+            authorization = 'Basic ' + Base64.encode(conf.username + ':' + conf.password);
+        } else if (conf.auth == 'oauth' && conf.token) {
+            authorization = 'token '+ conf.token;
+        }
+        if (authorization) {
+            Gh3.Helper.headers['Authorization'] = authorization;
+        }
+
+        Gh3.Helper.cache = false;
+
         this.controller = controller;
         this.formatter = new EventFormatter(this);
     };
 
+    Provider.prototype.get_user = function(username) {
+        return new Gh3.User(username);
+    };
+
     Provider.prototype.get_repo = function(path) {
         var parts = path.split('/');
-        return this.engine.getRepo(parts[0], parts[1]);
+        return new Gh3.Repository(parts[1], this.get_user(parts[0]));
+    };
+
+    Provider.prototype.decorate_callback = function(callback, name) {
+        return function(err, data) {
+            callback(err, err ? null : data[name]);
+        };
     };
 
     Provider.prototype.get_account_details = function(username, callback) {
-        this.user.show(username, callback);
+        this.get_user(username).fetch(callback);
     };
 
     Provider.prototype.get_account_repositories = function(username, callback) {
-        this.user.userRepos(username, callback);
+        var options = {
+            sort: 'pushed',
+            type: 'all',
+            per_page: 100
+        };
+        (new Gh3.Repositories(this.get_user(username))).fetch(options, null, this.decorate_callback(callback, 'repositories'));
     };
 
     Provider.prototype.get_account_stars = function(username, callback) {
-        this.user.userStars(username, callback);
+        this.get_user(username).fetchStarred(this.decorate_callback(callback, 'starred'));
     };
 
     Provider.prototype.get_account_own_events = function(username, callback) {
-        this.user.userEvents(username, callback);
+        this.get_user(username).fetchEvents(this.decorate_callback(callback, 'events'));
     };
 
     Provider.prototype.get_account_received_events = function(username, callback) {
-        this.user.userReceivedEvents(username, callback);
+        this.get_user(username).fetchReceivedEvents(this.decorate_callback(callback, 'received_events'));
     };
 
     Provider.prototype.get_account_followers = function(username, callback) {
-        this.user.userFollowers(username, callback);
+        this.get_user(username).fetchFollowers(this.decorate_callback(callback, 'followers'));
     };
 
     Provider.prototype.get_account_following = function(username, callback) {
-        this.user.userFollowing(username, callback);
+        this.get_user(username).fetchFollowing(this.decorate_callback(callback, 'following'));
     };
 
     Provider.prototype.get_account_org_members = function(username, callback) {
-        this.user.orgMembers(username, callback);
+        this.get_user(username).fetchMembers(this.decorate_callback(callback, 'members'));
     };
 
     Provider.prototype.get_account_orgs = function(username, callback) {
-        this.user.userOrgs(username, callback);
+        this.get_user(username).fetchOrgs(this.decorate_callback(callback, 'orgs'));
     };
 
     Provider.prototype.get_repository_details = function(path, callback) {
-        this.get_repo(path).show(callback);
+        this.get_repo(path).fetch(callback);
     };
 
     Provider.prototype.get_repository_readme = function(path, callback) {
-        this.get_repo(path).readme(callback);
+        this.get_repo(path).fetchReadme(this.decorate_callback(callback, 'readme'));
     };
 
     Provider.prototype.get_repository_activity = function(path, callback) {
-        this.get_repo(path).events(callback);
+        this.get_repo(path).fetchEvents(this.decorate_callback(callback, 'events'));
     };
 
     Provider.prototype.get_repository_forks = function(path, callback) {
-        this.get_repo(path).forks(callback);
+        this.get_repo(path).fetchForks(this.decorate_callback(callback, 'forks'));
     };
 
     Provider.prototype.get_repository_stars = function(path, callback) {
-        this.get_repo(path).stargazers(callback);
+        this.get_repo(path).fetchStargazers(this.decorate_callback(callback, 'stargazers'));
     };
 
     Provider.prototype.get_repository_contributors = function(path, callback) {
-        this.get_repo(path).contributors(callback);
+        this.get_repo(path).fetchContributors(this.decorate_callback(callback, 'contributors'));
     };
 
     if (!App.Providers) { App.Providers = {}; }

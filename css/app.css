@@ -76,14 +76,20 @@ a.mini-button.ui-btn.ui-mini .ui-btn-inner {
 .main-nav-menu .ui-btn {
     text-align: left;
 }
-.main-nav-menu .ui-controlgroup.ui-mini {
+.main-nav-menu .ui-controlgroup {
     margin: 0;
 }
 .main-nav-menu .ui-checkbox .ui-mini.ui-btn-icon-left .ui-btn-inner {
     padding-left: 30px;
 }
+.main-nav-menu .ui-checkbox .ui-btn-icon-left .ui-btn-inner {
+    padding-left: 40px;
+}
 .main-nav-menu .ui-checkbox .ui-mini.ui-btn-icon-left .ui-icon {
     left: 5px;
+}
+.main-nav-menu .ui-checkbox .ui-btn-icon-left .ui-icon {
+    left: 10px;
 }
 
 .go-button .provider {

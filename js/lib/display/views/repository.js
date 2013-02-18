@@ -55,12 +55,12 @@
 
             nodes.provider.html(repository.provider.name);
             nodes.name.html(repository.details.name);
-            nodes.owner.html(this.display.account_link(repository.details.owner.login, repository.provider.name));
+            nodes.owner.html(this.display.account_link(repository.details.user.login, repository.provider.name));
             nodes.owner_container.show();
 
             if (repository.details.fork) {
                 nodes.fork_name.html(this.display.repository_link(repository.details.parent.full_name, repository.details.parent.name, repository.provider.name));
-                nodes.fork_owner.html(repository.details.parent.owner.login);
+                nodes.fork_owner.html(repository.details.parent.user.login);
                 nodes.fork_container.show();
             }
 

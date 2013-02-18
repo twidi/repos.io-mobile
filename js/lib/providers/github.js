@@ -41,8 +41,8 @@
     EventFormatter.prototype.base_format = function(event, source, middle_part, desc, target, more) {
         var result = '';
         result += '<p class="ui-li-aside">' + this.provider.controller.display.format_date(event.created_at, 'show-time', null, 'time-only') + '</p>';
-        if (!target && event.repo && event.repo.name != '/') {
-            target = this.format_repo(event.repo, event.actor, source);
+        if (!target && event.repository && event.repository.name != '/') {
+            target = this.format_repo(event.repository, event.actor, source);
         }
         result += this.format_actor(event.actor, source) + ' ' + middle_part;
         if (target) {
@@ -135,7 +135,7 @@
     };
 
     EventFormatter.prototype.GollumEvent = function(event, source) {
-        var target = this.format_repo(event.repo, event.actor, source),
+        var target = this.format_repo(event.repository, event.actor, source),
             part = '<a href="#" class="collapsible-trigger">edited</a> the ' + target + ' wiki';
             more = '';
         more = '<div data-role="collapsible" data-content-theme="d" data-corners="false" data-mini="true"><h3>Actions</h3>';

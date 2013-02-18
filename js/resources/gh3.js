@@ -582,7 +582,32 @@
          * As an event is not specifically fetchable, this object as no "_service"
          * method.
          */
-        // TODO: manage actor as Gh3.User, repo as Gh3.repository
+        _setData: function(data) {
+            /* Save the actor and repo, then normal fields
+             */
+            if (data) {
+                if (data.actor) {
+                    if (data.actor.id && data.actor.login) {
+                        if (!this.actor) {
+                            this.actor = new Gh3.User(data.actor.login);
+                        }
+                        this.actor._setData(data.actor);
+                    }
+                    delete data.actor;
+                }
+                if (data.repo) {
+                    if (data.repo.id && data.repo.name) {
+                        if (!this.repository) {
+                            var parts = data.repo.name.split('/');
+                            this.repository = new Gh3.Repository(parts[1], new Gh3.User(parts[0]));
+                        }
+                        this.repository._setData(data.repo);
+                    }
+                    delete data.repo;
+                }
+            }
+            Gh3.Event.__super__._setData.call(this, data);
+        }
     });
     Collection._EventsList = Collection._Base.extend({
         /* Base class representing a collection of Gh3.Event objects
@@ -615,13 +640,20 @@
     Gh3.Gist = SingleObject.extend({
         /* This class represent a Github Gist
          */
-        // TODO: manage forks
-        constructor : function (gistData) {
+        // TODO: manage history
+        constructor : function (gistData, ghUser, ghParent, version) {
             /* The constructor define two lists, to hold files and comments,
              * then call the super constructor to save given data with _setData
              */
+
+            this.user = ghUser || null;
+            this.parent = ghParent || null;
+            this.version = version || null;
+
             this.files = new Collection.GistFiles(this);
             this.comments = new Collection.GistComments(this);
+            this.forks = new Collection.GistForks(this);
+            this.history = new Collection.GistHistory(this);
 
             Gh3.Gist.__super__.constructor.call(this, gistData);
         },
@@ -629,28 +661,83 @@
             /* Extract files from data to save them in the files list. Also
              * rename the "comments" field into "comment_count" to not override
              * the comments list.
+             * Save also forks, parent and history
              * And call the super _setData to save normal fields
              */
-            var files = data.files;
-            delete data.files;
+            if (data.user) {
+                if (!this.user) { this.user = new Gh3.User(data.user.login); }
+                this.user._setData(data.user);
+                delete data.user;
+            }
+            if (data.files) {
+                this.files._setItems(data.files);
+                delete data.files;
+            }
+            if (data.fork_of) {
+                if (!this.parent) {
+                    this.parent = new Gh3.Gist({id: data.fork_of.id}, new Gh3.User(data.fork_of.user.login, data.fork_of.user));
+                }
+                this.parent._setData(data.fork_of);
+                delete data.fork_of;
+            }
+            if (data.forks) {
+                this.history._setItems(data.forks);
+                delete data.forks;
+            }
+            if (data.history) {
+                this.history._setItems(data.history);
+                delete data.history;
+            }
 
             data.comment_count = data.comments;
             delete data.comments;
 
             Gh3.Gist.__super__._setData.call(this, data);
 
-            this.files._setItems(files);
         }, // _setData
-        _service: function() {
+        _baseService: function() {
+            /* Service to use for other objects, because the normal _service
+             * method add the version if any (but comments and forks) are
+             * linked to the gist, not a specific version
+             */
             return "gists/" + this.id;
+        },
+        _service: function() {
+            /* Add the version if any. Use _baseService for linked objects
+             */
+            var service = this._baseService();
+            if (this.version) {
+                service += "/" + this.version;
+            }
+            return service;
         }
     }); // Gh3.Gist
 
     Gh3.GistComment = SingleObject.extend({
         /* This class represent a Github gist comment, but does nothing specific
          */
-        // TODO: manage user as a Gh3.User, and it's "_service" method, and pass
-        //       the gist to the constructor
+        constructor : function (gistCommentData, ghGist) {
+            /* Save the parent gist then call the super constructor to save
+             * given data with _setData
+             */
+            this.gist = ghGist;
+            Gh3.GistComment.__super__.constructor.call(this, gistCommentData);
+        },
+        _service: function() {
+            return this.gist._baseService() + "/comments/" + this.id;
+        },
+        _setData: function(data) {
+            /* Save the commenter as a Gh3.User
+             */
+            if (data.user) {
+               if (!this.user) {
+                   this.user = new Gh3.User(data.user.login);
+               }
+               this.user._setData(data.user);
+               delete data.user;
+            }
+            Gh3.GistComment.__super__._setData.call(this, data);
+        }
     });
 
     Collection.GistComments = Collection._Base.extend({
@@ -659,13 +746,30 @@
         _prepareItem: function(item) {
             /* Simply create a Gh3.GistComment with raw data from the api
              */
-            // TODO: pass the gist too ?
-            return new Gh3.GistComment(item);
+            return new Gh3.GistComment(item, this.parent);
         },
         _service: function() {
-            return this.parent._service() + "/comments";
+            return this.parent._baseService() + "/comments";
         }
     }); // Collection.GistComments
+
+    Collection.GistForks = Collection._Base.extend({
+        /* A collection to hold the list of all forks of a gist
+         */
+        _prepareItem: function(item) {
+            /* Simply create a Gh3.Gist with raw data from the api
+             */
+            var user;
+            if (item.user) {
+                user = new Gh3.User(item.user.login, item.user);
+            }
+            return new Gh3.Gist(item, user, this.parent);
+        },
+        _service: function() {
+            return this.parent._baseService() + "/forks";
+        }
+
+    });
 
     Collection.UserGists = Collection._Base.extend({
         /* A collection to hold the list of all gists of a user
@@ -673,8 +777,7 @@
         _prepareItem: function(item) {
             /* Simply create a Gh3.Gist with raw data from the api
              */
-            // TODO: pass the owner ?
-            return new Gh3.Gist(item);
+            return new Gh3.Gist(item, this.parent);
         },
         _service: function() {
             return this.parent._service() + "/gists";
@@ -686,7 +789,13 @@
          * As a gist file is not specifically fetchable, this object as no "_service"
          * method.
          */
-        // TODO: pass the gist to the constructor
+        constructor : function (gistFileData, ghGist) {
+            /* Save the parent gist then call the super constructor to save
+             * given data with _setData
+             */
+            this.gist = ghGist;
+            Gh3.GistFile.__super__.constructor.call(this, gistFileData);
+        }
     });
 
     Collection.GistFiles = Collection._Base.extend({
@@ -695,8 +804,7 @@
         _prepareItem: function(item) {
             /* Simply create a Gh3.GistComment with raw data from the api
              */
-            // TODO: pass the gist too ?
-            return new Gh3.GistFile(item);
+            return new Gh3.GistFile(item, this.parent);
         },
         getByName: function(name) {
             /* Override the getByName default method, because a GistFile has a
@@ -705,6 +813,26 @@
             return this.getBy('filename', name);
         }
     }); // Collection.GistFiles
+
+    Gh3.GistVersion = SingleObject.extend({
+        /* This class represent a version of a Github file.
+         * A version is linked to two gists: the main gist, and the versionned one
+         */
+        constructor: function(version, historyData, ghGist) {
+            this.parent = ghGist;
+            this.version = version;
+            this.gist = new Gh3.Gist({id: this.parent.id}, this.parent.user, null, this.version);
+            Gh3.GistVersion.__super__.constructor.call(this, historyData);
+        }
+    }); // Gh3.GistVersion
+
+    Collection.GistHistory = Collection._Base.extend({
+        /* A collection to hold the list of all versions of a gist
+         */
+        _prepareItem: function(item) {
+            return new Gh3.GistVersion(item.version, item, this.parent);
+        }
+    }); // Collection.GistHistory
 
 
     /* ItemContents: files and dirs */
@@ -846,23 +974,22 @@
              * lists.
              * And call the super _setData to save normal fields
              */
-            var author = data.authors,
-                commiter = data.commiter,
-                files = data.files;
-            if (author) {
-                this.author = new Gh3.User(author.login, author);
-                delete data.authors;
+            if (data.author) {
+                if (!this.author) { this.author = new Gh3.User(data.author.login); }
+                this.author._setData(data.author);
+                delete data.author;
             }
-            if (commiter) {
-                if (commiter.login != author.login) {
-                    this.commiter = new Gh3.User(commiter.login, commiter);
+            if (data.commiter) {
+                if (!this.author || data.commiter.login != this.author.login) {
+                    if (!this.commiter) { this.commiter = new Gh3.User(data.commiter.login); }
+                    this.commiter._setData(data.commiter);
                 } else {
                     this.commiter = this.author;
                 }
                 delete data.commiter;
             }
-            if (files) {
-                this.files._setItems(files);
+            if (data.files) {
+                this.files._setItems(data.files);
                 delete data.files;
             }
             Gh3.Commit.__super__._setData.call(this, data);
@@ -885,10 +1012,15 @@
         _setData: function(data) {
             /* Save the file fields as a Gh3File, based on the filename
              */
-            this.file = new Gh3.File({
+            var file_data = {
                 sha: data.sha,
                 filename: data.filename
-            }, this.commit.branch);
+            };
+            if (!this.file) {
+                this.file = new Gh3.File(file_data, this.commit.branch);
+            } else {
+                this.file._setData(file_data);
+            }
             Gh3.CommitFile.__super__._setData.call(this, data);
         }
     }); // CommitFile
@@ -991,7 +1123,10 @@
              * as a "head_commit" field defined as a Gh3.Commit
              */
             if (data.commit) {
-                this.head_commit = new Gh3.Commit(data.commit, this);
+                if (!this.head_commit || this.head_commit.sha != data.commit.sha) {
+                    this.head_commit = new Gh3.Commit({sha: data.commit.sha}, this);
+                }
+                this.head_commit._setData(data.commit);
                 delete data.commit;
             }
             Gh3.Branch.__super__._setData.call(this, data);
@@ -1017,7 +1152,7 @@
     Gh3.Repository = SingleObject.extend({
         /* This class represent a Github repository, belonging to a user
          */
-        constructor : function (name, ghUser, infos) {
+        constructor : function (name, ghUser, infos, ghParent) {
             /* Save mandatory name and user, call the super constructor, create
              * a link to fetch the readme later, and some lists
              */
@@ -1028,6 +1163,8 @@
             } else {
                 throw "name && user !";
             }
+
+            this.parent = ghParent || null;
 
             Gh3.Repository.__super__.constructor.call(this, infos);
 
@@ -1049,6 +1186,32 @@
              * and then call the given callback
              */
             this.readmeFetcher.fetch(callback, querystring_args);
+        },
+        _setData: function(data) {
+            /* Update the user, source and parent, and set normal fields
+             */
+            if (data) {
+                if (data.owner) {
+                    this.user._setData(data.owner);
+                    delete data.owner;
+                }
+                if (data.source) {
+                    if (!this.source) {
+                        this.source = new Gh3.Repository(data.source.name, new Gh3.User(data.source.owner.login, data.source.owner));
+                    }
+                    this.source._setData(data.source);
+                delete data.source;
+                }
+                if (data.parent) {
+                    if (!this.parent) {
+                        this.parent = new Gh3.Repository(data.parent.name, new Gh3.User(data.parent.owner.login, data.parent.owner));
+                    }
+                    this.parent._setData(data.parent);
+                    delete data.parent;
+                }
+            }
+
+            Gh3.Repository.__super__._setData.call(this, data);
         }
     }); // Gh3.Repository
 
@@ -1111,6 +1274,13 @@
     Collection.RepositoryForks = Collection._RepositoriesList.extend({
         /* List of a repsitory's forks
          */
+        _prepareItem: function(item) {
+            /* Simply create a Gh3.Repository with raw data from the api, with
+             * the parent set
+             */
+            var owner = new Gh3.User(item.owner.login, item.owner);
+            return new Gh3.Repository(item.name, owner, item, this.parent);
+        },
         _service: function() { return this.parent._service() + "/forks"; }
     });
 

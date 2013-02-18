@@ -35,12 +35,12 @@
         fetch: function(type, success, failure, fail_if_404) {
             var that = this;
             that.provider['get_' + that.$class.model_name + '_' + type](that.ref, function(err, data) {
-                if (err && err.error == 404 && !fail_if_404) {
+                if (err && err.status == 404 && !fail_if_404) {
                     data = that.$class.fields[type];
                     err = null;
                 }
                 if (err) {
-                    failure(err.error);
+                    failure(err);
                 } else {
                     success(data);
                 }

@@ -357,9 +357,23 @@
     };
 
     Display.prototype.confirm_new_fech_full = function(error) {
+        var error_text = '';
         $.mobile.loading('hide');
-        error = error || 'undefined error';
-        var result = confirm('Unable to fetch (' + error + '), retry ?');
+        if (error) {
+            if (error.statusText) {
+                error_text = error.statusText;
+            }
+            if (error.status) {
+                if (error.statusText) {
+                    error_text += ' - ';
+                }
+                error_text += error.status;
+            }
+        }
+        if (!error_text) {
+            error_text = 'undefined error';
+        }
+        var result = confirm('Unable to fetch (' + error_text + '), retry ?');
         if (result) {
             $.mobile.loading('show');
         } else {

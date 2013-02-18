@@ -310,7 +310,7 @@
              * to run and the given error.
              * By default call the callback with the error set.
              */
-            if (callback) { callback(new Error(error)); }
+            if (callback) { callback(error); }
         },
         _service: function() {
             /* Must return the url to use by the fetch method. The url is

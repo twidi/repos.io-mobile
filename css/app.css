@@ -36,20 +36,21 @@ a.mini-button.ui-btn.ui-mini .ui-btn-inner {
     padding: 0.1em 8px 0.2em;
 }
 
-.ui-header.ui-bar-a > .ui-btn-icon-left {
+/* no text on back button */
+.ui-header.ui-bar-a > .ui-btn-left {
     height: 24px;
     width: 24px;
     top: 7px;
 }
-.ui-header.ui-bar-a > .ui-btn-icon-left > .ui-btn-inner {
+.ui-header.ui-bar-a > .ui-btn-left > .ui-btn-inner {
     height: 100%;
     padding: 0;
 }
-.ui-header.ui-bar-a > .ui-btn-icon-left > .ui-btn-inner > .ui-btn-text {
+.ui-header.ui-bar-a > .ui-btn-left > .ui-btn-inner > .ui-btn-text {
     left: -9999px;
     position: absolute;
 }
-.ui-header.ui-bar-a > .ui-btn-icon-left > .ui-btn-inner > .ui-icon {
+.ui-header.ui-bar-a > .ui-btn-left > .ui-btn-inner > .ui-icon {
     display: block;
     float: left;
     margin: 2px 1px 2px 3px;
@@ -72,6 +73,19 @@ a.mini-button.ui-btn.ui-mini .ui-btn-inner {
 .nav-menu .ui-li .ui-btn-inner a {
     font-size: 12.5px;
 }
+.main-nav-menu .ui-btn {
+    text-align: left;
+}
+.main-nav-menu .ui-controlgroup.ui-mini {
+    margin: 0;
+}
+.main-nav-menu .ui-checkbox .ui-mini.ui-btn-icon-left .ui-btn-inner {
+    padding-left: 30px;
+}
+.main-nav-menu .ui-checkbox .ui-mini.ui-btn-icon-left .ui-icon {
+    left: 5px;
+}
+
 .go-button .provider {
     text-transform: capitalize;
 }

@@ -47,7 +47,7 @@
         if (!force && this.display.is_page_for(page, obj)) {
             this.display.post_render_page(page, type, full_name);
         } else {
-            this.display.nodes[type][full_name].refresh_button.addClass('ui-disabled');
+            this.display.nodes[type][full_name].refresh_control.addClass('ui-disabled');
             this.display.reset_view(full_name);
             this[type].fetch_full(fetch_type, render, force);
         }

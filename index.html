@@ -95,6 +95,7 @@
         <h3>
             Repos.io
         </h3>
+        <a href="#main_menu_home" data-icon="gear" data-iconpos="notext" data-rel="popup" class="ui-btn-right">Options</a>
     </div>
     <div data-role="content">
         <ul data-role="listview" data-divider-theme="b" data-inset="true">
@@ -108,12 +109,10 @@
             Manage accounts
         </a>
     </div>
-    <div data-role="footer" data-position="fixed" data-id="all">
-        <div data-role="navbar" data-iconpos="bottom">
-            <ul>
-                <li><a href="#" data-icon="stop" class="fullscreen-button">Full screen</a></li>
-                <li><a href="#repository_home!repository=twidi:repos.io-mobile@github" data-icon="arrow-r">About</a></li>
-            </ul>
+    <div data-role="popup" id="main_menu_home" data-theme="a" class="main-nav-menu">
+        <div data-role="controlgroup" data-theme="a" data-mini="true">
+            <label><input type="checkbox" name="fullscreen" class="fullscreen-control" id="fullscreen-home" data-mini="true" data-theme="a"/>Full screen</label>
+            <a href="#repository_home!repository=twidi:repos.io-mobile@github" data-role="button" data-icon="arrow-r" data-theme="a">About</a>
         </div>
     </div>
 </div>
@@ -125,7 +124,7 @@
         <h3>
             Accounts
         </h3>
-        <a href="/" data-role="button" data-icon="home" data-iconpos="notext" data-rel="home" class="ui-btn-right">Home</a>
+        <a href="#main_menu_accounts" data-icon="gear" data-iconpos="notext" data-rel="popup" class="ui-btn-right">Options</a>
     </div>
     <div data-role="content">
         <ul data-role="listview" data-inset="true" data-split-icon="minus" data-split-theme="a">
@@ -142,12 +141,10 @@
             Add account
         </a>
     </div>
-    <div data-role="footer" data-position="fixed" data-id="all">
-        <div data-role="navbar" data-iconpos="bottom">
-            <ul>
-                <li><a href="#" data-icon="stop" class="fullscreen-button">Full screen</a></li>
-                <li><a href="#repository_home!repository=twidi:repos.io-mobile@github" data-icon="arrow-r">About</a></li>
-            </ul>
+    <div data-role="popup" id="main_menu_accounts" data-theme="a" class="main-nav-menu">
+        <div data-role="controlgroup" data-theme="a" data-mini="true">
+            <label><input type="checkbox" name="fullscreen" class="fullscreen-control" id="fullscreen-accounts" data-mini="true" data-theme="a"/>Full screen</label>
+            <a href="#repository_home!repository=twidi:repos.io-mobile@github" data-role="button" data-icon="arrow-r" data-theme="a">About</a>
         </div>
     </div>
 

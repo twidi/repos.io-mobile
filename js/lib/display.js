@@ -68,7 +68,7 @@
 
                 markup += '<div data-role="header" data-id="' + type + '_pages" data-position="fixed" data-theme="a">';
                     markup += '<h3></h3>';
-                    markup += '<a href="/" data-role="button" data-icon="home" data-iconpos="notext" data-rel="home" class="ui-btn-right">Home</a>';
+                    markup += '<a href="#main_menu_' + id_page + '" data-icon="gear" data-iconpos="notext" data-rel="popup" class="ui-btn-right">Options</a>';
                     markup += '<div data-role="navbar">';
                         markup += '<ul' + (extended_navbar ? ' class="extended"' : '') + '>';
                         for (var j=0; j<navbar_pages.length; j++) {
@@ -91,16 +91,6 @@
 
                 markup += '<div data-role="content"></div>';
 
-                markup += '<div data-role="footer" data-position="fixed" data-id="all">';
-                    markup += '<div data-role="navbar" data-iconpos="bottom">';
-                        markup += '<ul>';
-                            markup += '<li><a href="#" data-icon="stop" class="fullscreen-button">Full screen</a></li>';
-                            markup += '<li><a href="#" data-icon="refresh" class="refresh-button">Refresh</a></li>';
-                            markup += '<li><a href="#" data-icon="arrow-r" class="go-button">View on <span class="provider"></span></a></li>';
-                        markup += '</ul>';
-                    markup += '</div>';
-                markup += '</div>';
-
                 if (extended_navbar) {
                     markup += '<div data-role="popup" id="menu_' + id_page + '" data-theme="a" class="nav-menu">';
                         markup += '<ul data-role="listview" data-inset="true" data-theme="a">';
@@ -121,6 +111,15 @@
                     markup += '</div>';
                 }
 
+                markup += '<div data-role="popup" id="main_menu_' + id_page + '" data-theme="a" class="main-nav-menu">';
+                    markup += '<div data-role="controlgroup" data-theme="a" data-mini="true">';
+                        markup += '<a href="/" data-role="button" data-icon="home" data-rel="home" data-theme="a">Home</a>';
+                        markup += '<label><input type="checkbox" name="fullscreen" class="fullscreen-control" id="fullscreen-' + id_page + '" data-mini="true" data-theme="a"/>Full screen</label>';
+                        markup += '<a href="#" data-role="button" data-icon="refresh" class="refresh-control" data-theme="a">Refresh</a>';
+                        markup += '<a href="#" data-role="button" data-icon="arrow-r" class="go-button" data-theme="a">View on <span class="provider"></span></a>';
+                    markup += '</div>';
+                markup += '</div>';
+
             markup += '</div>';
 
             all_markup += markup;
@@ -134,7 +133,7 @@
             var final_page = this.pages[type][m],
                 full_page_name = type + '_' + final_page.id,
                 page_node = $('#' + full_page_name),
-                footer_node = page_node.find('[data-role=footer]'),
+                main_menu = $('#main_menu_' + full_page_name),
                 template = this.templates_container.children('div[data-template-for='+full_page_name+']');
 
             // cache some page nodes
@@ -143,8 +142,9 @@
                 page: page_node,
                 header: page_node.find(':jqmData(role=header)').find('h3'),
                 content: page_node.children(":jqmData(role=content)"),
-                refresh_button: footer_node.find('.refresh-button'),
-                go_button: footer_node.find('.go-button')
+                main_menu: main_menu,
+                refresh_control: main_menu.find('.refresh-control'),
+                go_button: main_menu.find('.go-button')
             };
 
             // insert page content
@@ -171,7 +171,7 @@
             that.on_before_page_change(e, data);
         });
         $(document).on("pagechange", function(e, data) {
-            that.update_fullscreen_button();
+            that.update_fullscreen_control();
             if ($.mobile.activePage && $.mobile.activePage.hasClass('current_page') && !$.mobile.activePage.hasClass('page_loaded')) {
                 $.mobile.loading('show');
             }
@@ -180,10 +180,10 @@
                     parts = url.split('_'),
                     type = parts[0],
                     page = parts[1],
-                    button = that.nodes[type][url].go_button,
+                    go_button = that.nodes[type][url].go_button,
                     real_url = that['get_real_' + type + '_page'](page, that.controller[type]);
-                button.toggleClass('ui-disabled', !real_url);
-                button.attr('href', real_url || '');
+                go_button.toggleClass('ui-disabled', !real_url);
+                go_button.attr('href', real_url || '');
             } catch(ex) {}
         });
         $('.nav-menu').on("popupafterclose", function() {
@@ -220,7 +220,7 @@
             $(this).toggleClass('extended');
             return false;
         });
-        $(document).on('click', '.refresh-button', function(e) {
+        $(document).on('click', '.refresh-control', function(e) {
             e.preventDefault();
             e.stopPropagation();
             var url = $.mobile.activePage.data('url'),
@@ -229,25 +229,27 @@
                 page = parts[1];
             $.mobile.loading('show');
             that.controller.on_page_before_load(type, that.controller[type].id, page, 'force');
+            that.nodes[type][url].main_menu.popup('close');
         });
         if (screenfull.enabled) {
-            $(document).on('click', '.fullscreen-button', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
+            $(document).on('change', '.fullscreen-control', function(e) {
+                $(this).parents('.main-nav-menu').popup('close');
                 screenfull.toggle();
             });
-            screenfull.onchange = that.update_fullscreen_button;
+            screenfull.onchange = that.update_fullscreen_control;
 
         } else {
-            $('.fullscreen-button').addClass('ui-disabled').parent().remove();
-            var uls = $('div.ui-footer div.ui-navbar > ul').removeClass('ui-grid-a ui-grid-b ui-grid-c ui-grid-d ui-grid-e');
-            uls.children('li').removeClass('ui-block-a ui-block-b ui-block-c ui-block-d ui-block-e');
-            uls.grid();
+            var controls = $('.fullscreen-control');
+            controls.parents('.ui-checkbox').add(controls.parents('label')).remove();
         }
     };
 
-    Display.prototype.update_fullscreen_button = function() {
-        $('.fullscreen-button').toggleClass('ui-btn-active ui-state-persist', screenfull.isFullscreen);
+    Display.prototype.update_fullscreen_control = function() {
+        $('.fullscreen-control').attr("checked", screenfull.isFullscreen).each(function() {
+            try {
+                $(this).checkboxradio("refresh");
+            } catch(ex) {}
+        });
     };
 
     Display.prototype.on_before_page_change = function(e, data) {
@@ -318,7 +320,7 @@
     Display.prototype.post_render_page = function(page, type, full_name) {
         $.mobile.loading('hide');
         page.addClass('page_loaded');
-        this.nodes[type][full_name].refresh_button.removeClass('ui-disabled ui-btn-active');
+        this.nodes[type][full_name].refresh_control.removeClass('ui-disabled ui-btn-active');
     };
 
     Display.prototype.render_widgets = function(node) {

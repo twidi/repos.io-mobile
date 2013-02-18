@@ -272,9 +272,9 @@
         return new Gh3.Repository(parts[1], this.get_user(parts[0]));
     };
 
-    Provider.prototype.decorate_callback = function(callback, name) {
+    Provider.prototype.decorate_collback = function(callback, name, field) {
         return function(err, data) {
-            callback(err, err ? null : data[name]);
+            callback(err, err ? null : (field ? data[name] : data[name].getAll()));
         };
     };
 
@@ -288,35 +288,35 @@
             type: 'all',
             per_page: 100
         };
-        (new Gh3.Repositories(this.get_user(username))).fetch(options, null, this.decorate_callback(callback, 'repositories'));
+        this.get_user(username).repositories.fetch(this.decorate_collback(callback, 'repositories'), options);
     };
 
     Provider.prototype.get_account_stars = function(username, callback) {
-        this.get_user(username).fetchStarred(this.decorate_callback(callback, 'starred'));
+        this.get_user(username).starred.fetch(this.decorate_collback(callback, 'starred'));
     };
 
     Provider.prototype.get_account_own_events = function(username, callback) {
-        this.get_user(username).fetchEvents(this.decorate_callback(callback, 'events'));
+        this.get_user(username).events.fetch(this.decorate_collback(callback, 'events'));
     };
 
     Provider.prototype.get_account_received_events = function(username, callback) {
-        this.get_user(username).fetchReceivedEvents(this.decorate_callback(callback, 'received_events'));
+        this.get_user(username).received_events.fetch(this.decorate_collback(callback, 'received_events'));
     };
 
     Provider.prototype.get_account_followers = function(username, callback) {
-        this.get_user(username).fetchFollowers(this.decorate_callback(callback, 'followers'));
+        this.get_user(username).followers.fetch(this.decorate_collback(callback, 'followers'));
     };
 
     Provider.prototype.get_account_following = function(username, callback) {
-        this.get_user(username).fetchFollowing(this.decorate_callback(callback, 'following'));
+        this.get_user(username).following.fetch(this.decorate_collback(callback, 'following'));
     };
 
     Provider.prototype.get_account_org_members = function(username, callback) {
-        this.get_user(username).fetchMembers(this.decorate_callback(callback, 'members'));
+        this.get_user(username).members.fetch(this.decorate_collback(callback, 'members'));
     };
 
     Provider.prototype.get_account_orgs = function(username, callback) {
-        this.get_user(username).fetchOrgs(this.decorate_callback(callback, 'orgs'));
+        this.get_user(username).orgs.fetch(this.decorate_collback(callback, 'orgs'));
     };
 
     Provider.prototype.get_repository_details = function(path, callback) {
@@ -324,23 +324,23 @@
     };
 
     Provider.prototype.get_repository_readme = function(path, callback) {
-        this.get_repo(path).fetchReadme(this.decorate_callback(callback, 'readme'));
+        this.get_repo(path).fetchReadme(this.decorate_collback(callback, 'readme', 'its-a-field'));
     };
 
     Provider.prototype.get_repository_activity = function(path, callback) {
-        this.get_repo(path).fetchEvents(this.decorate_callback(callback, 'events'));
+        this.get_repo(path).events.fetch(this.decorate_collback(callback, 'events'));
     };
 
     Provider.prototype.get_repository_forks = function(path, callback) {
-        this.get_repo(path).fetchForks(this.decorate_callback(callback, 'forks'));
+        this.get_repo(path).forks.fetch(this.decorate_collback(callback, 'forks'));
     };
 
     Provider.prototype.get_repository_stars = function(path, callback) {
-        this.get_repo(path).fetchStargazers(this.decorate_callback(callback, 'stargazers'));
+        this.get_repo(path).stargazers.fetch(this.decorate_collback(callback, 'stargazers'));
     };
 
     Provider.prototype.get_repository_contributors = function(path, callback) {
-        this.get_repo(path).fetchContributors(this.decorate_callback(callback, 'contributors'));
+        this.get_repo(path).contributors.fetch(this.decorate_collback(callback, 'contributors'));
     };
 
     if (!App.Providers) { App.Providers = {}; }

@@ -33,6 +33,11 @@
     var root = this
     ,    Gh3
     ,    Kind
+    ,    Collection
+    ,    ItemContent
+    ,    SingleObject
+    ,    Fetchable
+    ,    ReadmeFetcher
     ,    Base64;
 
     if (typeof exports !== 'undefined') {
@@ -230,7 +235,7 @@
 
     Gh3.Base64 = root.Base64;
 
-    if (window.XDomainReques) {
+    if (window.XDomainRequest) {
         try {
             new XDomainRequest();
             $.support.cors = true;
@@ -271,1069 +276,916 @@
         }
     });
 
-    Gh3.Users = Kind.extend({
 
-    },{//static members
-        users : [],
-        search : function (keyword, pagesInfo, callback) {
-            Gh3.Users.users = [];
-            Gh3.Helper.callHttpApi({
-                service : "legacy/user/search/"+keyword,
-                data : pagesInfo,
-                //beforeSend: function (xhr) { xhr.setRequestHeader ("rel", paginationInfo); },
+    /* Base objects */
+
+    Fetchable = Kind.extend({
+        /* Base class for all Github stuff (SingleObject and Collection).
+         * This base class define base methods to fetch data and manage result
+         * or errors.
+         */
+        constructor: function () {
+            /* By default the object is not yet fetched
+             */
+            this.fetched = false;
+        },
+        _setData: function(data) {
+            /* Take an object/hash of data and save properties in self.
+             */
+            for(var prop in data) {
+                this[prop] = data[prop];
+            }
+        },
+        _onFetchSuccess: function(callback, result) {
+            /* Called when a fetch call was successful, with the callback
+             * to run, and the result got from the api call.
+             * By default set the fetched flag to true, and call the callback
+             * with err=null and result=this
+             */
+            this.fetched = true;
+            if (callback) { callback(null, this); }
+        },
+        _onFetchError: function(callback, error) {
+            /* Called when a fetch call resulted in an error, with the callback
+             * to run and the given error.
+             * By default call the callback with the error set.
+             */
+            if (callback) { callback(new Error(error)); }
+        },
+        _service: function() {
+            /* Must return the url to use by the fetch method. The url is
+             * relative to the domain of the api. Ex: return 'users/k33g';
+             */
+            throw('Undefined service');
+        },
+        _defaultFetchCallParams: function() {
+            /* Must return an object that will be used to enhance the fields
+             * passed to "callHttpApi". Some stuff that can be updated:
+             * - data
+             * - dataType
+             * - headers (Accept, Content-Type)
+             */
+            return {};
+        },
+        _preFetch: function(callback, querystring_args) {
+            /* Called in the fetch method before really make the call to the
+             * api.
+             */
+        },
+        fetch: function(callback, querystring_args) {
+            /* Make a call to the api then call the callback.
+             * Start by calling _preFetch, then get default params with a call
+             * to _defaultFetchCallParams. It's "data" field will be extended
+             * with the given querystring_args.
+             * Finally call callHttpApi with the url got from _service, and
+             * callback defined around _onFetchSuccess and _onFetchError
+             */
+            var that = this,
+                default_params, call_params, call_args;
+
+            that._preFetch(callback, querystring_args);
+
+            call_params = {
+                service : that._service(),
                 success : function(res) {
-                    _.each(res.data.users, function (user) {
-                        Gh3.Users.users.push(new Gh3.User(user.login, user));
-                    });
-
-                    if (callback) { callback(null, Gh3.Users); }
+                    that._onFetchSuccess(callback, res);
                 },
                 error : function (res) {
-                    if (callback) { callback(new Error(res)); }
+                    that._onFetchError(callback, res);
                 }
-            });
+            };
 
-        },
-        reverse : function () {
-            Gh3.Users.users.reverse();
-        },
-        sort : function (comparison_func) {
-            if (comparison_func) {
-                Gh3.Users.users.sort(comparison_func);
-            } else {
-                Gh3.Users.users.sort();
+            default_params = that._defaultFetchCallParams();
+
+            if (querystring_args) {
+                default_params.data = $.extend({}, default_params.data || {}, querystring_args);
             }
-        },
-        getAll : function() { return Gh3.Users.users; },
-        getByName : function (name) {
-            return _.find(Gh3.Users.users, function (item) {
-                return item.name == name;
-            });
-        },
-        getByLogin : function (login) {
-            return _.find(Gh3.Users.users, function (item) {
-                return item.login == login;
-            });
-        },
-        each : function (callback) {
-            _.each(Gh3.Users.users, function (user) {
-                callback(user);
-            });
-        },
-        filter : function (comparator) {
-            return _.filter(Gh3.Users.users, comparator);
-        }
 
+            Gh3.Helper.callHttpApi($.extend({}, default_params, call_params));
+        } // fetch
+    }); // Fetchable
+
+    SingleObject = Fetchable.extend({
+        /* This base class is used to fetch and manage single objects: a user, a
+         * repository...
+         * It's a simple extension of the main Fetchable class, by simply adding
+         * a call to _setData on the constructor and when a fetch is successful
+         */
+        constructor : function (data) {
+            SingleObject.__super__.constructor.call(this);
+            this._setData(data);
+        },
+        _onFetchSuccess: function(callback, result) {
+            this._setData(result.data);
+            SingleObject.__super__._onFetchSuccess.call(this, callback, result);
+        }
     });
 
-    Gh3.User = Kind.extend({
+    Collection = {}; // Simple container for all Collection classes
 
-        constructor : function (login, user_infos) {
-
-            if (user_infos) {
-                for(var prop in user_infos) {
-                    this[prop] = user_infos[prop];
-                }
+    Collection._Base = Fetchable.extend({
+        /* The base of all collections, defining what to do with data when a
+         * fetch is successful, with many overridable methods.
+         * This class also provides many util methods based on underscore.
+         */
+        constructor: function (parent) {
+            /* All collections take a parent as argument, which is the
+             * SingleObject that hold the collections. For example, the
+             * repository for a list of forks.
+             */
+            this.parent = parent;
+            this.list = [];
+            Collection._Base.__super__.constructor.call(this);
+        },
+        length: function() {
+            /* Simple wrapper to get the length of the saved list
+             */
+            return this.list.length;
+        },
+        reverse: function () {
+            /* Simple wrapper to reverse the list of saved items.
+             * WARNING: it will update the internal list !
+             */
+            this.list.reverse();
+        },
+        sort: function(comparison_func) {
+            /* Simple wrapper to sort the list of saved items using the
+             * given callback as a comparison function.
+             */
+            if (comparison_func) {
+                this.list.sort(comparison_func);
+            } else {
+                this.list.sort();
             }
+        },
+        getAll: function() {
+            /* Return the whole list of saved items
+             */
+            return this.list;
+        },
+        filterBy: function(field, value) {
+            /* Filter the list on the given field, with the given value.
+               Return a list with matching items
+             */
+            return _.filter(this.list, function(item) {
+                return item[field] == value;
+            }, this);
+        },
+        getBy: function(field, value) {
+            /* Filter the list on the given field, with the given value.
+               Return the first matching item.
+             */
+            return _.find(this.list, function(item) {
+                return item[field] == value;
+            }, this);
+        },
+        getByName: function(name) {
+            /* A wrapper arround getBy to quickly get an item based on its
+             * "name" field
+             */
+            return this.getBy('name', name);
+        },
+        each: function(callback) {
+            /* Call the callback for each item in the list
+             */
+            _.each(this.list, callback);
+        },
+        _onFetchSuccess: function(callback, result) {
+            /* Called when a fetch is successful, to save items, via a call to
+             * _setItems with result.data, before calling the callback with the
+             * parent (the repository if a list of forks, for example)
+             */
+            this.fetched = true;
+            this._setItems(result.data);
+            if (callback) { callback(null, this.parent); }
+        },
+        _prepareItem: function(item) {
+            /* Take a raw item (generally from the api) and prepare it
+             * to make it usable (for example to add it to the internal list)
+             * Used in the _addItem method
+             */
+            return item;
+        },
+        _addItem: function(item) {
+            /* Add the given item to the list after passing it through the
+             * _prepareItem method
+            */
+            this.list.push(this._prepareItem(item));
+        },
+        _addItems: function(items) {
+            /* Add some items to the internal list, by calling _addItem on each
+             */
+            var that = this;
+            _.each(items, function (item) {
+                that._addItem(item);
+            });
+        },
+        _setItems: function(items) {
+            /* Reset the list and save it with each of the given items, by
+             * calling _addItems
+             */
+            this.list = [];
+            this._addItems(items);
+        }
+
+    }); // Collection._base
+
+
+    /* Users */
+
+    Gh3.User = SingleObject.extend({
+        /* This class represent a Github user
+         */
+        constructor : function (login, user_infos) {
+            /* The constructor take a mandatory login, which is the identifier
+             * of a user on the Github side.
+             * Other fields are passed to the super constructor to be passed to
+             * the _setData method
+             * Then, a lot of lists are defined.
+             */
 
             if (login) {
                 this.login = login;
             } else {
                 throw "login !";
             }
-        },
-        fetch : function (callback) {
-            var that = this;
 
-            Gh3.Helper.callHttpApi({
-                service : "users/"+that.login,
-                success : function (res) {
-                    for(var prop in res.data) {
-                        that[prop] = res.data[prop];
-                    }
-                    if (callback) { callback(null, that); }
-                },
-                error : function (res) {
-                    if (callback) { callback(new Error(res)); }
-                }
-            });
+            Gh3.User.__super__.constructor.call(this, user_infos);
 
+            this.repositories = new Collection.UserRepositories(this);
+            this.members = new Collection.OrganizationMembers(this);
+            this.orgs = new Collection.UserOrganizations(this);
+            this.followers = new Collection.UserFollowers(this);
+            this.following = new Collection.UserFollowing(this);
+            this.starred = new Collection.UserStarredRepositories(this);
+            this.events = new Collection.UserEvents(this);
+            this.received_events = new Collection.UserReceivedEvents(this);
+            this.gists = new Collection.UserGists(this);
         },
-        fetchOrgs : function (callback) {
-            var that = this;
-            that.orgs = [];
-
-            Gh3.Helper.callHttpApi({
-                service : "users/"+that.login+"/orgs",
-                success : function(res) {
-                    _.each(res.data, function (org) {
-                        that.orgs.push(new Gh3.User(org.login, org));
-                    });
-
-                    if (callback) { callback(null, that); }
-                },
-                error : function (res) {
-                    if (callback) { callback(new Error(res)); }
-                }
-            });
-
-        },
-        getOrgs : function () { return this.orgs; },
-        fetchMembers : function (callback) {
-            var that = this;
-            that.members = [];
-
-            Gh3.Helper.callHttpApi({
-                service : "orgs/"+that.login+"/members",
-                success : function(res) {
-                    _.each(res.data, function (user) {
-                        that.members.push(new Gh3.User(user.login, user));
-                    });
-
-                    if (callback) { callback(null, that); }
-                },
-                error : function (res) {
-                    if (callback) { callback(new Error(res)); }
-                }
-            });
-
-        },
-        getMembers : function () { return this.members; },
-        fetchFollowers : function (callback) {
-            var that = this;
-            that.followers = [];
-
-            Gh3.Helper.callHttpApi({
-                service : "users/"+that.login+"/followers",
-                success : function(res) {
-                    _.each(res.data, function (follower) {
-                        that.followers.push(new Gh3.User(follower.login, follower));
-                    });
-
-                    if (callback) { callback(null, that); }
-                },
-                error : function (res) {
-                    if (callback) { callback(new Error(res)); }
-                }
-            });
-
-        },
-        getFollowers : function () { return this.followers; },
-        getFollowerByName : function (name) {
-            return _.find(this.followers, function (follower) {
-                return follower.name == name;
-            });
-        },
-        getFollowerByLogin : function (login) {
-            return _.find(this.followers, function (follower) {
-                return follower.login == login;
-            });
-        },
-        eachFollower : function (callback) {
-            _.each(this.followers, function (follower) {
-                callback(follower);
-            });
-        },
-        reverseFollowers : function () {
-            this.followers.reverse();
-        },
-        sortFollowers : function (comparison_func) {
-            if (comparison_func) {
-                this.followers.sort(comparison_func);
-            } else {
-                this.followers.sort();
-            }
-        },
-        fetchFollowing : function (callback) {
-            var that = this;
-            that.following = [];
-
-            Gh3.Helper.callHttpApi({
-                service : "users/"+that.login+"/following",
-                success : function(res) {
-                    _.each(res.data, function (following) {
-                        that.following.push(new Gh3.User(following.login, following));
-                    });
-
-                    if (callback) { callback(null, that); }
-                },
-                error : function (res) {
-                    if (callback) { callback(new Error(res)); }
-                }
-            });
-
-        },
-        getFollowing : function () { return this.following; },
-        getFollowingByName : function (name) {
-            return _.find(this.following, function (following) {
-                return following.name == name;
-            });
-        },
-        getFollowingByLogin : function (login) {
-            return _.find(this.following, function (following) {
-                return following.login == login;
-            });
-        },
-        eachFollowing : function (callback) {
-            _.each(this.following, function (following) {
-                callback(following);
-            });
-        },
-        reverseFollowing : function () {
-            this.following.reverse();
-        },
-        sortFollowing : function (comparison_func) {
-            if (comparison_func) {
-                this.following.sort(comparison_func);
-            } else {
-                this.following.sort();
-            }
-        },
-        fetchStarred : function (callback) {
-            var that = this;
-            that.starred = [];
-
-            Gh3.Helper.callHttpApi({
-                service : "users/"+that.login+"/starred",
-                success : function(res) {
-                    _.each(res.data, function (starred) {
-                        var owner = new Gh3.User(starred.owner.login, starred.owner);
-                        that.starred.push(new Gh3.Repository(starred.name, owner, starred));
-                    });
-
-                    if (callback) { callback(null, that); }
-                },
-                error : function (res) {
-                    if (callback) { callback(new Error(res)); }
-                }
-            });
-
-        },
-        getStarred : function () { return this.starred; },
-        getStarredByName : function (name) {
-            return _.find(this.starred, function (starred) {
-                return starred.name == name;
-            });
-        },
-        eachStarred : function (callback) {
-            _.each(this.starred, function (starred) {
-                callback(starred);
-            });
-        },
-        reverseStarred : function () {
-            this.starred.reverse();
-        },
-        sortStarred : function (comparison_func) {
-            if (comparison_func) {
-                this.starred.sort(comparison_func);
-            } else {
-                this.starred.sort();
-            }
-        },
-        fetchEvents : function (callback) {
-            var that = this;
-            that.events = [];
-
-            Gh3.Helper.callHttpApi({
-                service : "users/"+that.login+"/events",
-                success : function(res) {
-                    _.each(res.data, function (event) {
-                        that.events.push(new Gh3.Event(event));
-                    });
-
-                    if (callback) { callback(null, that); }
-                },
-                error : function (res) {
-                    if (callback) { callback(new Error(res)); }
-                }
-            });
-
-        },
-        getEvents : function () { return this.events; },
-        getEventByType : function (type) {
-            return _.find(this.events, function (event) {
-                return event.type == type;
-            });
-        },
-        eachEvent : function (callback) {
-            _.each(this.events, function (event) {
-                callback(event);
-            });
-        },
-        reverseEvents : function () {
-            this.events.reverse();
-        },
-        sortEvents : function (comparison_func) {
-            if (comparison_func) {
-                this.events.sort(comparison_func);
-            } else {
-                this.events.sort();
-            }
-        },
-        fetchReceivedEvents : function (callback) {
-            var that = this;
-            that.received_events = [];
-
-            Gh3.Helper.callHttpApi({
-                service : "users/"+that.login+"/received_events",
-                success : function(res) {
-                    _.each(res.data, function (event) {
-                        that.received_events.push(new Gh3.Event(event));
-                    });
-
-                    if (callback) { callback(null, that); }
-                },
-                error : function (res) {
-                    if (callback) { callback(new Error(res)); }
-                }
-            });
-
-        },
-        getReceivedEvents : function () { return this.received_events; },
-        getReceivedEventByType : function (type) {
-            return _.find(this.received_events, function (event) {
-                return event.type == type;
-            });
-        },
-        eachReceivedEvent : function (callback) {
-            _.each(this.received_events, function (event) {
-                callback(event);
-            });
-        },
-        reverseReceivedEvents : function () {
-            this.received_events.reverse();
-        },
-        sortReceivedEvents : function (comparison_func) {
-            if (comparison_func) {
-                this.received_events.sort(comparison_func);
-            } else {
-                this.received_events.sort();
-            }
+        _service: function() {
+            return "users/" + this.login;
         }
+    }); // Gh3.User
 
-    },{});
+    Collection._UsersList = Collection._Base.extend({
+        /* Base class representing a collection of Gh3.User objects
+         */
+        _prepareItem: function(item) {
+            /* Simply create a Gh3.User with raw data from the api
+             */
+            return new Gh3.User(item.login, item);
+        },
+        getByLogin: function(login) {
+            /* A wrapper arround getBy to quickly get an item based on its
+             * login
+             */
+            return this.getBy('login', login);
+        }
+    }); // Collection._UsersList
+
+    Collection.OrganizationMembers = Collection._UsersList.extend({
+        /* List of an organization's members
+         */
+        _service: function() { return "orgs/" + this.parent.login + "/members"; }
+    });
+    Collection.UserOrganizations = Collection._UsersList.extend({
+        /* List of organizations a user belongs to
+         */
+        _service: function() { return this.parent._service() + "/orgs"; }
+    });
+    Collection.UserFollowers = Collection._UsersList.extend({
+        /* List of a user's followers
+         */
+        _service: function() { return this.parent._service() + "/followers"; }
+    });
+    Collection.UserFollowing = Collection._UsersList.extend({
+        /* List of a user's following
+         */
+        _service: function() { return this.parent._service() + "/following"; }
+    });
+    Collection.RepositoryContributors = Collection._UsersList.extend({
+        /* List of a repository's contributors
+         */
+        _service: function() { return this.parent._service() + "/contributors"; }
+    });
+    Collection.RepositoryStargazers = Collection._UsersList.extend({
+        /* List of a repository's stargazers
+         */
+        _service: function() { return this.parent._service() + "/stargazers"; }
+    });
 
 
     /*Events*/
-    Gh3.Event = Kind.extend({
-        constructor : function(eventData) {
-            for(var prop in eventData) {
-                this[prop] = eventData[prop];
-            }
-        }
-    },{});
 
-
-    /*Gists*/
-
-    Gh3.GistComment = Kind.extend({
-        constructor : function (gistCommentData) {
-            for(var prop in gistCommentData) {
-                this[prop] = gistCommentData[prop];
-            }
-        }
-    },{});
-
-    Gh3.Gist = Kind.extend({
-        constructor : function (gistData) {
-            for(var prop in gistData) {
-                this[prop] = gistData[prop];
-            }
-        },
-        fetchContents : function (callback) {
-            var that = this;
-            that.files = [];
-
-            Gh3.Helper.callHttpApi({
-                service : "gists/"+that.id,
-                success : function(res) {
-
-                    for(var file in res.data.files) {
-                        that.files.push(res.data.files[file]);
-                    }
-
-                    delete res.data.files;
-
-                    for(var prop in res.data) {
-                        that[prop] = res.data[prop];
-                    }
-                    if (callback) { callback(null, that); }
-                },
-                error : function (res) {
-                    if (callback) { callback(new Error(res)); }
-                }
-            });
-
-
-        },
-        fetchComments : function (callback) {
-            var that = this;
-            that.comments = [];
-
-
-            Gh3.Helper.callHttpApi({
-                service : "gists/"+that.id+"/comments",
-                success : function(res) {
-                    _.each(res.data, function (comment) {
-                        that.comments.push(new Gh3.GistComment(comment));
-                    });
-                    if (callback) { callback(null, that); }
-                },
-                error : function (res) {
-                    if (callback) { callback(new Error(res)); }
-                }
-            });
-
-        },
-        getFileByName : function (name) {
-            return _.find(this.files, function (file) {
-                return file.filename == name;
-            });
-        },
-        getFiles : function () {
-            return this.files;
-        },
-        eachFile : function (callback) {
-            _.each(this.files, function (file) {
-                callback(file);
-
-            });
-        },
-        getComments : function () { return this.comments; },
-        eachComment : function (callback) {
-            _.each(this.comments, function (comment) {
-                callback(comment);
-            });
-        },
-        filterComments : function (comparator) {
-            return _.filter(this.comments, comparator);
-        }
-
-    },{});
-
-    Gh3.Gists = Kind.extend({//http://developer.github.com/v3/gists/
-        constructor : function (ghUser) {
-            if (ghUser) { this.user = ghUser; }
-            this.gists = [];
-        },
-        fetch : function (pagesInfo, paginationInfo, callback) {//http://developer.github.com/v3/#pagination
-            var that = this;
-
-            Gh3.Helper.callHttpApi({
-                service : "users/"+that.user.login+"/gists",
-                data : pagesInfo,
-                //beforeSend: function (xhr) { xhr.setRequestHeader ("rel", paginationInfo); },
-                success : function(res) {
-                    _.each(res.data, function (gist) {
-                        that.gists.push(new Gh3.Gist(gist));
-                    });
-                    if (callback) { callback(null, that); }
-                },
-                error : function (res) {
-                    if (callback) { callback(new Error(res)); }
-                }
-            });
-
-        },
-
-        getGists : function () { return this.gists; },
-        eachGist : function (callback) {
-            _.each(this.gists, function (gist) {
-                callback(gist);
-            });
-        },
-        filter : function (comparator) {
-            return _.filter(this.gists, comparator);
-        }
-
-    },{});
-
-
-    Gh3.Commit = Kind.extend({
-        constructor : function (commitInfos) {
-            this.author = commitInfos.author;
-            this.author.email = commitInfos.commit.author.email;
-            this.author.name = commitInfos.commit.author.name;
-            this.date =    commitInfos.commit.author.date;
-            this.message = commitInfos.commit.message;
-            this.sha = commitInfos.sha;
-            this.url = commitInfos.url;
-        }
-    },{});
-
-    Gh3.ItemContent = Kind.extend({
-        constructor : function (contentItem, ghUser, repositoryName, branchName) {
-            for(var prop in contentItem) {
-                this[prop] = contentItem[prop];
-            }
-            if (ghUser) { this.user = ghUser; }
-            if (repositoryName) { this.repositoryName = repositoryName; }
-            if (branchName) { this.branchName = branchName; }
-        }
-
-    },{});
-
-    Gh3.File = Gh3.ItemContent.extend({
-        constructor : function (contentItem, ghUser, repositoryName, branchName) {
-            Gh3.File.__super__.constructor.call(this, contentItem, ghUser, repositoryName, branchName);
-        },
-        fetchContent : function (callback) {
-            var that = this;
-
-            Gh3.Helper.callHttpApi({
-                service : "repos/"+that.user.login+"/"+that.repositoryName+"/contents/"+that.path,
-                success : function(res) {
-                    that.content = res.data.content;
-                    that.rawContent = Base64.decode(res.data.content);
-
-                    if (callback) { callback(null, that); }
-                },
-                error : function (res) {
-                    if (callback) { callback(new Error(res)); }
-                }
-            });
-
-        },
-        fetchCommits : function (callback) {//http://developer.github.com/v3/repos/commits/
-            var that = this;
-            that.commits = [];
-
-            Gh3.Helper.callHttpApi({
-                service : "repos/"+that.user.login+"/"+that.repositoryName+"/commits",
-                data : {path: that.path },
-                success : function(res) {
-                    _.each(res.data, function (commit) {
-                        that.commits.push(new Gh3.Commit(commit));
-                    });
-                    if (callback) { callback(null, that); }
-                },
-                error : function (res) {
-                    if (callback) { callback(new Error(res)); }
-                }
-            });
-
-        },
-        getRawContent : function() { return this.rawContent; },
-        getCommits : function () { return this.commits; },
-        getLastCommit : function () {
-            return this.commits[0];
-        },
-        getFirstCommit : function () {
-            return this.commits[this.commits.length-1];
-        },
-        eachCommit : function (callback) {
-            _.each(this.commits, function (branch) {
-                callback(branch);
-            });
-        },
-        filterCommits : function (comparator) {
-            return _.filter(this.commits, comparator);
-        },
-        reverseCommits : function () {
-            this.commits.reverse();
-        },
-        sortCommits: function (comparison_func) {
-            if (comparison_func) {
-                this.commits.sort(comparison_func);
-            } else {
-                this.commits.sort();
-            }
-        }
-    },{});
-
-
-    Gh3.Dir = Gh3.ItemContent.extend({
-        constructor : function (contentItem, ghUser, repositoryName, branchName) {
-            Gh3.Dir.__super__.constructor.call(this, contentItem, ghUser, repositoryName, branchName);
-        },
-        fetchContents : function (callback) {
-            var that = this;
-            that.contents = [];
-
-            Gh3.Helper.callHttpApi({
-                service : "repos/"+that.user.login+"/"+that.repositoryName+"/contents/"+that.path,
-                data : {ref: that.branchName },
-                success : function(res) {
-                    _.each(res.data, function (item) {
-                        if (item.type == "file") { that.contents.push(new Gh3.File(item, that.user, that.repositoryName, that.branchName)); }
-                        if (item.type == "dir") { that.contents.push(new Gh3.Dir(item, that.user, that.repositoryName, that.branchName)); }
-                    });
-                    if (callback) { callback(null, that); }
-                },
-                error : function (res) {
-                    if (callback) { callback(new Error(res)); }
-                }
-            });
-
-        },
-        reverseContents : function () {
-            this.contents.reverse();
-        },
-        sortContents : function (comparison_func) {
-            if (comparison_func) {
-                this.contents.sort(comparison_func);
-            } else {
-                this.contents.sort();
-            }
-        },
-        getContents : function() { return this.contents; },
-        getFileByName : function (name) {
-            return _.find(this.contents, function (item) {
-                return item.name == name && item.type == "file";
-            });
-        },
-        getDirByName : function (name) {
-            return _.find(this.contents, function (item) {
-                return item.name == name && item.type == "dir";
-            });
-        },
-        eachContent : function (callback) {
-            _.each(this.contents, function (branch) {
-                callback(branch);
-            });
-        },
-        filterContents : function (comparator) {
-            return _.filter(this.contents, comparator);
-        }
-
-    },{});
-
-    Gh3.Branch = Kind.extend({
-        constructor : function (name, sha, url, ghUser, repositoryName) {
-            if (name) { this.name = name; }
-            if (sha) { this.sha = sha; }
-            if (url) { this.url = url; }
-
-            if (ghUser) { this.user = ghUser; }
-            if (repositoryName) { this.repositoryName = repositoryName; }
-
-        },
-
-        fetchContents : function (callback) { //see how to refactor with Gh3.Dir
-            var that = this;
-            that.contents = [];
-
-            Gh3.Helper.callHttpApi({
-                service : "repos/"+that.user.login+"/"+that.repositoryName+"/contents/",
-                data : {ref: that.name },
-                success : function(res) {
-                    _.each(res.data, function (item) {
-
-                        if (item.type == "file") { that.contents.push(new Gh3.File(item, that.user, that.repositoryName, that.name)); }
-                        if (item.type == "dir") { that.contents.push(new Gh3.Dir(item, that.user, that.repositoryName, that.name)); }
-                    });
-                    if (callback) { callback(null, that); }
-                },
-                error : function (res) {
-                    if (callback) { callback(new Error(res)); }
-                }
-            });
-
-        },
-        reverseContents : function () {
-            this.contents.reverse();
-        },
-        sortContents : function (comparison_func) {
-            if (comparison_func) {
-                this.contents.sort(comparison_func);
-            } else {
-                this.contents.sort();
-            }
-        },
-        getContents : function() { return this.contents; },
-        getFileByName : function (name) {
-            return _.find(this.contents, function (item) {
-                return item.name == name && item.type == "file";
-            });
-        },
-        getDirByName : function (name) {
-            return _.find(this.contents, function (item) {
-                return item.name == name && item.type == "dir";
-            });
-        },
-        eachContent : function (callback) {
-            _.each(this.contents, function (branch) {
-                callback(branch);
-            });
-        },
-        filterContents : function (comparator) {
-            return _.filter(this.contents, comparator);
-        }
-
-    },{});
-
-    Gh3.Repository = Kind.extend({
-        constructor : function (name, ghUser, infos) {
-
-            if (infos) {
-                for(var prop in infos) {
-                    this[prop] = infos[prop];
-                }
-            }
-
-            if (name) { this.name = name; }
-
-            if (ghUser) { this.user = ghUser; }
-
-        },
-        fetch : function (callback) {
-            var that = this;
-            //TODO test user.login & name
-
-            Gh3.Helper.callHttpApi({
-                service : "repos/"+that.user.login+"/"+that.name,
-                success : function(res) {
-                    for(var prop in res.data) {
-                        that[prop] = res.data[prop];
-                    }
-                    if (callback) { callback(null, that); }
-                },
-                error : function (res) {
-                    if (callback) { callback(new Error(res)); }
-                }
-            });
-
-        },
-        fetchBranches : function (callback) {
-            var that = this;
-            that.branches = [];
-
-            Gh3.Helper.callHttpApi({
-                service : "repos/"+that.user.login+"/"+that.name+"/branches",
-                success : function(res) {
-                    _.each(res.data, function (branch) {
-                        that.branches.push(new Gh3.Branch(branch.name, branch.commit.sha, branch.commit.url, that.user, that.name));
-                    });
-
-                    if (callback) { callback(null, that); }
-                },
-                error : function (res) {
-                    if (callback) { callback(new Error(res)); }
-                }
-            });
-
-        },
-        getBranches : function () { return this.branches; },
-        getBranchByName : function (name) {
-            return _.find(this.branches, function (branch) {
-                return branch.name == name;
-            });
-        },
-        eachBranch : function (callback) {
-            _.each(this.branches, function (branch) {
-                callback(branch);
-            });
-        },
-        reverseBranches : function () {
-            this.branches.reverse();
-        },
-        sortBranches : function (comparison_func) {
-            if (comparison_func) {
-                this.branches.sort(comparison_func);
-            } else {
-                this.branches.sort();
-            }
-        },
-        fetchReadme: function (callback) {
-            var that = this;
-            that.readme = '';
-
-            Gh3.Helper.callHttpApi({
-                service: "repos/"+that.user.login+"/"+that.name+"/readme",
-                headers: {
-                    Accept: 'application/vnd.github.html+json',
-                    'Content-Type': 'text/html'
-                },
-                dataType: 'html',
-                success: function(res) {
-                    that.readme = res.data;
-                    if (callback) { callback(null, that); }
-                },
-                error: function (res) {
-                    if (callback) { callback(new Error(res)); }
-                }
-            });
-        },
-        fetchContributors : function (callback) {
-            var that = this;
-            that.contributors = [];
-
-            Gh3.Helper.callHttpApi({
-                service : "repos/"+that.user.login+"/"+that.name+"/contributors",
-                success : function(res) {
-                    _.each(res.data, function (contributor) {
-                        that.contributors.push(new Gh3.User(contributor.login, contributor));
-                    });
-
-                    if (callback) { callback(null, that); }
-                },
-                error : function (res) {
-                    if (callback) { callback(new Error(res)); }
-                }
-            });
-
-        },
-        getContributors : function () { return this.contributors; },
-        getContributorByName : function (name) {
-            return _.find(this.contributors, function (contributor) {
-                return contributor.name == name;
-            });
-        },
-        getContributorByLogin : function (login) {
-            return _.find(this.contributors, function (contributor) {
-                return contributor.login == login;
-            });
-        },
-        eachContributor : function (callback) {
-            _.each(this.contributors, function (contributor) {
-                callback(contributor);
-            });
-        },
-        reverseContributors : function () {
-            this.contributors.reverse();
-        },
-        sortContributors : function (comparison_func) {
-            if (comparison_func) {
-                this.contributors.sort(comparison_func);
-            } else {
-                this.contributors.sort();
-            }
-        },
-        fetchForks : function (callback) {
-            var that = this;
-            that.forks = [];
-
-            Gh3.Helper.callHttpApi({
-                service : "repos/"+that.user.login+"/"+that.name+"/forks",
-                success : function(res) {
-                    _.each(res.data, function (fork) {
-                        var owner = new Gh3.User(fork.owner.login, fork.owner);
-                        that.forks.push(new Gh3.Repository(fork.name, owner, fork));
-                    });
-
-                    if (callback) { callback(null, that); }
-                },
-                error : function (res) {
-                    if (callback) { callback(new Error(res)); }
-                }
-            });
-
-        },
-        getForks : function () { return this.forks; },
-        getForkByName : function (name) {
-            return _.find(this.forks, function (fork) {
-                return fork.name == name;
-            });
-        },
-        eachFork : function (callback) {
-            _.each(this.forks, function (fork) {
-                callback(fork);
-            });
-        },
-        reverseForks : function () {
-            this.forks.reverse();
-        },
-        sortForks : function (comparison_func) {
-            if (comparison_func) {
-                this.forks.sort(comparison_func);
-            } else {
-                this.forks.sort();
-            }
-        },
-        fetchStargazers : function (callback) {
-            var that = this;
-            that.stargazers = [];
-
-            Gh3.Helper.callHttpApi({
-                service : "repos/"+that.user.login+"/"+that.name+"/stargazers",
-                success : function(res) {
-                    _.each(res.data, function (stargazer) {
-                        that.stargazers.push(new Gh3.User(stargazer.login, stargazer));
-                    });
-
-                    if (callback) { callback(null, that); }
-                },
-                error : function (res) {
-                    if (callback) { callback(new Error(res)); }
-                }
-            });
-
-        },
-        getStargazers : function () { return this.stargazers; },
-        getStargazerByName : function (name) {
-            return _.find(this.stargazers, function (stargazer) {
-                return stargazer.name == name;
-            });
-        },
-        getStargazerByLogin : function (login) {
-            return _.find(this.stargazers, function (stargazer) {
-                return stargazer.login == login;
-            });
-        },
-        eachStargazer : function (callback) {
-            _.each(this.stargazers, function (stargazer) {
-                callback(stargazer);
-            });
-        },
-        reverseStargazers : function () {
-            this.stargazers.reverse();
-        },
-        sortStargazers : function (comparison_func) {
-            if (comparison_func) {
-                this.stargazers.sort(comparison_func);
-            } else {
-                this.stargazers.sort();
-            }
-        },
-        fetchEvents : function (callback) {
-            var that = this;
-            that.events = [];
-
-            Gh3.Helper.callHttpApi({
-                service : "repos/"+that.user.login+"/"+that.name+"/events",
-                success : function(res) {
-                    _.each(res.data, function (event) {
-                        that.events.push(new Gh3.Event(event));
-                    });
-
-                    if (callback) { callback(null, that); }
-                },
-                error : function (res) {
-                    if (callback) { callback(new Error(res)); }
-                }
-            });
-
-        },
-        getEvents : function () { return this.events; },
-        getEventByType : function (type) {
-            return _.find(this.events, function (event) {
-                return event.type == type;
-            });
-        },
-        eachEvent : function (callback) {
-            _.each(this.events, function (event) {
-                callback(event);
-            });
-        },
-        reverseEvents : function () {
-            this.events.reverse();
-        },
-        sortEvents : function (comparison_func) {
-            if (comparison_func) {
-                this.events.sort(comparison_func);
-            } else {
-                this.events.sort();
-            }
-        }
-
-    },{});
-
-    //TODO: Repositories for an organization
-
-    Gh3.Repositories = Kind.extend({//http://developer.github.com/v3/repos/
-        constructor : function (ghUser) {
-
-            if (ghUser) { this.user = ghUser; }
-
-        },
-        //List user repositories
-        fetch : function (pagesInfoAndParameters, paginationInfo, callback) {
-            var that = this;
-            that.repositories = [];
-
-            Gh3.Helper.callHttpApi({
-                service : "users/"+that.user.login+"/repos",
-                data : pagesInfoAndParameters,
-                //beforeSend: function (xhr) { xhr.setRequestHeader ("rel", paginationInfo); },
-                success : function(res) {
-                    _.each(res.data, function (repository) {
-                        that.repositories.push(new Gh3.Repository(repository.name, that.user, repository));
-                    });
-
-                    if (callback) { callback(null, that); }
-                },
-                error : function (res) {
-                    if (callback) { callback(new Error(res)); }
-                }
-            });
-
-        },
-        reverseRepositories : function () {
-            this.repositories.reverse();
-        },
-        sortRepositories : function (comparison_func) {
-            if (comparison_func) {
-                this.repositories.sort(comparison_func);
-            } else {
-                this.repositories.sort();
-            }
-        },
-        getRepositories : function() { return this.repositories; },
-        getRepositoryByName : function (name) {
-            return _.find(this.repositories, function (item) {
-                return item.name == name;
-            });
-        },
-
-        eachRepository : function (callback) {
-            _.each(this.repositories, function (repository) {
-                callback(repository);
-            });
-        },
-        filterRepositories : function (comparator) {
-            return _.filter(this.repositories, comparator);
-        }
-
-
-    },{//static members
-        repositories : [],
-        search : function (keyword, pagesInfo, callback) {
-            Gh3.Repositories.repositories = [];
-            Gh3.Helper.callHttpApi({
-                service : "legacy/repos/search/"+keyword,
-                data : pagesInfo,
-                //beforeSend: function (xhr) { xhr.setRequestHeader ("rel", paginationInfo); },
-                success : function(res) {
-                    //console.log("*** : ", res);
-                    _.each(res.data.repositories, function (repository) {
-                        Gh3.Repositories.repositories.push(new Gh3.Repository(repository.name, new Gh3.User(repository.owner), repository));
-                        //owner & login : same thing ???
-                    });
-
-                    if (callback) { callback(null, Gh3.Repositories); }
-                },
-                error : function (res) {
-                    if (callback) { callback(new Error(res)); }
-                }
-            });
-
-        },
-        reverse : function () {
-            Gh3.Repositories.repositories.reverse();
-        },
-        sort : function (comparison_func) {
-            if (comparison_func) {
-                Gh3.Repositories.repositories.sort(comparison_func);
-            } else {
-                Gh3.Repositories.repositories.sort();
-            }
-        },
-        getAll : function() { return Gh3.Repositories.repositories; },
-        getByName : function (name) {
-            return _.find(Gh3.Repositories.repositories, function (item) {
-                return item.name == name;
-            });
-        },
-        each : function (callback) {
-            _.each(Gh3.Repositories.repositories, function (repository) {
-                callback(repository);
-            });
-        },
-        filter : function (comparator) {
-            return _.filter(Gh3.Repositories.repositories, comparator);
+    Gh3.Event = SingleObject.extend({
+        /* This class represent a Github event, but does nothing specific
+         * As an event is not specifically fetchable, this object as no "_service"
+         * method.
+         */
+        // TODO: manage actor as Gh3.User, repo as Gh3.repository
+    });
+    Collection._EventsList = Collection._Base.extend({
+        /* Base class representing a collection of Gh3.Event objects
+         */
+        _prepareItem: function(item) {
+            /* Simply create a Gh3.Event with raw data from the api
+             */
+            return new Gh3.Event(item);
         }
     });
+    Collection.UserEvents = Collection._EventsList.extend({
+        /* List of events emitted by a user
+         */
+        _service: function() { return this.parent._service() + "/events"; }
+    });
+    Collection.UserReceivedEvents = Collection._EventsList.extend({
+        /* List of events received by a user
+         */
+        _service: function() { return this.parent._service() + "/received_events"; }
+    });
+    Collection.RepositoryEvents = Collection._EventsList.extend({
+        /* List of events emitted by a repository
+         */
+        _service: function() { return this.parent._service() + "/events"; }
+    });
 
+
+    /* Gists */
+
+    Gh3.Gist = SingleObject.extend({
+        /* This class represent a Github Gist
+         */
+        // TODO: manage forks
+        constructor : function (gistData) {
+            /* The constructor define two lists, to hold files and comments,
+             * then call the super constructor to save given data with _setData
+             */
+            this.files = new Collection.GistFiles(this);
+            this.comments = new Collection.GistComments(this);
+
+            Gh3.Gist.__super__.constructor.call(this, gistData);
+        },
+        _setData: function(data) {
+            /* Extract files from data to save them in the files list. Also
+             * rename the "comments" field into "comment_count" to not override
+             * the comments list.
+             * And call the super _setData to save normal fields
+             */
+            var files = data.files;
+            delete data.files;
+
+            data.comment_count = data.comments;
+            delete data.comments;
+
+            Gh3.Gist.__super__._setData.call(this, data);
+
+            this.files._setItems(files);
+        }, // _setData
+        _service: function() {
+            return "gists/" + this.id;
+        }
+    }); // Gh3.Gist
+
+    Gh3.GistComment = SingleObject.extend({
+        /* This class represent a Github gist comment, but does nothing specific
+         */
+        // TODO: manage user as a Gh3.User, and it's "_service" method, and pass
+        //       the gist to the constructor
+    });
+
+    Collection.GistComments = Collection._Base.extend({
+        /* A collection to hold the list of all comments of a gist
+         */
+        _prepareItem: function(item) {
+            /* Simply create a Gh3.GistComment with raw data from the api
+             */
+            // TODO: pass the gist too ?
+            return new Gh3.GistComment(item);
+        },
+        _service: function() {
+            return this.parent._service() + "/comments";
+        }
+    }); // Collection.GistComments
+
+    Collection.UserGists = Collection._Base.extend({
+        /* A collection to hold the list of all gists of a user
+         */
+        _prepareItem: function(item) {
+            /* Simply create a Gh3.Gist with raw data from the api
+             */
+            // TODO: pass the owner ?
+            return new Gh3.Gist(item);
+        },
+        _service: function() {
+            return this.parent._service() + "/gists";
+        }
+    }); // Collection.UserGists
+
+    Gh3.GistFile = SingleObject.extend({
+        /* This class represent a Github Gist file
+         * As a gist file is not specifically fetchable, this object as no "_service"
+         * method.
+         */
+        // TODO: pass the gist to the constructor
+    });
+
+    Collection.GistFiles = Collection._Base.extend({
+        /* A collection to hold the list of all files of a gist
+         */
+        _prepareItem: function(item) {
+            /* Simply create a Gh3.GistComment with raw data from the api
+             */
+            // TODO: pass the gist too ?
+            return new Gh3.GistFile(item);
+        },
+        getByName: function(name) {
+            /* Override the getByName default method, because a GistFile has a
+             * "filename" field instead of a "name" field.
+             */
+            return this.getBy('filename', name);
+        }
+    }); // Collection.GistFiles
+
+
+    /* ItemContents: files and dirs */
+
+    ItemContent = SingleObject.extend({
+        /* A base class to hold "content" items of a repository: files and
+         * directories.
+         * A content item belongs to a branch of a repository.
+         */
+        constructor : function (contentItem, ghBranch) {
+            /* Save the branch then call the super constructor to save default
+             * fields defined in contentItem
+             */
+            this.branch = ghBranch;
+            ItemContent.__super__.constructor.call(this, contentItem);
+        },
+        _service: function() {
+            return this.branch.repository._service() + "/contents/" + this.path;
+        }
+    }); // ItemContent
+
+    Gh3.File = ItemContent.extend({
+        /* This class represent a file in a repository.
+         */
+        constructor : function (contentItem, ghBranch) {
+            /* Save the branch and the fields defined in contentItem, and create
+             * a list to hold the file's commits
+             */
+            Gh3.File.__super__.constructor.call(this, contentItem, ghBranch);
+            this.commits = new Collection.FileCommits(this);
+        },
+        _service: function() {
+            return this.branch.repository._service() + "/contents/" + this.path;
+        },
+        _defaultFetchCallParams: function() {
+            /* Override the data used to call the api by passing the branch as
+             * the "ref" argument
+             */
+            var params = Collection.ItemContents.__super__._defaultFetchCallParams.call(this);
+            params.data = $.extend({}, params.data || {}, {
+                ref: this.branch.name
+            });
+            return params;
+        },
+        _onFetchSuccess: function(callback, result) {
+            /* When a fetch is successful, decode the content of the file for
+             * easy access of its readable version
+             */
+            if (result.data.content) {
+                result.data.content = Base64.decode(result.data.content);
+            }
+            Gh3.File.__super__._onFetchSuccess.call(this, callback, result);
+        }
+    }); // Gh3.File
+
+    Gh3.Dir = ItemContent.extend({
+        /* This class represent a directory in a repository.
+         */
+        constructor : function (contentItem, ghBranch) {
+            /* Save the branch and the fields defined in contentItem, and create
+             * a list to hold the directory's content (fields and sub-directories)
+             */
+            Gh3.Dir.__super__.constructor.call(this, contentItem, ghBranch);
+            this.contents = new Collection.ItemContents(this);
+        }
+    }); // Gh3.Dir
+
+    Collection.ItemContents = Collection._Base.extend({
+        /* A collection to hold a list of "ItemContents" (a list of files and
+         * directories). Used to hold content of a Gh3.Branch and a Gh3.Dir
+         */
+        _prepareItem: function(item) {
+            /* Create either a Gh3.File or a Gh3.Dir depending of the "type"
+             * field of the given item.
+             */
+            return new Gh3[item.type == "file" ? 'File' : 'Dir'](item, this.parent);
+        },
+        _service: function() {
+            return this.parent.branch.repository._service() + "/contents/" + this.parent.path;
+        },
+        _defaultFetchCallParams: function() {
+            /* Override the data used to call the api by passing the branch as
+             * the "ref" argument
+             */
+            var params = Collection.ItemContents.__super__._defaultFetchCallParams.call(this);
+            params.data = $.extend({}, params.data || {}, {
+                ref: this.parent.branch.name
+            });
+            return params;
+        },
+        files : function (comparator) {
+            /* An utility method to retrieve only files
+             */
+            return _.filter(this.list, function(item) {
+                return item.type == "file";
+            }, this);
+        },
+        dirs : function (comparator) {
+            /* An utility method to retrieve only directories
+             */
+            return _.filter(this.list, function(item) {
+                return item.type == "dir";
+            }, this);
+        },
+        getFileByName : function (name) {
+            /* An utility method to get a file by its name
+             */
+            return _.find(this.list, function (item) {
+                return item.name == name && item.type == "file";
+            });
+        },
+        getDirByName : function (name) {
+            /* An utility method to get a directory by its name
+             */
+            return _.find(this.list, function (item) {
+                return item.name == name && item.type == "dir";
+            });
+        }
+    }); // Collection.ItemContents
+
+
+    /* Commits */
+
+    Gh3.Commit = SingleObject.extend({
+        /* This class represent a Github Commit
+         * A commit belongs to a branch of a repository.
+         */
+        constructor : function (commitInfos, ghBranch) {
+            /* Save the branch then call the super constructor to save default
+             * fields defined in commitInfos. And create a list to hold files
+             * managed by this commit.
+             */
+            this.branch = ghBranch;
+            this.files = new Collection.CommitFiles(this);
+            Gh3.Commit.__super__.constructor.call(this, commitInfos);
+        },
+        _setData: function(data) {
+            /* Extract author, commiter and files from data to save them in
+             * lists.
+             * And call the super _setData to save normal fields
+             */
+            var author = data.authors,
+                commiter = data.commiter,
+                files = data.files;
+            if (author) {
+                this.author = new Gh3.User(author.login, author);
+                delete data.authors;
+            }
+            if (commiter) {
+                if (commiter.login != author.login) {
+                    this.commiter = new Gh3.User(commiter.login, commiter);
+                } else {
+                    this.commiter = this.author;
+                }
+                delete data.commiter;
+            }
+            if (files) {
+                this.files._setItems(files);
+                delete data.files;
+            }
+            Gh3.Commit.__super__._setData.call(this, data);
+        } // _setData
+    }); // Gh3.Commit
+
+    Gh3.CommitFile = SingleObject.extend({
+        /* This class represent a reference to a file managed by a commit.
+         * Each reference store the status of the file (deleted, created,
+         * modified), some stats (additions, deletions, changes), the pach, and
+         * a link to the real Gh3.File
+         */
+        constructor: function(commitFileData, ghCommit) {
+            /* Save the commit and call the super constructor to save fields
+             * defined in commitFileData
+             */
+            this.commit = ghCommit;
+            Gh3.CommitFile.__super__.constructor.call(this, commitFileData);
+        },
+        _setData: function(data) {
+            /* Save the file fields as a Gh3File, based on the filename
+             */
+            this.file = new Gh3.File({
+                sha: data.sha,
+                filename: data.filename
+            }, this.commit.branch);
+            Gh3.CommitFile.__super__._setData.call(this, data);
+        }
+    }); // CommitFile
+
+    Collection.CommitFiles = Collection._Base.extend({
+        /* A collection to hold the files managed by a commit (the *references*
+         * to the files)
+         */
+        _prepareItem: function(item) {
+            /* Simply create a Gh3.CommitFile with raw data from the api
+             */
+            return new Gh3.CommitFile(item, this.parent);
+        },
+        getByName: function(name) {
+            /* Override the getByName default method, because a CommitFile has a
+             * "filename" field instead of a "name" field.
+             */
+            return this.getBy('filename', name);
+        }
+    }); // Collection.CommitFiles
+
+    Collection._Commits = Collection._Base.extend({
+        /* Base class representing a collection of Gh3.Commit objects
+         */
+        _service: function() {
+            return this.parent.branch.repository._service() + "/commits";
+        },
+        _prepareItem: function(item) {
+            /* Simply create a Gh3.Commit with raw data from the api
+             */
+            return new Gh3.Commit(item, this.parent.branch);
+        },
+        last: function() {
+            /* Utility to return the last commit of the list
+             */
+            return this.list[0];
+        },
+        first: function() {
+            /* Utility to return the first commit of the list
+             */
+            return this.list[this.list.length-1];
+        }
+    }); // Collection._Commits
+
+    Collection.FileCommits = Collection._Commits.extend({
+        /* A collection of commits managing a file
+         */
+        _defaultFetchCallParams: function(callback, querystring_args) {
+            /* Override the data used to call the api by passing the file's path
+             * the "path" argument
+             */
+            var params = Collection.FileCommits.__super__._defaultFetchCallParams.call(this, callback, querystring_args);
+            params.data = $.extend({}, params.data || {}, {
+                path: this.parent.path
+            });
+            return params;
+        }
+    }); // Collection.FileCommits
+
+    Collection.BranchCommits = Collection._Commits.extend({
+        /* A collection of commits in a branch
+         */
+        _defaultFetchCallParams: function(callback, querystring_args) {
+            /* Override the data used to call the api by passing the branch as
+             * the "ref" argument
+             */
+            var params = Collection.FileCommits._defaultFetchCallParams.call(this, callback, querystring_args);
+            params.data = $.extend({}, params.data || {}, {
+                ref: this.parent.name
+            });
+            return params;
+        }
+    }); // Collection.BranchCommits
+
+
+    /* Branches */
+
+    Gh3.Branch = SingleObject.extend({
+        /* This class represent a branch of a repository
+         * As a branch is used like a Dir to hold contents, we define two
+         * fields, "branch" (this) and "path" (empty) to act as a Dir when
+         * needed.
+         */
+        constructor: function(branchData, ghRepository) {
+            /* Save the repository, create branch and path to act as a Dir,
+             * create a list to hold contents, and save fields defined in
+             * branchData
+             */
+            this.repository = ghRepository;
+            this.branch = this;  // used for contents
+            this.path = '';  // used for contents
+            Gh3.Branch.__super__.constructor.call(this, branchData);
+            this.contents = new Collection.ItemContents(this);
+        },
+        _service: function() {
+            return this.parent._service() + "/branches/" + this.name;
+        },
+        _setData: function(data) {
+            /* Extract the "commit" field of the data from the api to save it
+             * as a "head_commit" field defined as a Gh3.Commit
+             */
+            if (data.commit) {
+                this.head_commit = new Gh3.Commit(data.commit, this);
+                delete data.commit;
+            }
+            Gh3.Branch.__super__._setData.call(this, data);
+        }
+    }); // Gh3.branch
+
+    Collection.RepositoryBranches = Collection._Base.extend({
+        /* A collection to hold branches of a repository
+         */
+        _service: function() {
+            return this.parent._service() + "/branches";
+        },
+        _prepareItem: function(item) {
+            /* Simply create a Gh3.Branch with raw data from the api
+             */
+            return new Gh3.Branch(item, this.parent);
+        }
+    }); // Collection.RepositoryBranches
+
+
+    /* Repositories */
+
+    Gh3.Repository = SingleObject.extend({
+        /* This class represent a Github repository, belonging to a user
+         */
+        constructor : function (name, ghUser, infos) {
+            /* Save mandatory name and user, call the super constructor, create
+             * a link to fetch the readme later, and some lists
+             */
+
+            if (name && ghUser) {
+                this.name = name;
+                this.user = ghUser;
+            } else {
+                throw "name && user !";
+            }
+
+            Gh3.Repository.__super__.constructor.call(this, infos);
+
+            this.readme = '';
+            this.readmeFetcher = new ReadmeFetcher(this);
+
+            this.contributors = new Collection.RepositoryContributors(this);
+            this.forks = new Collection.RepositoryForks(this);
+            this.stargazers = new Collection.RepositoryStargazers(this);
+            this.events = new Collection.RepositoryEvents(this);
+            this.branches = new Collection.RepositoryBranches(this);
+
+        },
+        _service: function() {
+            return "repos/" + this.user.login + "/" + this.name;
+        },
+        fetchReadme: function (callback, querystring_args) {
+            /* A simple wrapper arroud the readme fetcher to fetch the readme
+             * and then call the given callback
+             */
+            this.readmeFetcher.fetch(callback, querystring_args);
+        }
+    }); // Gh3.Repository
+
+    ReadmeFetcher = Fetchable.extend({
+        /* This class is a helper to fetch the readme of a repository. It's not
+         * not a SingleObject as it has no real existence as an object.
+         */
+        constructor: function(ghRepo) {
+            /* Save the repository to set the readme when fetched
+             */
+            this.repository = ghRepo;
+            ReadmeFetcher.__super__.constructor.call(this);
+        },
+        _service: function() {
+            return this.repository._service() + "/readme";
+        },
+        _onFetchSuccess: function(callback, result) {
+            /* When the fetch is successful, save the readme in the repository
+             * and call the callback passing the repository, and not this, as
+             * the result data
+             */
+            this.repository.readme = result.data;
+            this.fetched = true;
+            if (callback) { callback(null, this.repository); }
+        },
+        _defaultFetchCallParams: function() {
+            /* Update the default params as we don't want a json response, but
+             * the full readme in its html version to use it directly
+             */
+            var params = ReadmeFetcher.__super__._defaultFetchCallParams.call(this);
+            params.dataType = 'html';
+            params.headers = $.extend({}, params.headers || {}, {
+                Accept: 'application/vnd.github.html+json',
+                'Content-Type': 'text/html'
+            });
+            return params;
+        }
+    }); // ReadmeFetcher
+
+    Collection._RepositoriesList = Collection._Base.extend({
+        /* Base class representing a collection of Gh3.Repository objects
+         */
+        _prepareItem: function(item) {
+            /* Simply create a Gh3.Repository with raw data from the api
+             */
+            var owner = new Gh3.User(item.owner.login, item.owner);
+            return new Gh3.Repository(item.name, owner, item);
+        }
+    });
+    Collection.UserRepositories = Collection._RepositoriesList.extend({
+        /* List of a user's repositories
+         */
+        _service: function() { return this.parent._service() + "/repos"; }
+    });
+    Collection.UserStarredRepositories = Collection._RepositoriesList.extend({
+        /* List of a user's starred repositories
+         */
+        _service: function() { return this.parent._service() + "/starred"; }
+    });
+    Collection.RepositoryForks = Collection._RepositoriesList.extend({
+        /* List of a repsitory's forks
+         */
+        _service: function() { return this.parent._service() + "/forks"; }
+    });
+
+
+    /* Search */
+
+    Collection.Search = Collection._Base.extend({
+        /* Base collection to manage search. Accept a keyword as init argument
+         * but provides a search method to set the keywork and fetch data in a
+         * single call.
+         * Used by Gh3.Repository.Search and Gh3.User.Search.
+         */
+        constructor: function(keyword) {
+            /* Save the optional given keyword
+             */
+            this.keyword = keyword || null;
+            Collection.Search.__super__.constructor.call(this, null);
+        },
+        search: function(keyword, callback, querystring_args) {
+            /* Simple method that reset the list, set the keyword to search and
+             * call the fetch method
+             */
+            this.list = [];
+            this.keyword = keyword;
+            this.fetch(callback, querystring_args);
+        }
+    }); // Collection.Search
+
+    Gh3.Repository.Search = Collection.Search.extend({
+        _service: function() {
+            return "legacy/repos/search/" + this.keyword;
+        },
+        _prepareItem: function(item) {
+            /* Create a Gh3.Repository with raw data from the api.
+             */
+            // Owner is not an object, we just have the login in the main object
+            var owner = new Gh3.User(item.owner);
+            delete item.owner;
+            delete item.username;
+            return new Gh3.Repository(item.name, owner, item);
+        },
+        _onFetchSuccess: function(callback, result) {
+            /* Called when a fetch is successful to save the repositories from
+             * the result
+             */
+            this.fetched = true;
+            this._setItems(result.data.repositories);
+            if (callback) { callback(null, this); }
+        }
+    }); // Collection.RepositorySearch
+
+    Gh3.User.Search = Collection.Search.extend({
+        _service: function() {
+            return "legacy/user/search/" + this.keyword;
+        },
+        _prepareItem: function(item) {
+            /* Simply create a Gh3.User with raw data from the api
+             */
+            return new Gh3.User(item.login, item);
+        },
+        getByLogin: function(login) {
+            /* A wrapper arround getBy to quickly get an item based on its
+             * login
+             */
+            return this.getBy('login', login);
+        },
+        _onFetchSuccess: function(callback, result) {
+            /* Called when a fetch is successful to save the users from
+             * the result
+             */
+            this.fetched = true;
+            this._setItems(result.data.users);
+            if (callback) { callback(null, this); }
+        }
+    }); // Collection.UserSearch
 
 
 }).call(this);

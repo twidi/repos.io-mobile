@@ -32,7 +32,7 @@
             }
         },
 
-        fetch: function(type, success, failure, fail_if_404) {
+        fetch: function(type, success, failure, fail_if_404, params) {
             var that = this;
             that.provider['get_' + that.$class.model_name + '_' + type](that.ref, function(err, data) {
                 if (err && err.status == 404 && !fail_if_404) {
@@ -40,11 +40,37 @@
                     err = null;
                 }
                 if (err) {
-                    failure(err);
+                    if (failure) { failure(err); }
                 } else {
-                    success(data);
+                    if (success) { success(data); }
                 }
-            });
+            }, params);
+        },
+
+        fetch_all: function(type, page_success, success, failure, params) {
+            var that = this,
+                error = null,
+                end = false,
+                all_data = [],
+                options = $.extend({}, params || {}, {page: 0}),
+                one_fetch_success = function(data) {
+                    if (!data || !data.length) {
+                        // we're done
+                        if (success) { success(all_data); }
+                    } else {
+                        // ask for another page (async)
+                        one_fetch();
+                        // add new fetched data
+                        all_data = all_data.concat(data);
+                        // launch the one page callback
+                        if (page_success) { page_success(data, options.page); }
+                    }
+                },
+                one_fetch = function() {
+                    options.page += 1;
+                    that.fetch(type, one_fetch_success, failure, false, options);
+                };
+            one_fetch();
         },
 
         fetch_full: function(type, callback, force) {

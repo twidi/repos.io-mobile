@@ -1,5 +1,5 @@
 var Reposio = {};
 $(document).ready(function() {
-    var controller = new Reposio.Controller();
-    controller.init();
+    Reposio.controller = new Reposio.Controller();
+    Reposio.controller.init();
 });

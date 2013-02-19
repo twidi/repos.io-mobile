@@ -220,6 +220,39 @@
     </div>
 
     <div data-template-for="account_repositories">
+
+        <div data-role="collapsible" data-corners="false" data-theme="e" data-content-theme="c" data-inset="false" data-mini="true" class="view-options"> 
+            <h3>Options and filters</h3>
+            <form id="account_repositories_options" data-ajax="false">
+                <div class="radio-fieldsets">
+                    <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label ui-with-radio-legend">
+                        <legend>Type: </legend>
+                        <label><input type="radio" name="account_repositories_options_type" id="account_repositories_options_type__label" value="__label__" disabled="disabled" data-theme="a" />Type: </label>
+                        <label><input type="radio" name="account_repositories_options_type" id="account_repositories_options_type_all" value="all" checked="checked" />All</label>
+                        <label><input type="radio" name="account_repositories_options_type" id="account_repositories_options_type_owner" value="owner" />Owner</label>
+                        <label><input type="radio" name="account_repositories_options_type" id="account_repositories_options_type_member" value="member" />Member</label>
+                    </fieldset>
+                    <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label ui-with-radio-legend ui-with-lot-of-radios"> 
+                        <legend>Sort: </legend>
+                        <label><input type="radio" name="account_repositories_options_sort" id="account_repositories_options_sort__label" value="__label__" disabled="disabled" data-theme="a" />Sort: </label>
+                        <label><input type="radio" name="account_repositories_options_sort" id="account_repositories_options_sort_created" value="created" />Created</label>
+                        <label><input type="radio" name="account_repositories_options_sort" id="account_repositories_options_sort_updated" value="updated" />Updated</label>
+                        <label><input type="radio" name="account_repositories_options_sort" id="account_repositories_options_sort_pushed" value="pushed" checked="checked" />Pushed</label>
+                        <label><input type="radio" name="account_repositories_options_sort" id="account_repositories_options_sort_name" value="full_name" />Name</label>
+                    </fieldset>
+                    <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label ui-with-radio-legend">
+                        <legend>Direction: </legend>
+                        <label><input type="radio" name="account_repositories_options_direction" id="account_repositories_options_direction__label" value="__label__" disabled="disabled" data-theme="a" />Direction: </label>
+                        <label><input type="radio" name="account_repositories_options_direction" id="account_repositories_options_direction_asc" value="asc" />Asc</label>
+                        <label><input type="radio" name="account_repositories_options_direction" id="account_repositories_options_direction_desc" value="desc" checked="checked" />Desc</label>
+                    </fieldset>
+                </div>
+                <fieldset class="buttons">
+                    <button type="reset" data-mini="true" data-theme="c" data-icon="delete" data-inline="true" name="reset" value="reset-value">Default</button>
+                    <button type="submit" data-mini="true" data-theme="b" data-icon="check" data-inline="true" name="submit" value="submit-value">Update</button>
+                </fieldset>
+            </form>
+        </div>
         <ul data-role='listview' class='repos-list'>
         </ul>
     </div>

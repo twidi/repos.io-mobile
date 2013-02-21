@@ -49,13 +49,13 @@
         } else {
             this.display.nodes[type][full_name].refresh_control.addClass('ui-disabled');
             this.display.reset_view(full_name);
-            this[type].fetch_full(fetch_type, render, force);
+            this[type].fetch_full(fetch_type, render, {}, force);
         }
     };
 
-    Controller.prototype.fetch_full_error = function(error, obj, fetch_type, original_callback) {
+    Controller.prototype.fetch_full_error = function(error, obj, fetch_type, original_callback, original_params, original_force) {
         if (this.display.confirm_new_fech_full(error)) {
-            obj.fetch_full(fetch_type, original_callback);
+            obj.fetch_full(fetch_type, original_callback, original_params, original_force);
         }
     };
 

@@ -28,11 +28,19 @@
 
             // create fields
             for (var field_name in this.__classvars__.fields) {
-                this[field_name] = null;
+                if (this.__classvars__.fields[field_name] instanceof Array) {
+                    this[field_name] = {};
+                } else {
+                    this[field_name] = null;
+                }
             }
         },
 
-        fetch: function(type, success, failure, fail_if_404, params) {
+        get_list: function(type, options) {
+            return this[type][$.param(options)];
+        },
+
+        fetch: function(type, success, failure, params, fail_if_404) {
             var that = this;
             that.provider['get_' + that.$class.model_name + '_' + type](that.ref, function(err, data) {
                 if (err && err.status == 404 && !fail_if_404) {
@@ -68,28 +76,48 @@
                 },
                 one_fetch = function() {
                     options.page += 1;
-                    that.fetch(type, one_fetch_success, failure, false, options);
+                    that.fetch(type, one_fetch_success, failure, options);
                 };
             one_fetch();
         },
 
-        fetch_full: function(type, callback, force) {
-            var that = this;
+        fetched: function(type, params) {
+            if (this.$class.fields[type] instanceof Array) {
+                return (typeof this[type][params] != 'undefined');
+            } else {
+                return (this[type] !== null);
+            }
+        },
+
+        fetch_full: function(type, callback, params, force) {
+            var that = this,
+                is_list = (that.$class.fields[type] instanceof Array),
+                str_params;
+
+            params = params || {};
+            str_params = $.param(params);
+
             if (type != 'details' && !that.details) {
                 that.fetch_full('details', function() {
-                    that.fetch_full(type, callback);
+                    that.fetch_full(type, callback, params, force);
                 });
                 return;
             }
-            if (that[type] === null || force) {
+
+            if (force || !that.fetched(type, str_params)) {
                 that.fetch(type,
                     function(data) {  // success
-                        that[type] = data;
+                        if (is_list) {
+                            that[type][str_params] = data;
+                        } else {
+                            that[type] = data;
+                        }
                         callback();
                     },
                     function(err) {  // failure
-                        that.controller.fetch_full_error(err, that, type, callback);
+                        that.controller.fetch_full_error(err, that, type, callback, params, force);
                     },
+                    params,
                     'fail_if_404'
                 );
             } else {

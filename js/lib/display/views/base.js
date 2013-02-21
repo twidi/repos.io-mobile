@@ -46,6 +46,11 @@
         // provide a "data_field" in __classvars__ to know which field of the
         // object to use as data (or override get_data)
 
+        __init__: function(display) {
+            this.$super(display);
+            this.options = {};
+        },
+
         cache_nodes: function() {
             this.$super();
             this.cache.list = this.container.children('ul');
@@ -68,7 +73,7 @@
         },
 
         get_data: function(obj) {
-            return obj[this.$class.data_field];
+            return obj.get_list(this.$class.data_field, this.options);
         },
 
         get_items: function(obj) {

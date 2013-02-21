@@ -19,6 +19,12 @@
             this.display = display;
             this.cache = null;
             this.container = null;
+            this.init_events();
+            this.page = this.display.nodes[this.__classvars__.model][this.__classvars__.view_name].page;
+            this.accept_options = this.__classvars__.accept_options;
+        },
+
+        init_events: function() {
         },
 
         cache_nodes: function() {
@@ -57,6 +63,9 @@
         },
 
         reset: function() {
+            if (!this.page.data('mobile-page')) {
+                this.page.page();
+            }
             var nodes = this.nodes();
             nodes.list.empty();
         },
@@ -78,6 +87,43 @@
 
         get_items: function(obj) {
             // return some "li"s
+        },
+        options_form: function() {
+            if (!this._options_form) {
+                this._options_form = $('#' + this.$class.view_name + '_options');
+            }
+            return this._options_form;
+        },
+        save_options: function() {
+            var fields = this.options_form().serializeArray(),
+                name, dict = {}, sorted_names = [], sorted_dict = {};
+            for (var i=0; i<fields.length; i++) {
+                name = fields[i].name.replace(this.$class.view_name + '_options_', '');
+                if (name == 'submit') { continue; }
+                sorted_names.push(name);
+                dict[name] = fields[i].value;
+            }
+            sorted_names.sort();
+            for (var j=0; j<sorted_names.length; j++) {
+                sorted_dict[sorted_names[j]] = dict[sorted_names[j]];
+            }
+            this.options = sorted_dict;
+            return this.options;
+        },
+        init_events: function() {
+            var view = this,
+                on_submit = function(ev) {
+                    ev.preventDefault();
+                    ev.stopPropagation();
+                    var url = $.mobile.activePage.data('url'),
+                        parts = url.split('_'),
+                        type = parts[0],
+                        page = parts[1];
+                    $.mobile.loading('show');
+                    view.display.on_page_before_load(type, view.display.controller[type].id, page);
+                    return false;
+                };
+            $(document).on('submit', '#' + this.__classvars__.view_name + '_options', on_submit);
         }
 
     });

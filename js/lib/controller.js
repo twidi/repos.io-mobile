@@ -29,30 +29,6 @@
 
     };
 
-    Controller.prototype.on_page_before_load = function(type, obj_id, page_name, force) {
-        obj_id = obj_id.replace(':', '/');
-        var that = this,
-            changed = this.set_current_object(type, obj_id),
-            obj = this[type],
-            full_name = type + '_' + page_name,
-            render = function() {
-                that.display['update_' + type + '_navbar'](obj);
-                that.display.render_page(type, page_name, obj, force);
-            },
-            fetch_type = this.mapping[type][page_name],
-            page = $('#' + full_name);
-
-        $('.current_page, .page_loaded').removeClass('current_page, page_loaded');
-        page.addClass('current_page');
-        if (!force && this.display.is_page_for(page, obj)) {
-            this.display.post_render_page(page, type, full_name);
-        } else {
-            this.display.nodes[type][full_name].refresh_control.addClass('ui-disabled');
-            this.display.reset_view(full_name);
-            this[type].fetch_full(fetch_type, render, {}, force);
-        }
-    };
-
     Controller.prototype.fetch_full_error = function(error, obj, fetch_type, original_callback, original_params, original_force) {
         if (this.display.confirm_new_fech_full(error)) {
             obj.fetch_full(fetch_type, original_callback, original_params, original_force);

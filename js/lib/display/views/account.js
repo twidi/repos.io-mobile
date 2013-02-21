@@ -126,7 +126,8 @@
         __classvars__: {
             model: 'account',
             view_name: 'account_repositories',
-            data_field: 'repositories'
+            data_field: 'repositories',
+            accept_options: true
         }
     });
 

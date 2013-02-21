@@ -228,7 +228,7 @@
                 type = parts[0],
                 page = parts[1];
             $.mobile.loading('show');
-            that.controller.on_page_before_load(type, that.controller[type].id, page, 'force');
+            that.on_page_before_load(type, that.controller[type].id, page, 'force');
             that.nodes[type][url].main_menu.popup('close');
         });
         if (screenfull.enabled) {
@@ -276,7 +276,7 @@
 
         if (page_ok) {
             $.mobile.loading('show');
-            this.controller.on_page_before_load(type, obj, page);
+            this.on_page_before_load(type, obj, page);
         } else if (type || !$(url.hash).length) {
             $.mobile.changePage($('#home'));
             e.preventDefault();
@@ -296,12 +296,41 @@
         return false;
     };
 
-    Display.prototype.reset_view = function(name) {
-        var page = $('#' + name);
-        if (!page.data('mobile-page')) {
-            page.page();
+    Display.prototype.is_view_for = function(view, obj, options) {
+        if (!this.is_page_for(view.page, obj)) { return false; }
+        if (view.accept_options && view.page.data('current-options') != $.param(options)) {
+            return false;
         }
-        App.View.get(name, this).reset();
+        return true;
+    };
+
+    Display.prototype.on_page_before_load = function(type, obj_id, page_name, force) {
+        obj_id = obj_id.replace(':', '/');
+        var that = this,
+            changed = this.controller.set_current_object(type, obj_id),
+            obj = this.controller[type],
+            full_name = type + '_' + page_name,
+            fetch_type = this.controller.mapping[type][page_name],
+            view = App.View.get(full_name, this),
+            page = view.page,
+            options = view.accept_options ? view.save_options() : {};
+
+        $('.current_page, .page_loaded').removeClass('current_page, page_loaded');
+        page.addClass('current_page');
+
+        if (!force && this.is_view_for(view, obj, options)) {
+            this.post_render_page(page, type, full_name);
+        } else {
+            this.nodes[type][full_name].refresh_control.addClass('ui-disabled');
+            view.reset();
+            if (view.accept_options) {
+                view.page.data('current-options', $.param(options));
+            }
+            obj.fetch_full(fetch_type, function() {
+                that['update_' + type + '_navbar'](obj);
+                that.render_page(type, page_name, obj, force);
+            }, options, force);
+        }
     };
 
     Display.prototype.update_view = function(name, obj, force) {

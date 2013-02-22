@@ -1,7 +1,7 @@
 (function(App) {
 
-    App.Display.prototype.pages.repository = [
-        { id: 'home', name: 'Details',  method: 'details' },
+    App.Display.prototype.pages_list.repository = [
+        { id: 'home', title: 'Details',  method: 'details' },
         { id: 'activity' },
         { id: 'contributors' },
         { id: 'forks', count: true },
@@ -11,17 +11,16 @@
     App.Display.prototype.change_repository = function() {
         $('.repository_forks-count').hide();
         $('.repository_stars-count').hide();
-        for (var page_name in this.nodes.repository) {
-            var links = this.nodes.repository[page_name].links;
-            for (var i=0; i<links.length; i++) {
-                var link = $(links[i]),
-                    href = '#' + page_name + '!repository=' + this.controller.repository.href_id;
-                link.attr('href', href);
 
+        for (var i=0; i<this.pages_list.repository.length; i++) {
+            var page = this.pages_list.repository[i];
+            for (var j=0; j<page.nodes.links.length; j++) {
+                page.nodes.links[j].href = '#' + page.id + '!repository=' + this.controller.repository.id;
             }
-            this.nodes.repository[page_name].header.html(this.controller.repository.id);
-            this.nodes.repository[page_name].page.removeData('current-for');
+            page.nodes.header.html(this.controller.repository.id + ' - ' + page.title);
+            page.nodes.page.removeData('current-for');
         }
+
     };
 
     App.Display.prototype.repository_link = function(full_name, repo_name, provider_name) {
@@ -74,8 +73,8 @@
         $('.repository_stars-count').html(repository.details ? repository.details.watchers_count : '?').show();
     };
 
-    App.Display.prototype.get_real_repository_page = function(page, repository) {
-        switch(page) {
+    App.Display.prototype.get_real_repository_page = function(page_name, repository) {
+        switch(page_name) {
             case 'home':
             case 'activity':
                 return 'https://github.com/' + repository.path;

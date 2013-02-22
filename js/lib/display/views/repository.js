@@ -10,7 +10,7 @@
         cache_nodes: function() {
             this.$super();
 
-            var nodes = this.cache;
+            var nodes = this.nodes_cache;
 
             var main = this.container.children('.repo-main').children('li');
             nodes.provider = main.children('p.provider');
@@ -37,6 +37,8 @@
         },
 
         reset: function() {
+            this.$super();
+
             var nodes = this.nodes();
 
             nodes.name.html('loading...');

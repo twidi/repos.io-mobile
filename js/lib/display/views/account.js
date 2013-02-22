@@ -10,7 +10,7 @@
         cache_nodes: function() {
             this.$super();
 
-            var nodes = this.cache;
+            var nodes = this.nodes_cache;
 
             var main = this.container.children('.account-main').children();
             nodes.avatar = main.children('img');
@@ -44,6 +44,8 @@
         },
 
         reset: function() {
+            this.$super();
+
             var nodes = this.nodes();
 
             nodes.username.html('loading...');

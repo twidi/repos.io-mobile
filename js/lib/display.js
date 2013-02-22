@@ -8,12 +8,18 @@
     Display.prototype.init = function() {
         this.templates_container = $('#templates');
 
-        for (var obj_type in this.pages) {
-            this.construct_pages(obj_type, this.pages[obj_type]);
+
+        for (var obj_type in this.pages_list) {
+            this.construct_pages(obj_type, this.pages_list[obj_type]);
         }
 
         $('body > p.loading').remove();
         $('html').removeClass('loading');
+
+        $.mobile.initializePage();
+
+        // not done automatically anymore ??
+        $('div[data-role=page]:not(.ui-page').page();
 
         this.init_events();
     };
@@ -31,20 +37,18 @@
 
     Display.prototype.nodes = {};
     Display.prototype.templates = {};
-    Display.prototype.all_pages = {};
-    Display.prototype.pages = {};
+    Display.prototype.pages_list = {};  // to define pages in display/*.js
+    Display.prototype.pages = {};  // to hold all final pages
 
     Display.prototype.construct_pages = function(type, pages) {
 
-        this.controller.mapping[type] = {};
-        this.all_pages[type] = [];
-
         for (var l=0; l<pages.length; l++) {
             var page = pages[l];
-            if (!page.name) { page.name = page.id[0].toUpperCase() + page.id.slice(1); }
-            if (!page.method) { page.method = page.id; }
-            this.controller.mapping[type][page.id] = page.method;
-            this.all_pages[type].push(page.id);
+            page.name = page.id;  // name will be the right part, ie "home"
+            page.id = type + '_' + page.name;  // id will be the full name, ie "account_home"
+            page.type = type;
+            if (!page.title) { page.title = page.name[0].toUpperCase() + page.name.slice(1); }
+            if (!page.method) { page.method = page.name; }
         }
 
         var all_markup = '';
@@ -52,7 +56,6 @@
 
         for (var i=0; i<pages.length; i++) {
             var cur_page = pages[i],
-                id_page  = type + '_' + cur_page.id,
                 markup = '',
                 navbar_pages = [];
 
@@ -64,26 +67,26 @@
                 navbar_pages = pages;
             }
 
-            markup = '<div data-role="page" id="' + id_page + '">';
+            markup = '<div data-role="page" id="' + cur_page.id + '">';
 
                 markup += '<div data-role="header" data-id="' + type + '_pages" data-position="fixed" data-theme="a">';
                     markup += '<h3></h3>';
-                    markup += '<a href="#main_menu_' + id_page + '" data-icon="gear" data-iconpos="notext" data-rel="popup" class="ui-btn-right">Options</a>';
+                    markup += '<a href="#main_menu_' + cur_page.id + '" data-icon="gear" data-iconpos="notext" data-rel="popup" class="ui-btn-right">Options</a>';
                     markup += '<div data-role="navbar">';
                         markup += '<ul' + (extended_navbar ? ' class="extended"' : '') + '>';
                         for (var j=0; j<navbar_pages.length; j++) {
                             var navbar_page = navbar_pages[j];
                             markup += '<li>';
-                                markup += '<a href="#' + type + '_' + navbar_page.id + '"' + (j < i ?  ' data-direction="reverse"' : '') + ' class="' + (navbar_page.id == cur_page.id ? 'ui-btn-active ui-state-persist ' : '') + type + '_' + navbar_page.id + '-link">';
-                                    markup += navbar_page.name;
+                                markup += '<a href="#' + navbar_page.id + '"' + (j < i ?  ' data-direction="reverse"' : '') + ' class="' + (navbar_page.name == cur_page.name ? 'ui-btn-active ui-state-persist ' : '') + navbar_page.id + '-link">';
+                                    markup += navbar_page.title;
                                     if (navbar_page.count) {
-                                        markup += '<span class="' + type + '_' + navbar_page.id + '-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span>';
+                                        markup += '<span class="' + navbar_page.id + '-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span>';
                                     }
                                 markup += '</a>';
                             markup += '</li>';
                         }
                         if (extended_navbar) {
-                            markup += '<li><a data-rel="popup" href="#menu_' + id_page + '">...</a>';
+                            markup += '<li><a data-rel="popup" href="#menu_' + cur_page.id + '">...</a>';
                         }
                         markup += '</ul>';
                     markup += '</div>';
@@ -92,16 +95,16 @@
                 markup += '<div data-role="content"></div>';
 
                 if (extended_navbar) {
-                    markup += '<div data-role="popup" id="menu_' + id_page + '" data-theme="a" class="nav-menu">';
+                    markup += '<div data-role="popup" id="menu_' + cur_page.id + '" data-theme="a" class="nav-menu">';
                         markup += '<ul data-role="listview" data-inset="true" data-theme="a">';
 
                         for (var k=0; k<pages.length; k++) {
                             var ext_page = pages[k];
                             markup += '<li>';
-                                markup += '<a href="#' + type + '_' + ext_page.id + '" class="' + (ext_page.id == cur_page.id ? 'ui-btn-active ': '') + type + '_' + ext_page.id + '-link">';
-                                    markup += ext_page.name;
+                                markup += '<a href="#' + ext_page.id + '" class="' + (ext_page.name == cur_page.name ? 'ui-btn-active ': '') + ext_page.id + '-link">';
+                                    markup += ext_page.title;
                                     if (ext_page.count) {
-                                        markup += '<span class="' + type + '_' + ext_page.id + '-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span>';
+                                        markup += '<span class="' + ext_page.id + '-count ui-li-count ui-btn-up-c ui-btn-corner-all">?</span>';
                                     }
                                 markup += '</a>';
                             markup += '</li>';
@@ -111,10 +114,10 @@
                     markup += '</div>';
                 }
 
-                markup += '<div data-role="popup" id="main_menu_' + id_page + '" data-theme="a" class="main-nav-menu">';
+                markup += '<div data-role="popup" id="main_menu_' + cur_page.id + '" data-theme="a" class="main-nav-menu">';
                     markup += '<div data-role="controlgroup" data-theme="a" >';
                         markup += '<a href="/" data-role="button" data-icon="home" data-rel="home" data-theme="a">Home</a>';
-                        markup += '<label><input type="checkbox" name="fullscreen" class="fullscreen-control" id="fullscreen-' + id_page + '" data-theme="a"/>Full screen</label>';
+                        markup += '<label><input type="checkbox" name="fullscreen" class="fullscreen-control" id="fullscreen-' + cur_page.id + '" data-theme="a"/>Full screen</label>';
                         markup += '<a href="#" data-role="button" data-icon="refresh" class="refresh-control" data-theme="a">Refresh</a>';
                         markup += '<a href="#" data-role="button" data-icon="arrow-r" class="go-button" data-theme="a">View on <span class="provider"></span></a>';
                     markup += '</div>';
@@ -128,17 +131,15 @@
 
         $('body').append(all_markup);
 
-        this.nodes[type] = {};
-        for (var m=0; m<this.pages[type].length; m++) {
-            var final_page = this.pages[type][m],
-                full_page_name = type + '_' + final_page.id,
-                page_node = $('#' + full_page_name),
-                main_menu = $('#main_menu_' + full_page_name),
-                template = this.templates_container.children('div[data-template-for='+full_page_name+']');
+        for (var m=0; m<pages.length; m++) {
+            var final_page = pages[m],
+                page_node = $('#' + final_page.id),
+                main_menu = $('#main_menu_' + final_page.id),
+                template = this.templates_container.children('div[data-template-for=' + final_page.id + ']');
 
             // cache some page nodes
-            this.nodes[type][full_page_name] = {
-                links: $('a.' + full_page_name + '-link'),
+            final_page.nodes = {
+                links: $('a.' + final_page.id + '-link'),
                 page: page_node,
                 header: page_node.find(':jqmData(role=header)').find('h3'),
                 content: page_node.children(":jqmData(role=content)"),
@@ -149,13 +150,15 @@
 
             // insert page content
             if (template.length) {
-                this.nodes[type][full_page_name].content.prepend(template.children());
+                final_page.nodes.content.prepend(template.children());
                 template.remove();
             }
 
-        }
+            this.pages[final_page.id] = final_page;
 
-    };
+        } // for
+
+    }; // construct_pages
 
     Display.prototype.init_events = function() {
         var that = this;
@@ -176,12 +179,9 @@
                 $.mobile.loading('show');
             }
             try {
-                var url = data.toPage.data('url'),
-                    parts = url.split('_'),
-                    type = parts[0],
-                    page = parts[1],
-                    go_button = that.nodes[type][url].go_button,
-                    real_url = that['get_real_' + type + '_page'](page, that.controller[type]);
+                var page = that.pages[data.toPage.data('url')],
+                    go_button = page.nodes.go_button,
+                    real_url = that['get_real_' + page.type + '_page'](page.name, that.controller[page.type]);
                 go_button.toggleClass('ui-disabled', !real_url);
                 go_button.attr('href', real_url || '');
             } catch(ex) {}
@@ -189,7 +189,7 @@
         $('.nav-menu').on("popupafterclose", function() {
             // restore previous active link in navbar when closing popup menu
             var menu = $(this),
-                link = $(this).find('a.ui-btn-active'),
+                link = menu.find('a.ui-btn-active'),
                 href, parent;
             if (link.length) {
                 parent = menu.parents('.ui-page');
@@ -205,7 +205,7 @@
             e.stopPropagation();
             var link = $(this),
                 collapsible = link.data('collapsible'),
-                opened =link.data('opened') || false;
+                opened = link.data('opened') || false;
             if (!collapsible) {
                 collapsible =  link.parents('li').find('.ui-collapsible');
                 link.data('collapsible', collapsible);
@@ -223,13 +223,10 @@
         $(document).on('click', '.refresh-control', function(e) {
             e.preventDefault();
             e.stopPropagation();
-            var url = $.mobile.activePage.data('url'),
-                parts = url.split('_'),
-                type = parts[0],
-                page = parts[1];
+            var page = that.pages[$.mobile.activePage.data('url')];
             $.mobile.loading('show');
-            that.on_page_before_load(type, that.controller[type].id, page, 'force');
-            that.nodes[type][url].main_menu.popup('close');
+            that.on_page_before_load(page.id, that.controller[page.type].id, 'force');
+            page.nodes.main_menu.popup('close');
         });
         if (screenfull.enabled) {
             $(document).on('change', '.fullscreen-control', function(e) {
@@ -245,111 +242,98 @@
     };
 
     Display.prototype.update_fullscreen_control = function() {
-        $('.fullscreen-control').attr("checked", screenfull.isFullscreen).each(function() {
-            try {
-                $(this).checkboxradio("refresh");
-            } catch(ex) {}
-        });
+        $('.fullscreen-control')
+            .attr("checked", screenfull.isFullscreen)
+            .each(function() {
+                    try {
+                        $(this).checkboxradio("refresh");
+                    } catch(ex) {}
+            });
     };
 
     Display.prototype.on_before_page_change = function(e, data) {
         var url = $.mobile.path.parseUrl(data.toPage),
-            page_ok = false,
-            page, type, obj;
+            page_id, page;
 
         if (url.hash && data.options) {
-            page = url.hash.slice(1);
-            for (var obj_type in this.pages) {
-                if (page.indexOf(obj_type + '_') === 0) {
-                    type = obj_type;
-                    break;
-                }
-            }
-            if (type && data.options.pageData && data.options.pageData[type]) {
-                page = page.slice(type.length+1);
-                if (this.all_pages[type].indexOf(page) !== -1) {
-                    obj = data.options.pageData[type];
-                    page_ok = true;
+            page_id = url.hash.slice(1);
+
+            if (this.pages[page_id]) {
+                page = this.pages[page_id];
+                if (data.options.pageData && data.options.pageData[page.type]) {
+                    $.mobile.loading('show');
+                    this.on_page_before_load(page.id, data.options.pageData[page.type]);
+                    return;
                 }
             }
         }
 
-        if (page_ok) {
-            $.mobile.loading('show');
-            this.on_page_before_load(type, obj, page);
-        } else if (type || !$(url.hash).length) {
+        if (page || !$(url.hash).length) {
             $.mobile.changePage($('#home'));
             e.preventDefault();
         }
+
     };
 
-    Display.prototype.is_current_page = function(page, obj) {
-        if (!page.hasClass('current_page')) { return false ;}
-        var current_for = page.data('current-for');
+    Display.prototype.is_current_page = function(page_id, obj) {
+        var page_node = this.pages[page_id].nodes.page;
+        if (!page_node.hasClass('current_page')) { return false ;}
+        var current_for = page_node.data('current-for');
         if (current_for && current_for != obj.id) { return false; }
         return true;
     };
 
-    Display.prototype.is_page_for = function(page, obj) {
-        var current_for = page.data('current-for');
-        if (current_for && current_for == obj.id) { return true; }
-        return false;
-    };
-
     Display.prototype.is_view_for = function(view, obj, options) {
-        if (!this.is_page_for(view.page, obj)) { return false; }
-        if (view.accept_options && view.page.data('current-options') != $.param(options)) {
+        var page_node = view.page.nodes.page,
+            current_for = page_node.data('current-for');
+        if (!current_for || current_for != obj.id) { return false; }
+        if (view.accept_options && page_node.data('current-options') != $.param(options)) {
             return false;
         }
         return true;
     };
 
-    Display.prototype.on_page_before_load = function(type, obj_id, page_name, force) {
+    Display.prototype.on_page_before_load = function(page_id, obj_id, force) {
         obj_id = obj_id.replace(':', '/');
         var that = this,
-            changed = this.controller.set_current_object(type, obj_id),
-            obj = this.controller[type],
-            full_name = type + '_' + page_name,
-            fetch_type = this.controller.mapping[type][page_name],
-            view = App.View.get(full_name, this),
-            page = view.page,
+            page = this.pages[page_id],
+            changed = this.controller.set_current_object(page.type, obj_id),
+            obj = this.controller[page.type],
+            view = App.View.get(page_id, this),
+            page_node = view.page.nodes.page,
             options = view.accept_options ? view.save_options() : {};
 
         $('.current_page, .page_loaded').removeClass('current_page, page_loaded');
-        page.addClass('current_page');
+        page_node.addClass('current_page');
 
         if (!force && this.is_view_for(view, obj, options)) {
-            this.post_render_page(page, type, full_name);
+            this.post_render_page(page_id);
         } else {
-            this.nodes[type][full_name].refresh_control.addClass('ui-disabled');
+            page.nodes.refresh_control.addClass('ui-disabled');
             view.reset();
             if (view.accept_options) {
-                view.page.data('current-options', $.param(options));
+                page_node.data('current-options', $.param(options));
             }
-            obj.fetch_full(fetch_type, function() {
-                that['update_' + type + '_navbar'](obj);
-                that.render_page(type, page_name, obj, force);
+            obj.fetch_full(page.method, function() {
+                that['update_' + page.type + '_navbar'](obj);
+                that.render_page(page_id, obj, force);
             }, options, force);
         }
     };
 
-    Display.prototype.update_view = function(name, obj, force) {
-        App.View.get(name, this).update(obj, force);
+    Display.prototype.render_page = function(page_id, obj, force) {
+        var page = this.pages[page_id];
+        if (!this.is_current_page(page_id, obj)) { return; }
+        App.View.get(page_id, this).update(obj, force);
+        page.nodes.page.data('current-for', obj.id);
+        this.post_render_page(page_id);
     };
 
-    Display.prototype.render_page = function(type, name, obj, force) {
-        var full_name = type + '_' + name,
-            page = $('#' + full_name);
-        if (!this.is_current_page(page, obj)) { return; }
-        this.update_view(full_name, obj, force);
-        page.data('current-for', obj.id);
-        this.post_render_page(page, type, full_name);
-    };
-
-    Display.prototype.post_render_page = function(page, type, full_name) {
+    Display.prototype.post_render_page = function(page_id) {
+        var page = this.pages[page_id];
         $.mobile.loading('hide');
-        page.addClass('page_loaded');
-        this.nodes[type][full_name].refresh_control.removeClass('ui-disabled ui-btn-active');
+        page.nodes.page.addClass('page_loaded');
+        page.nodes.refresh_control.removeClass('ui-disabled ui-btn-active');
     };
 
     Display.prototype.render_widgets = function(node) {

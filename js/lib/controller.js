@@ -11,8 +11,6 @@
         this.display = new App.Display(this);
     };
 
-    Controller.prototype.mapping = {};
-
     Controller.prototype.init = function() {
         this.display.init();
         this.init_events();

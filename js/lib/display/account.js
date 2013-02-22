@@ -1,8 +1,8 @@
 (function(App) {
 
-    App.Display.prototype.pages.account = [
-        { id: 'home', name: 'Details',  method: 'details' },
-        { id: 'repositories', name: 'Repos', count: true },
+    App.Display.prototype.pages_list.account = [
+        { id: 'home', title: 'Details',  method: 'details' },
+        { id: 'repositories', title: 'Repos', count: true },
         { id: 'activity', method: 'own_events' },
         { id: 'members', method: 'org_members' },
         { id: 'stars' },
@@ -15,16 +15,14 @@
         $('.account_repositories-count').hide();
         $('.account_followers-count').hide();
         $('.account_following-count').hide();
-        for (var page_name in this.nodes.account) {
-            var links = this.nodes.account[page_name].links;
-            for (var i=0; i<links.length; i++) {
-                var link = $(links[i]),
-                    href = '#' + page_name + '!account=' + this.controller.account.id;
-                link.attr('href', href);
 
+        for (var i=0; i<this.pages_list.account.length; i++) {
+            var page = this.pages_list.account[i];
+            for (var j=0; j<page.nodes.links.length; j++) {
+                page.nodes.links[j].href = '#' + page.id + '!account=' + this.controller.account.id;
             }
-            this.nodes.account[page_name].header.html(this.controller.account.id);
-            this.nodes.account[page_name].page.removeData('current-for');
+            page.nodes.header.html(this.controller.account.id + ' - ' + page.title);
+            page.nodes.page.removeData('current-for');
         }
     };
 
@@ -67,9 +65,9 @@
         $('.account_following-count').html(account.details ? account.details.following : '?').show();
     };
 
-    App.Display.prototype.get_real_account_page = function(page, account) {
+    App.Display.prototype.get_real_account_page = function(page_name, account) {
         var is_org = (account.details && account.details.type.toLowerCase() == 'organization');
-        switch(page) {
+        switch(page_name) {
             case 'home':
                 return 'https://github.com/' + account.username;
             case 'repositories':

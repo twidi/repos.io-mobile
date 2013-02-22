@@ -6,21 +6,21 @@
             model: null,
             view_name: null,
             views: {},
-            cache: {},
+            views_cache: {},
             get: function(name, display) {
-                if (!this.cache[name]) {
-                    this.cache[name] = new this.views[name](display);
+                if (!this.views_cache[name]) {
+                    this.views_cache[name] = new this.views[name](display);
                 }
-                return this.cache[name];
+                return this.views_cache[name];
             }
         },
 
         __init__: function(display) {
             this.display = display;
-            this.cache = null;
+            this.nodes_cache = null;
             this.container = null;
             this.init_events();
-            this.page = this.display.nodes[this.__classvars__.model][this.__classvars__.view_name].page;
+            this.page = this.display.pages[this.__classvars__.view_name];
             this.accept_options = this.__classvars__.accept_options;
         },
 
@@ -28,18 +28,21 @@
         },
 
         cache_nodes: function() {
-            this.container = this.display.nodes[this.$class.model][this.$class.view_name].content;
-            this.cache = {};
+            this.container = this.page.nodes.content;
+            this.nodes_cache = {};
         },
 
         nodes: function() {
-            if (!this.cache) {
+            if (!this.nodes_cache) {
                 this.cache_nodes();
             }
-            return this.cache;
+            return this.nodes_cache;
         },
 
         reset: function() {
+            if (!this.page.nodes.page.data('mobile-page')) {
+                this.page.nodes.page.page();
+            }
         },
 
         update: function(obj, force) {
@@ -59,13 +62,11 @@
 
         cache_nodes: function() {
             this.$super();
-            this.cache.list = this.container.children('ul');
+            this.nodes_cache.list = this.container.children('ul');
         },
 
         reset: function() {
-            if (!this.page.data('mobile-page')) {
-                this.page.page();
-            }
+            this.$super();
             var nodes = this.nodes();
             nodes.list.empty();
         },
@@ -115,12 +116,9 @@
                 on_submit = function(ev) {
                     ev.preventDefault();
                     ev.stopPropagation();
-                    var url = $.mobile.activePage.data('url'),
-                        parts = url.split('_'),
-                        type = parts[0],
-                        page = parts[1];
+                    var page = view.display.pages[$.mobile.activePage.data('url')];
                     $.mobile.loading('show');
-                    view.display.on_page_before_load(type, view.display.controller[type].id, page);
+                    view.display.on_page_before_load(page.id, view.display.controller[page.type].id);
                     return false;
                 };
             $(document).on('submit', '#' + this.__classvars__.view_name + '_options', on_submit);

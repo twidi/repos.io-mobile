@@ -7,20 +7,20 @@
             view_name: null,
             views: {},
             views_cache: {},
-            get: function(name, display) {
-                if (!this.views_cache[name]) {
-                    this.views_cache[name] = new this.views[name](display);
+            get: function(page, display) {
+                if (!this.views_cache[page.id]) {
+                    this.views_cache[page.id] = new this.views[page.id](page, display);
                 }
-                return this.views_cache[name];
+                return this.views_cache[page.id];
             }
         },
 
-        __init__: function(display) {
+        __init__: function(page, display) {
+            this.page = page;
             this.display = display;
             this.nodes_cache = null;
             this.container = null;
             this.init_events();
-            this.page = this.display.pages[this.__classvars__.view_name];
             this.accept_options = this.__classvars__.accept_options;
         },
 
@@ -40,8 +40,8 @@
         },
 
         reset: function() {
-            if (!this.page.nodes.page.data('mobile-page')) {
-                this.page.nodes.page.page();
+            if (!this.page.node.data('mobile-page')) {
+                this.page.node.page();
             }
         },
 
@@ -55,8 +55,8 @@
         // provide a "data_field" in __classvars__ to know which field of the
         // object to use as data (or override get_data)
 
-        __init__: function(display) {
-            this.$super(display);
+        __init__: function(page, display) {
+            this.$super(page, display);
             this.options = {};
         },
 
@@ -118,7 +118,7 @@
                     ev.stopPropagation();
                     var page = view.display.pages[$.mobile.activePage.data('url')];
                     $.mobile.loading('show');
-                    view.display.on_page_before_load(page.id, view.display.controller[page.type].id);
+                    view.display.ask_for_page(page.id, view.display.controller[page.type].id);
                     return false;
                 };
             $(document).on('submit', '#' + this.__classvars__.view_name + '_options', on_submit);

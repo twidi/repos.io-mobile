@@ -18,7 +18,7 @@
                 page.nodes.links[j].href = '#' + page.id + '!repository=' + this.controller.repository.id;
             }
             page.nodes.header.html(this.controller.repository.id + ' - ' + page.title);
-            page.nodes.page.removeData('current-for');
+            page.node.removeData('current-for');
         }
 
     };

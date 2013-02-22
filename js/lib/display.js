@@ -147,6 +147,7 @@
                 refresh_control: main_menu.find('.refresh-control'),
                 go_button: main_menu.find('.go-button')
             };
+            final_page.node = final_page.nodes.page;
 
             // insert page content
             if (template.length) {
@@ -154,6 +155,7 @@
                 template.remove();
             }
 
+            final_page.view = App.View.get(final_page, this);
             this.pages[final_page.id] = final_page;
 
         } // for
@@ -225,7 +227,7 @@
             e.stopPropagation();
             var page = that.pages[$.mobile.activePage.data('url')];
             $.mobile.loading('show');
-            that.on_page_before_load(page.id, that.controller[page.type].id, 'force');
+            that.ask_for_page(page.id, that.controller[page.type].id, 'force');
             page.nodes.main_menu.popup('close');
         });
         if (screenfull.enabled) {
@@ -262,7 +264,7 @@
                 page = this.pages[page_id];
                 if (data.options.pageData && data.options.pageData[page.type]) {
                     $.mobile.loading('show');
-                    this.on_page_before_load(page.id, data.options.pageData[page.type]);
+                    this.ask_for_page(page.id, data.options.pageData[page.type]);
                     return;
                 }
             }
@@ -276,43 +278,41 @@
     };
 
     Display.prototype.is_current_page = function(page_id, obj) {
-        var page_node = this.pages[page_id].nodes.page;
-        if (!page_node.hasClass('current_page')) { return false ;}
-        var current_for = page_node.data('current-for');
+        var page = this.pages[page_id];
+        if (!page.node.hasClass('current_page')) { return false ;}
+        var current_for = page.node.data('current-for');
         if (current_for && current_for != obj.id) { return false; }
         return true;
     };
 
-    Display.prototype.is_view_for = function(view, obj, options) {
-        var page_node = view.page.nodes.page,
-            current_for = page_node.data('current-for');
+    Display.prototype.is_page_for = function(page_id, obj, options) {
+        var page = this.pages[page_id],
+            current_for = page.node.data('current-for');
         if (!current_for || current_for != obj.id) { return false; }
-        if (view.accept_options && page_node.data('current-options') != $.param(options)) {
+        if (page.view.accept_options && page.node.data('current-options') != $.param(options)) {
             return false;
         }
         return true;
     };
 
-    Display.prototype.on_page_before_load = function(page_id, obj_id, force) {
+    Display.prototype.ask_for_page = function(page_id, obj_id, force) {
         obj_id = obj_id.replace(':', '/');
         var that = this,
             page = this.pages[page_id],
             changed = this.controller.set_current_object(page.type, obj_id),
             obj = this.controller[page.type],
-            view = App.View.get(page_id, this),
-            page_node = view.page.nodes.page,
-            options = view.accept_options ? view.save_options() : {};
+            options = page.view.accept_options ? page.view.save_options() : {};
 
         $('.current_page, .page_loaded').removeClass('current_page, page_loaded');
-        page_node.addClass('current_page');
+        page.node.addClass('current_page');
 
-        if (!force && this.is_view_for(view, obj, options)) {
+        if (!force && this.is_page_for(page_id, obj, options)) {
             this.post_render_page(page_id);
         } else {
             page.nodes.refresh_control.addClass('ui-disabled');
-            view.reset();
-            if (view.accept_options) {
-                page_node.data('current-options', $.param(options));
+            page.view.reset();
+            if (page.view.accept_options) {
+                page.node.data('current-options', $.param(options));
             }
             obj.fetch_full(page.method, function() {
                 that['update_' + page.type + '_navbar'](obj);
@@ -324,15 +324,15 @@
     Display.prototype.render_page = function(page_id, obj, force) {
         var page = this.pages[page_id];
         if (!this.is_current_page(page_id, obj)) { return; }
-        App.View.get(page_id, this).update(obj, force);
-        page.nodes.page.data('current-for', obj.id);
+        page.view.update(obj, force);
+        page.node.data('current-for', obj.id);
         this.post_render_page(page_id);
     };
 
     Display.prototype.post_render_page = function(page_id) {
         var page = this.pages[page_id];
         $.mobile.loading('hide');
-        page.nodes.page.addClass('page_loaded');
+        page.node.addClass('page_loaded');
         page.nodes.refresh_control.removeClass('ui-disabled ui-btn-active');
     };
 

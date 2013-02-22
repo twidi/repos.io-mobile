@@ -22,7 +22,7 @@
                 page.nodes.links[j].href = '#' + page.id + '!account=' + this.controller.account.id;
             }
             page.nodes.header.html(this.controller.account.id + ' - ' + page.title);
-            page.nodes.page.removeData('current-for');
+            page.node.removeData('current-for');
         }
     };
 

@@ -277,17 +277,8 @@
 
     };
 
-    Display.prototype.is_current_page = function(page_id, obj) {
-        var page = this.pages[page_id];
-        if (!page.node.hasClass('current_page')) { return false ;}
+    Display.prototype.is_page_for = function(page, obj, options) {
         var current_for = page.node.data('current-for');
-        if (current_for && current_for != obj.id) { return false; }
-        return true;
-    };
-
-    Display.prototype.is_page_for = function(page_id, obj, options) {
-        var page = this.pages[page_id],
-            current_for = page.node.data('current-for');
         if (!current_for || current_for != obj.id) { return false; }
         if (page.view.accept_options && page.node.data('current-options') != $.param(options)) {
             return false;
@@ -303,34 +294,34 @@
             obj = this.controller[page.type],
             options = page.view.accept_options ? page.view.save_options() : {};
 
-        $('.current_page, .page_loaded').removeClass('current_page, page_loaded');
+        $('.current_page, .page_loaded').removeClass('current_page page_loaded');
         page.node.addClass('current_page');
 
-        if (!force && this.is_page_for(page_id, obj, options)) {
-            this.post_render_page(page_id);
+        if (!force && this.is_page_for(page, obj, options)) {
+            this.post_render_page(page);
         } else {
             page.nodes.refresh_control.addClass('ui-disabled');
             page.view.reset();
             if (page.view.accept_options) {
                 page.node.data('current-options', $.param(options));
             }
+            page.node.data('current-for', obj.id);
             obj.fetch_full(page.method, function() {
-                that['update_' + page.type + '_navbar'](obj);
-                that.render_page(page_id, obj, force);
+                that.render_page(page, obj, options, force);
             }, options, force);
         }
     };
 
-    Display.prototype.render_page = function(page_id, obj, force) {
-        var page = this.pages[page_id];
-        if (!this.is_current_page(page_id, obj)) { return; }
+    Display.prototype.render_page = function(page, obj, options, force) {
+        if (!this.is_page_for(page, obj, options)) { return; }
         page.view.update(obj, force);
-        page.node.data('current-for', obj.id);
-        this.post_render_page(page_id);
+        if (page.node.hasClass('current_page')) {
+            this['update_' + page.type + '_navbar'](obj);
+            this.post_render_page(page);
+        }
     };
 
-    Display.prototype.post_render_page = function(page_id) {
-        var page = this.pages[page_id];
+    Display.prototype.post_render_page = function(page) {
         $.mobile.loading('hide');
         page.node.addClass('page_loaded');
         page.nodes.refresh_control.removeClass('ui-disabled ui-btn-active');

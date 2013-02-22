@@ -19,7 +19,7 @@
         $.mobile.initializePage();
 
         // not done automatically anymore ??
-        $('div[data-role=page]:not(.ui-page').page();
+        $('div[data-role=page]:not(.ui-page)').page();
 
         this.init_events();
     };

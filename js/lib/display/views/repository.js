@@ -123,10 +123,11 @@
             data_field: 'contributors'
         },
         get_data: function(repository) {
-            for (var i=0; i<repository.contributors.length; i++) {
-                repository.contributors[i].html_extended = '<p class="ui-li-aside count">' + repository.contributors[i].contributions + '</p>';
+            var contributors = this.$super(repository);
+            for (var i=0; i<contributors.length; i++) {
+                contributors[i].html_extended = '<p class="ui-li-aside count">' + contributors[i].contributions + '</p>';
             }
-            return this.$super(repository);
+            return contributors;
         }
     });
 

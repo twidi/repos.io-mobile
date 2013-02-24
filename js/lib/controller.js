@@ -27,15 +27,15 @@
 
     };
 
-    Controller.prototype.fetch_full_error = function(error, obj, fetch_type, original_callback, original_params, original_force) {
-        if (this.display.confirm_new_fech_full(error)) {
-            obj.fetch_full(fetch_type, original_callback, original_params, original_force);
+    Controller.prototype.fetch_full_error = function(error, obj, fetch_type, original_callback, original_params, original_force, original_callback_error) {
+        if (this.display.confirm_new_fech_full(error, original_callback_error)) {
+            obj.fetch_full(fetch_type, original_callback, original_params, original_force, original_callback_error);
         }
     };
 
-    Controller.prototype.fetch_more_error = function(error, obj, fetch_type, original_callback, original_params) {
-        if (this.display.confirm_new_fech_more(error)) {
-            obj.fetch_more(fetch_type, original_callback, original_params);
+    Controller.prototype.fetch_more_error = function(error, obj, fetch_type, original_callback, original_params, original_callback_error) {
+        if (this.display.confirm_new_fech_more(error, original_callback_error)) {
+            obj.fetch_more(fetch_type, original_callback, original_params, original_callback_error);
         }
     };
 

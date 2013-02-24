@@ -95,7 +95,7 @@
             }
         },
 
-        fetch_full: function(type, callback, params, force) {
+        fetch_full: function(type, callback, params, force, callback_error) {
             var that = this,
                 is_list = (that.$class.fields[type] instanceof Array),
                 str_params;
@@ -122,7 +122,7 @@
                         callback();
                     },
                     function(err) {  // failure
-                        that.controller.fetch_full_error(err, that, type, callback, params, force);
+                        that.controller.fetch_full_error(err, that, type, callback, params, force, callback_error);
                     },
                     params,
                     'fail_if_404'
@@ -146,7 +146,7 @@
             };
         },
 
-        fetch_more: function(type, callback, params) {
+        fetch_more: function(type, callback, params, callback_error) {
             var that = this, str_params, final_params;
             params = params || {};
             str_params = $.param(params);
@@ -166,7 +166,7 @@
                     callback(data);
                 },
                 function(err) { // failure
-                    that.controller.fetch_more_error(err, that, type, callback, params);
+                    that.controller.fetch_more_error(err, that, type, callback, params, callback_error);
                 },
                 final_params
             );

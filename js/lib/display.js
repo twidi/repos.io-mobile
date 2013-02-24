@@ -323,7 +323,9 @@
             if (page.node.hasClass('current_page')) {
                 $.mobile.loading('hide');
             }
-        }, options);
+        }, options, function() {
+            page.view.toggle_more_button_status(false);
+        });
     };
 
     Display.prototype.render_page = function(page, obj, options, force) {
@@ -395,24 +397,30 @@
         return error_text;
     };
 
-    Display.prototype.confirm_new_fech_full = function(error) {
+    Display.prototype.confirm_new_fech_full = function(error, callback_error) {
         $.mobile.loading('hide');
         var result = confirm('Unable to fetch this page (' + this.get_error_text(error) + '), retry ?');
         if (result) {
             $.mobile.loading('show');
         } else {
-            history.go(-1);
+            if (callback_error) {
+                callback_error();
+            } else {
+                history.go(-1);
+            }
         }
         return result;
     };
 
-    Display.prototype.confirm_new_fech_more = function(error) {
+    Display.prototype.confirm_new_fech_more = function(error, callback_error) {
         $.mobile.loading('hide');
         var result = confirm('Unable to fetch more (' + this.get_error_text(error) + '), retry ?');
         if (result) {
             $.mobile.loading('show');
         } else {
-            //
+            if (callback_error) {
+                callback_error();
+            }
         }
         return result;
     };

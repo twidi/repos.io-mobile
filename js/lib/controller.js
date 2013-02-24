@@ -33,6 +33,12 @@
         }
     };
 
+    Controller.prototype.fetch_more_error = function(error, obj, fetch_type, original_callback, original_params) {
+        if (this.display.confirm_new_fech_more(error)) {
+            obj.fetch_more(fetch_type, original_callback, original_params);
+        }
+    };
+
     Controller.prototype.init_events = function() {
     };
 

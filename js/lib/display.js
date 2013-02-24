@@ -312,6 +312,20 @@
         }
     };
 
+    Display.prototype.ask_for_more = function(page) {
+        var that = this,
+            obj = this.controller[page.type],
+            options = page.view.options;
+
+        obj.fetch_more(page.method, function(data) {
+            if (!that.is_page_for(page, obj, options)) { return; }
+            page.view.complete(obj, data);
+            if (page.node.hasClass('current_page')) {
+                $.mobile.loading('hide');
+            }
+        }, options);
+    };
+
     Display.prototype.render_page = function(page, obj, options, force) {
         if (!this.is_page_for(page, obj, options)) { return; }
         page.view.update(obj, force);
@@ -362,9 +376,8 @@
         return items;
     };
 
-    Display.prototype.confirm_new_fech_full = function(error) {
+    Display.prototype.get_error_text = function(error) {
         var error_text = '';
-        $.mobile.loading('hide');
         if (error) {
             if (error.statusText) {
                 error_text = error.statusText;
@@ -379,11 +392,27 @@
         if (!error_text) {
             error_text = 'undefined error';
         }
-        var result = confirm('Unable to fetch (' + error_text + '), retry ?');
+        return error_text;
+    };
+
+    Display.prototype.confirm_new_fech_full = function(error) {
+        $.mobile.loading('hide');
+        var result = confirm('Unable to fetch this page (' + this.get_error_text(error) + '), retry ?');
         if (result) {
             $.mobile.loading('show');
         } else {
             history.go(-1);
+        }
+        return result;
+    };
+
+    Display.prototype.confirm_new_fech_more = function(error) {
+        $.mobile.loading('hide');
+        var result = confirm('Unable to fetch more (' + this.get_error_text(error) + '), retry ?');
+        if (result) {
+            $.mobile.loading('show');
+        } else {
+            //
         }
         return result;
     };

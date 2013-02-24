@@ -8,6 +8,7 @@
             model_name: null,
             fields: {},
             cache: {},
+            default_params: {},
             get: function(id, controller) {
                 if (!this.cache[this.model_name]) {
                     this.cache[this.model_name] = {};
@@ -25,11 +26,13 @@
             this.ref = parts[0];
             this.provider = controller.providers[parts[1]];
             this.controller = controller;
+            this.list_page_status = {};
 
             // create fields
             for (var field_name in this.__classvars__.fields) {
                 if (this.__classvars__.fields[field_name] instanceof Array) {
                     this[field_name] = {};
+                    this.list_page_status[field_name] = {};
                 } else {
                     this[field_name] = null;
                 }
@@ -42,6 +45,9 @@
 
         fetch: function(type, success, failure, params, fail_if_404) {
             var that = this;
+            if (this.$class.default_params[type]) {
+                params = $.extend({}, this.$class.default_params[type], params);
+            }
             that.provider['get_' + that.$class.model_name + '_' + type](that.ref, function(err, data) {
                 if (err && err.status == 404 && !fail_if_404) {
                     data = that.$class.fields[type];
@@ -109,6 +115,7 @@
                     function(data) {  // success
                         if (is_list) {
                             that[type][str_params] = data;
+                            that.update_list_page_status(type, str_params, 1, data ? data.length || 0 : 0);
                         } else {
                             that[type] = data;
                         }
@@ -123,6 +130,47 @@
             } else {
                 callback();
             }
+        },
+
+        update_list_page_status: function(type, str_params, page_number, last_length) {
+            var default_params = this.$class.default_params[type] || {},
+                max_page = default_params.max_page || null,
+                per_page = default_params.per_page || null,
+                maybe_more = true;
+            if (!last_length) { maybe_more = false; }
+            else if (max_page && page_number >= max_page) { maybe_more = false; }
+            else if (per_page && last_length < per_page) { maybe_more = false; }
+            this.list_page_status[type][str_params] = {
+                last_page: page_number,
+                maybe_more: maybe_more
+            };
+        },
+
+        fetch_more: function(type, callback, params) {
+            var that = this, str_params, final_params;
+            params = params || {};
+            str_params = $.param(params);
+            final_params = $.extend({}, params, {
+                page: this.list_page_status[type][str_params].last_page + 1
+            });
+
+            if (!this.list_page_status[type][str_params].maybe_more) {
+                callback([]);
+                return;
+            }
+
+            that.fetch(type,
+                function(data) { //success
+                    that[type][str_params] = that[type][str_params].concat(data);
+                    that.update_list_page_status(type, str_params, final_params.page, data ? data.length || 0 : 0);
+                    callback(data);
+                },
+                function(err) { // failure
+                    that.controller.fetch_more_error(err, that, type, callback, params);
+                },
+                final_params
+            );
+
         }
 
     });

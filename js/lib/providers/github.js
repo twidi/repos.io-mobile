@@ -285,8 +285,7 @@
     Provider.prototype.get_account_repositories = function(username, callback, params) {
         var options = {
             sort: 'pushed',
-            type: 'all',
-            per_page: 100
+            type: 'all'
         };
         $.extend(options, params || {});
         this.get_user(username).repositories.fetch(this.decorate_collback(callback, 'repositories'), options);

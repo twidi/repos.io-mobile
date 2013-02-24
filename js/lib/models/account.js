@@ -14,6 +14,9 @@
                 following: [],
                 org_members: [],
                 orgs: []
+            },
+            default_params: {
+                repositories: {per_page: 20}
             }
         },
 

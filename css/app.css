@@ -353,6 +353,3 @@ fieldset.buttons {
 .list-more-button.hidden {
     display: none !important;
 }
-.list-more-button .ui-btn-inner {
-    line-height: 30px;
-}

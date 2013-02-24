@@ -16,7 +16,13 @@
                 orgs: null
             },
             default_params: {
-                repositories: {per_page: 20}
+                repositories: {per_page: 50},
+                stars: {per_page: 50},
+                own_events: {per_page: 30, max_pages: 10},
+                received_events: {per_page: 30, max_pages: 10},
+                followers: {per_page: 50},
+                following: {per_page: 50},
+                org_members: {per_page: 50}
             }
         },
 

@@ -104,7 +104,8 @@
         __classvars__: {
             model: 'repository',
             view_name: 'repository_forks',
-            data_field: 'forks'
+            data_field: 'forks',
+            accept_options: true
         }
     });
 

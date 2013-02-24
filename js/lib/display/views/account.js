@@ -137,7 +137,8 @@
         __classvars__: {
             model: 'account',
             view_name: 'account_stars',
-            data_field: 'stars'
+            data_field: 'stars',
+            accept_options: true
         }
     });
 

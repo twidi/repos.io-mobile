@@ -47,6 +47,7 @@
             var that = this;
             if (this.$class.default_params[type]) {
                 params = $.extend({}, this.$class.default_params[type], params);
+                delete params.max_pages;
             }
             that.provider['get_' + that.$class.model_name + '_' + type](that.ref, function(err, data) {
                 if (err && err.status == 404 && !fail_if_404) {
@@ -134,11 +135,11 @@
 
         update_list_page_status: function(type, str_params, page_number, last_length) {
             var default_params = this.$class.default_params[type] || {},
-                max_page = default_params.max_page || null,
+                max_pages = default_params.max_pages || null,
                 per_page = default_params.per_page || null,
                 maybe_more = true;
             if (!last_length) { maybe_more = false; }
-            else if (max_page && page_number >= max_page) { maybe_more = false; }
+            else if (max_pages && page_number >= max_pages) { maybe_more = false; }
             else if (per_page && last_length < per_page) { maybe_more = false; }
             this.list_page_status[type][str_params] = {
                 last_page: page_number,

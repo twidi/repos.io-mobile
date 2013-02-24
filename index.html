@@ -228,8 +228,8 @@
                     <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label ui-with-radio-legend">
                         <legend>Type: </legend>
                         <label><input type="radio" name="account_repositories_options_type" id="account_repositories_options_type__label" value="__label__" disabled="disabled" data-theme="a" />Type: </label>
-                        <label><input type="radio" name="account_repositories_options_type" id="account_repositories_options_type_all" value="all" checked="checked" />All</label>
-                        <label><input type="radio" name="account_repositories_options_type" id="account_repositories_options_type_owner" value="owner" />Owner</label>
+                        <label><input type="radio" name="account_repositories_options_type" id="account_repositories_options_type_all" value="all" />All</label>
+                        <label><input type="radio" name="account_repositories_options_type" id="account_repositories_options_type_owner" value="owner" checked="checked" />Owner</label>
                         <label><input type="radio" name="account_repositories_options_type" id="account_repositories_options_type_member" value="member" />Member</label>
                     </fieldset>
                     <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label ui-with-radio-legend ui-with-lot-of-radios"> 
@@ -259,18 +259,45 @@
     </div>
 
     <div data-template-for="account_stars">
+
+        <div data-role="collapsible" data-corners="false" data-theme="e" data-content-theme="c" data-inset="false" data-mini="true" class="view-options"> 
+            <h3>Options and filters</h3>
+            <form id="account_stars_options" data-ajax="false">
+                <div class="radio-fieldsets">
+                    <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label ui-with-radio-legend"> 
+                        <legend>Sort: </legend>
+                        <label><input type="radio" name="account_stars_options_sort" id="account_stars_options_sort__label" value="__label__" disabled="disabled" data-theme="a" />Sort: </label>
+                        <label><input type="radio" name="account_stars_options_sort" id="account_stars_options_sort_created" value="created" checked="checked" />Starred</label>
+                        <label><input type="radio" name="account_stars_options_sort" id="account_stars_options_sort_updated" value="updated" />Pushed</label>
+                    </fieldset>
+                    <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label ui-with-radio-legend">
+                        <legend>Direction: </legend>
+                        <label><input type="radio" name="account_stars_options_direction" id="account_stars_options_direction__label" value="__label__" disabled="disabled" data-theme="a" />Direction: </label>
+                        <label><input type="radio" name="account_stars_options_direction" id="account_stars_options_direction_asc" value="asc" />Asc</label>
+                        <label><input type="radio" name="account_stars_options_direction" id="account_stars_options_direction_desc" value="desc" checked="checked" />Desc</label>
+                    </fieldset>
+                </div>
+                <fieldset class="buttons">
+                    <button type="reset" data-mini="true" data-theme="c" data-icon="delete" data-inline="true" name="reset" value="reset-value">Default</button>
+                    <button type="submit" data-mini="true" data-theme="b" data-icon="check" data-inline="true" name="submit" value="submit-value">Update</button>
+                </fieldset>
+            </form>
+        </div>
         <ul data-role='listview' class='repos-list'>
         </ul>
+        <a data-role="button" href='#' id="account_stars_more" class="list-more-button ui-disabled hidden" data-corners="false" data-icon="+">Load more</a>
     </div>
 
     <div data-template-for="account_followers">
         <ul data-role='listview' class='accounts-list'>
         </ul>
+        <a data-role="button" href='#' id="account_followers_more" class="list-more-button ui-disabled hidden" data-corners="false" data-icon="+">Load more</a>
     </div>
 
     <div data-template-for="account_following">
         <ul data-role='listview' class='accounts-list'>
         </ul>
+        <a data-role="button" href='#' id="account_following_more" class="list-more-button ui-disabled hidden" data-corners="false" data-icon="+">Load more</a>
     </div>
 
     <div data-template-for="account_members">
@@ -281,11 +308,13 @@
     <div data-template-for="account_activity">
         <ul class="ui-listview list-events" data-mobile-listview='{"options":{}}'>
         </ul>
+        <a data-role="button" href='#' id="account_activity_more" class="list-more-button ui-disabled hidden" data-corners="false" data-icon="+">Load more</a>
     </div>
 
     <div data-template-for="account_events">
         <ul class="ui-listview list-events" data-mobile-listview='{"options":{}}'>
         </ul>
+        <a data-role="button" href='#' id="account_events_more" class="list-more-button ui-disabled hidden" data-corners="false" data-icon="+">Load more</a>
     </div>
 
     <div data-template-for="repository_home">
@@ -323,13 +352,34 @@
     </div>
 
     <div data-template-for="repository_forks">
+
+        <div data-role="collapsible" data-corners="false" data-theme="e" data-content-theme="c" data-inset="false" data-mini="true" class="view-options"> 
+            <h3>Options and filters</h3>
+            <form id="repository_forks_options" data-ajax="false">
+                <div class="radio-fieldsets">
+                    <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label ui-with-radio-legend"> 
+                        <legend>Sort: </legend>
+                        <label><input type="radio" name="repository_forks_options_sort" id="repository_forks_options_sort__label" value="__label__" disabled="disabled" data-theme="a" />Sort: </label>
+                        <label><input type="radio" name="repository_forks_options_sort" id="repository_forks_options_sort_newest" value="newest" checked="checked" />Newest</label>
+                        <label><input type="radio" name="repository_forks_options_sort" id="repository_forks_options_sort_oldest" value="oldest" />Oldest</label>
+                        <label><input type="radio" name="repository_forks_options_sort" id="repository_forks_options_sort_watchers" value="watchers" />Watchers</label>
+                    </fieldset>
+                </div>
+                <fieldset class="buttons">
+                    <button type="reset" data-mini="true" data-theme="c" data-icon="delete" data-inline="true" name="reset" value="reset-value">Default</button>
+                    <button type="submit" data-mini="true" data-theme="b" data-icon="check" data-inline="true" name="submit" value="submit-value">Update</button>
+                </fieldset>
+            </form>
+        </div>
         <ul data-role='listview' class='repos-list'>
         </ul>
+        <a data-role="button" href='#' id="repository_forks_more" class="list-more-button ui-disabled hidden" data-corners="false" data-icon="+">Load more</a>
     </div>
 
     <div data-template-for="repository_activity">
         <ul class="ui-listview list-events" data-mobile-listview='{"options":{}}'>
         </ul>
+        <a data-role="button" href='#' id="repository_activity_more" class="list-more-button ui-disabled hidden" data-corners="false" data-icon="+">Load more</a>
     </div>
 
     <div data-template-for="repository_contributors">
@@ -340,6 +390,7 @@
     <div data-template-for="repository_stars">
         <ul data-role='listview' class='accounts-list'>
         </ul>
+        <a data-role="button" href='#' id="repository_stars_more" class="list-more-button ui-disabled hidden" data-corners="false" data-icon="+">Load more</a>
     </div>
 
     <ul>

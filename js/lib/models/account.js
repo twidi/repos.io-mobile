@@ -13,7 +13,7 @@
                 followers: [],
                 following: [],
                 org_members: [],
-                orgs: []
+                orgs: null
             },
             default_params: {
                 repositories: {per_page: 20}

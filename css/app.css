@@ -1,6 +1,14 @@
 #templates {
     display: none !important;
 }
+
+.ui-content {
+    padding-bottom: 0;
+}
+.ui-content > .ui-listview {
+    margin-bottom: 0;
+}
+
 div[data-role="popup"] > div.ui-bar {
     text-align: center;
 }
@@ -347,9 +355,8 @@ fieldset.buttons {
     border-top: solid 1px rgba(0, 0, 0, 0.2);
 }
 
-.list-more-button {
-    margin: 14px -16px 0;
-}
-.list-more-button.hidden {
-    display: none !important;
+.load-buttons {
+    margin: -1px -16px 0 !important;
+    max-width: none;
+    display: none;
 }

@@ -62,32 +62,6 @@
             }, params);
         },
 
-        fetch_all: function(type, page_success, success, failure, params) {
-            var that = this,
-                error = null,
-                end = false,
-                all_data = [],
-                options = $.extend({}, params || {}, {page: 0}),
-                one_fetch_success = function(data) {
-                    if (!data || !data.length) {
-                        // we're done
-                        if (success) { success(all_data); }
-                    } else {
-                        // ask for another page (async)
-                        one_fetch();
-                        // add new fetched data
-                        all_data = all_data.concat(data);
-                        // launch the one page callback
-                        if (page_success) { page_success(data, options.page); }
-                    }
-                },
-                one_fetch = function() {
-                    options.page += 1;
-                    that.fetch(type, one_fetch_success, failure, options);
-                };
-            one_fetch();
-        },
-
         fetched: function(type, params) {
             if (this.$class.fields[type] instanceof Array) {
                 return (typeof this[type][params] != 'undefined');
@@ -147,7 +121,7 @@
             };
         },
 
-        fetch_more: function(type, callback, params, callback_error) {
+        _fetch_more: function(type, params, success, failure) {
             var that = this, str_params, final_params;
             params = params || {};
             str_params = $.param(params);
@@ -156,7 +130,7 @@
             });
 
             if (!this.list_page_status[type][str_params].maybe_more) {
-                callback([]);
+                success([]);
                 return;
             }
 
@@ -164,14 +138,41 @@
                 function(data) { //success
                     that[type][str_params] = that[type][str_params].concat(data);
                     that.update_list_page_status(type, str_params, final_params.page, data ? data.length || 0 : 0);
-                    callback(data);
+                    success(data);
                 },
-                function(err) { // failure
-                    that.controller.fetch_more_error(err, that, type, callback, params, callback_error);
-                },
+                failure,
                 final_params
             );
 
+        },
+
+        fetch_more: function(type, callback, params, callback_error) {
+            var that = this;
+            this._fetch_more(type, params, callback, function(err) {
+                that.controller.fetch_more_error(err, that, type, callback, params, callback_error);
+            });
+        },
+
+        fetch_all: function(type, page_callback, callback, params, callback_error) {
+            var that = this, str_params;
+            params = params || {};
+            str_params = $.param(params);
+
+            var one_fetch_success = function(data) {
+                page_callback(data);
+                if (that.list_page_status[type][str_params].maybe_more) {
+                    one_fetch();
+                } else {
+                    callback();
+                }
+            };
+            var one_fetch_error = function(err) {
+                that.controller.fetch_all_error(err, that, type, page_callback, callback, params, callback_error);
+            };
+            var one_fetch = function() {
+                that._fetch_more(type, params, one_fetch_success, one_fetch_error);
+            };
+            one_fetch();
         }
 
     });

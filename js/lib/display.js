@@ -320,11 +320,30 @@
         obj.fetch_more(page.method, function(data) {
             if (!that.is_page_for(page, obj, options)) { return; }
             page.view.complete(obj, data);
+            page.view.update_load_buttons(obj);
             if (page.node.hasClass('current_page')) {
                 $.mobile.loading('hide');
             }
         }, options, function() {
-            page.view.toggle_more_button_status(false);
+            page.view.enable_load_buttons();
+        });
+    };
+
+    Display.prototype.ask_for_all = function(page) {
+        var that = this,
+            obj = this.controller[page.type],
+            options = page.view.options;
+        obj.fetch_all(page.method, function(data) {
+            if (!that.is_page_for(page, obj, options)) { return; }
+            page.view.complete(obj, data);
+        }, function() {
+            if (!that.is_page_for(page, obj, options)) { return; }
+            if (page.node.hasClass('current_page')) {
+                page.view.hide_load_buttons();
+                $.mobile.loading('hide');
+            }
+        }, options, function() {
+            page.view.enable_load_buttons();
         });
     };
 
@@ -397,29 +416,22 @@
         return error_text;
     };
 
-    Display.prototype.confirm_new_fech_full = function(error, callback_error) {
+    Display.prototype.confirm_new_fech = function(mode, text, error, callback_error) {
         $.mobile.loading('hide');
-        var result = confirm('Unable to fetch this page (' + this.get_error_text(error) + '), retry ?');
+        var result = confirm('Unable to fetch ' + text + ' (' + this.get_error_text(error) + '), retry ?');
         if (result) {
             $.mobile.loading('show');
         } else {
             if (callback_error) {
                 callback_error();
             } else {
-                history.go(-1);
-            }
-        }
-        return result;
-    };
-
-    Display.prototype.confirm_new_fech_more = function(error, callback_error) {
-        $.mobile.loading('hide');
-        var result = confirm('Unable to fetch more (' + this.get_error_text(error) + '), retry ?');
-        if (result) {
-            $.mobile.loading('show');
-        } else {
-            if (callback_error) {
-                callback_error();
+                switch (mode) {
+                    case 'full':
+                        history.go(-1);
+                        break;
+                    case 'more':
+                    case 'all':
+                }
             }
         }
         return result;

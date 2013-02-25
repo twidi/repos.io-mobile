@@ -28,14 +28,20 @@
     };
 
     Controller.prototype.fetch_full_error = function(error, obj, fetch_type, original_callback, original_params, original_force, original_callback_error) {
-        if (this.display.confirm_new_fech_full(error, original_callback_error)) {
+        if (this.display.confirm_new_fech('full', 'this page', error, original_callback_error)) {
             obj.fetch_full(fetch_type, original_callback, original_params, original_force, original_callback_error);
         }
     };
 
     Controller.prototype.fetch_more_error = function(error, obj, fetch_type, original_callback, original_params, original_callback_error) {
-        if (this.display.confirm_new_fech_more(error, original_callback_error)) {
+        if (this.display.confirm_new_fech('more', 'more', error, original_callback_error)) {
             obj.fetch_more(fetch_type, original_callback, original_params, original_callback_error);
+        }
+    };
+
+    Controller.prototype.fetch_all_error = function(error, obj, fetch_type, original_page_callback, original_callback, original_params, original_callback_error) {
+        if (this.display.confirm_new_fech('all', 'all', error, original_callback_error)) {
+            obj.fetch_all(fetch_type, original_page_callback, original_callback, original_params, original_callback_error);
         }
     };
 

@@ -96,7 +96,7 @@
             if (!nodes.load_buttons.length) { return; }
             var str_options = $.param(this.options),
                 list_options = obj.list_page_status[this.$class.data_field][str_options];
-            if (list_options ? list_options.maybe_more : true) {
+            if (!obj.list_page_status[this.$class.data_field].__global__.all && (list_options ? list_options.maybe_more : true)) {
                 this.enable_load_buttons();
             } else {
                 this.hide_load_buttons();

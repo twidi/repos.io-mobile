@@ -32,7 +32,7 @@
             for (var field_name in this.__classvars__.fields) {
                 if (this.__classvars__.fields[field_name] instanceof Array) {
                     this[field_name] = {};
-                    this.list_page_status[field_name] = {};
+                    this.list_page_status[field_name] = {__global__: {all:false}};
                 } else {
                     this[field_name] = null;
                 }
@@ -40,6 +40,10 @@
         },
 
         get_list: function(type, options) {
+            if (this.list_page_status[type].__global__.all && this['sort_and_filter_' + type]) {
+                var result = this['sort_and_filter_' + type](options);
+                if (result !== null) { return result; }
+            }
             return this[type][$.param(options)];
         },
 
@@ -64,6 +68,7 @@
 
         fetched: function(type, params) {
             if (this.$class.fields[type] instanceof Array) {
+                if (this.list_page_status[type].__global__.all) { return true; }
                 return (typeof this[type][params] != 'undefined');
             } else {
                 return (this[type] !== null);
@@ -85,12 +90,16 @@
                 return;
             }
 
+            if (force && this.list_page_status[type]) {
+                that.list_page_status[type].__global__ = {all: false};
+            }
+
             if (force || !that.fetched(type, str_params)) {
                 that.fetch(type,
                     function(data) {  // success
                         if (is_list) {
                             that[type][str_params] = data;
-                            that.update_list_page_status(type, str_params, 1, data ? data.length || 0 : 0);
+                            that.update_list_page_status(type, params, 1, data ? data.length || 0 : 0);
                         } else {
                             that[type] = data;
                         }
@@ -107,8 +116,9 @@
             }
         },
 
-        update_list_page_status: function(type, str_params, page_number, last_length) {
+        update_list_page_status: function(type, params, page_number, last_length) {
             var default_params = this.$class.default_params[type] || {},
+                str_params = $.param(params),
                 max_pages = default_params.max_pages || null,
                 per_page = default_params.per_page || null,
                 maybe_more = true;
@@ -119,6 +129,18 @@
                 last_page: page_number,
                 maybe_more: maybe_more
             };
+            if (maybe_more) {
+                this.list_page_status[type].__global__ = {all: false};
+            } else {
+                this.list_page_status[type].__global__ = {
+                    all: true,
+                    params: params,
+                    str_params: str_params
+                };
+                if (this['manage_global_for_' + type]) {
+                    this['manage_global_for_' + type]();
+                }
+            }
         },
 
         _fetch_more: function(type, params, success, failure) {
@@ -126,18 +148,13 @@
             params = params || {};
             str_params = $.param(params);
             final_params = $.extend({}, params, {
-                page: this.list_page_status[type][str_params].last_page + 1
+                page: that.list_page_status[type][str_params].last_page + 1
             });
-
-            if (!this.list_page_status[type][str_params].maybe_more) {
-                success([]);
-                return;
-            }
 
             that.fetch(type,
                 function(data) { //success
                     that[type][str_params] = that[type][str_params].concat(data);
-                    that.update_list_page_status(type, str_params, final_params.page, data ? data.length || 0 : 0);
+                    that.update_list_page_status(type, params, final_params.page, data ? data.length || 0 : 0);
                     success(data);
                 },
                 failure,
@@ -148,6 +165,7 @@
 
         fetch_more: function(type, callback, params, callback_error) {
             var that = this;
+            this.list_page_status[type].__global__ = {all: false};
             this._fetch_more(type, params, callback, function(err) {
                 that.controller.fetch_more_error(err, that, type, callback, params, callback_error);
             });
@@ -157,6 +175,8 @@
             var that = this, str_params;
             params = params || {};
             str_params = $.param(params);
+
+            that.list_page_status[type].__global__ = {all: false};
 
             var one_fetch_success = function(data) {
                 page_callback(data);

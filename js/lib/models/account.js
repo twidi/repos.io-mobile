@@ -27,9 +27,12 @@
 
             sort_and_filter_helpers: {
                 repositories: {
-                    filter: function(item) {return (item.user.login == this.username); },
+                    filter: function(repository) {return (repository.user.login == this.username); },
                     filter_method: {member: _.reject, owner: _.filter},
                     sort_field: {created: 'created_at', pushed: 'pushed_at', updated: 'updated_at', full_name: 'full_name'}
+                },
+                stars: {
+                    sort_field: {created: 'starred_order', updated: 'pushed_at'}
                 }
             }
         },
@@ -63,12 +66,49 @@
                 if (options.direction != global.params.direction) {
                     data.reverse();
                     if (options.type == 'all') {
-                        global.params.direction = options.direction;  // change the saved dir because we update real data
+                        global.params.direction = options.direction;  // change the saved direction because we update real data
                     }
                 }
             }
             return data;
-        }
+        }, // sort_and_filter_repositories
+
+        manage_global_for_stars: function() {
+            var global = this.list_page_status.stars.__global__;
+            if (global.params.sort != 'created') {
+                global.all = false;
+            }
+        },
+
+        sort_and_filter_stars: function(options) {
+            var global = this.list_page_status.stars.__global__,
+                helpers = this.$class.sort_and_filter_helpers.stars,
+                data = this.stars[global.str_params];
+
+            if (!global.default_order_saved) {
+                global.default_order_saved = true;
+                if (global.params.direction == 'desc') {
+                    data.reverse();
+                    global.params.direction = 'asc';
+                }
+                _.each(data, function(repository, index) {
+                    repository.starred_order = index;
+                });
+            }
+
+            if (options.sort != global.params.sort) {
+                data = _.sortBy(data, helpers.sort_field[options.sort]);
+                if (options.direction == 'desc') {
+                    data.reverse();
+                }
+            } else {
+                if (options.direction != global.params.direction) {
+                    data.reverse();
+                    global.params.direction = options.direction;  // change the saved direction because we update real data
+                }
+            }
+            return data;
+        } // sort_and_filter_stars
 
     });
 

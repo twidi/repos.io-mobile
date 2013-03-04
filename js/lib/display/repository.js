@@ -36,7 +36,7 @@
             var repository = repositories[i],
                 path = repository.full_name || repository.name,
                 href = '#repository_home!repository=' + path.replace('/', ':') + '@' + provider.name,
-                li = template[0].cloneNode(true),
+                li = template.cloneNode(true),
                 a = li.getElementsByTagName('a')[0],
                 a_children = a.children,
                 path_holder = a_children[1],

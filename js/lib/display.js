@@ -135,7 +135,7 @@
             var final_page = pages[m],
                 page_node = $('#' + final_page.id),
                 main_menu = $('#main_menu_' + final_page.id),
-                template = this.templates_container.children('div[data-template-for=' + final_page.id + ']');
+                template = this.get_template(final_page.id, true);
 
             // cache some page nodes
             final_page.nodes = {
@@ -150,9 +150,8 @@
             final_page.node = final_page.nodes.page;
 
             // insert page content
-            if (template.length) {
-                final_page.nodes.content.prepend(template.children());
-                template.remove();
+            if (template) {
+                final_page.nodes.content.prepend(template.children);
             }
 
             final_page.view = App.View.get(final_page, this);
@@ -380,13 +379,13 @@
         for (var i=0; i<events.length; i++) {
             event = events[i];
             if (event.day != cur_day) {
-                li = day_template[0].cloneNode(true);
+                li = day_template.cloneNode(true);
                 li.innerHTML = event.day;
                 cur_day = event.day;
                 items.push(li);
             }
 
-            li = event_template[0].cloneNode(true);
+            li = event_template.cloneNode(true);
             li.innerHTML = event.html;
             items.push(li);
         }
@@ -434,11 +433,18 @@
         return result;
     };
 
-    Display.prototype.get_template = function(name) {
+    Display.prototype.get_template = function(name, consume) {
         if (!this.templates[name]) {
-            this.templates[name] = this.templates_container.find('[data-template-for=' + name + ']');
+            template = this.templates_container.find('[data-template-for=' + name + ']')[0];
+            template.parentNode.removeChild(template);
+            template.removeAttribute('data-template-for');
+            this.templates[name] = template;
         }
-        return this.templates[name];
+        var template = this.templates[name];
+        if (consume) {
+            delete this.templates[name];
+        }
+        return template;
     };
 
 

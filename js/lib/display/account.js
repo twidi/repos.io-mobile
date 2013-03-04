@@ -37,7 +37,7 @@
         for (var i=0; i<accounts.length; i++) {
             var account = accounts[i],
                 href = '#account_home!account=' + account.login + '@' + provider.name,
-                li = template[0].cloneNode(true),
+                li = template.cloneNode(true),
                 a = li.getElementsByTagName('a')[0],
                 a_children = a.children,
                 img = a_children[0],

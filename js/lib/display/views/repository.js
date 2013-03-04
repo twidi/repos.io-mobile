@@ -60,7 +60,7 @@
             nodes.owner.html(this.display.account_link(repository.details.user.login, repository.provider.name));
             nodes.owner_container.show();
 
-            if (repository.details.fork) {
+            if (repository.details.is_fork) {
                 nodes.fork_name.html(this.display.repository_link(repository.details.parent.full_name, repository.details.parent.name, repository.provider.name));
                 nodes.fork_owner.html(repository.details.parent.user.login);
                 nodes.fork_container.show();

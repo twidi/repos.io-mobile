@@ -53,7 +53,7 @@
                 classes.push('no-desc');
             }
 
-            if (!repository.fork) {
+            if (!repository.is_fork) {
                 classes.push('no-fork');
             }
 

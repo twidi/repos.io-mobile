@@ -524,6 +524,27 @@
         },
         _service: function() {
             return "users/" + this.login;
+        },
+        _setData: function(data) {
+            /* Rename the "followers" and "following" fields into "followers_count"
+             * and "following_count" to leave room for our own "followers" and
+             * "following" objects
+             * And call the super _setData to save normal fields
+             */
+
+            if (data) {
+                if (typeof data.followers !== 'undefined') {
+                    data.followers_count = data.followers;
+                    delete data.followers;
+                }
+                if (typeof data.following !== 'undefined') {
+                    data.following_count = data.following;
+                    delete data.following;
+                }
+            }
+
+            Gh3.User.__super__._setData.call(this, data);
+
         }
     }); // Gh3.User
 

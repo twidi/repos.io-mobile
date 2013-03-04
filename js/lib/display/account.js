@@ -62,9 +62,9 @@
         var is_org = (account.details && account.details.type.toLowerCase() == 'organization');
         $('.go-button').find('.provider').html(account.provider.name);
         $('.account_members-link').closest('li').toggle(is_org);
-        $('.account_repositories-count').html(account.details ? account.details.public_repos : '?').show();
-        $('.account_followers-count').html(account.details ? account.details.followers : '?').show();
-        $('.account_following-count').html(account.details ? account.details.following : '?').show();
+        $('.account_repositories-count').html(account.details ? account.details.repos_count : '?').show();
+        $('.account_followers-count').html(account.details ? account.details.followers_count : '?').show();
+        $('.account_following-count').html(account.details ? account.details.following_count : '?').show();
     };
 
     App.Display.prototype.get_real_account_page = function(page_name, account) {

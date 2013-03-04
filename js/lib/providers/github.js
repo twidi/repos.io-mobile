@@ -272,27 +272,107 @@
         return new Gh3.Repository(parts[1], this.get_user(parts[0]));
     };
 
-    Provider.prototype.decorate_collback = function(callback, name, field) {
+    Provider.prototype.map_type = {accounts: 'account', repositories: 'repository'};
+    Provider.prototype.decorate_collback = function(callback, name, type) {
+        var that = this;
         return function(err, data) {
-            callback(err, err ? null : (field ? data[name] : data[name].getAll()));
+            var final_data;
+            if (!err) {
+                switch (type) {
+                    case 'field':
+                        final_data = data[name];
+                        break;
+                    case 'repositories':
+                    case 'accounts':
+                        // call "map_account" or "map_repositories" for each entry
+                        // in the list obtained by a call to "getAll"
+                        final_data = _.map(data[name].getAll(), that['map_' + that.map_type[type]], that);
+                        break;
+                    default:
+                        final_data = data[name].getAll();
+                }
+            }
+            callback(err, err ? null : final_data);
         };
+    };
+
+    Provider.prototype.map = function(data, mapping) {
+        var result = {};
+        if (data) {
+            for (var key in mapping) {
+                if (typeof(data[key]) == 'undefined') {
+                    continue;
+                }
+                result[mapping[key]] = data[key];
+            }
+        }
+        return result;
+    };
+
+    Provider.prototype.account_mapping = {
+        login: 'login',
+        type: 'type',
+        avatar_url: 'avatar_url',
+        name: 'name',
+        created_at: 'created_at',
+        company: 'company',
+        location: 'location',
+        email: 'email',
+        blog: 'site',
+        public_repos: 'repos_count',
+        followers_count: 'followers_count',
+        following_count: 'following_count',
+        contributions: 'contributions'
+    };
+
+    Provider.prototype.map_account = function(data) {
+        var result = {};
+        if (data) {
+            result = this.map(data, this.account_mapping);
+        }
+        return result;
+    };
+
+    Provider.prototype.repository_mapping = {
+        name: 'name',
+        full_name: 'full_name',
+        description: 'description',
+        pushed_at: 'pushed_at',
+        fork: 'is_fork',
+        forks_count: 'forks_count',
+        watchers_count: 'watchers_count'
+    };
+    Provider.prototype.map_repository = function(data) {
+        var result = {};
+        if (data) {
+            result = this.map(data, this.repository_mapping);
+            if (data.fork && data.parent) {
+                result.parent = this.map_repository(data.parent);
+            }
+            if (data.user) {
+                result.user = this.map_account(data.user);
+            }
+        }
+        return result;
     };
 
     Provider.prototype.get_account_details = function(username, callback, params) {
-        this.get_user(username).fetch(callback, params);
+        var that = this;
+        function map_callback(error, data) {
+            if (!error && data) {
+                data = that.map_account(data);
+            }
+            return callback(error, data);
+        }
+        this.get_user(username).fetch(map_callback, params);
     };
 
     Provider.prototype.get_account_repositories = function(username, callback, params) {
-        var options = {
-            sort: 'pushed',
-            type: 'all'
-        };
-        $.extend(options, params || {});
-        this.get_user(username).repositories.fetch(this.decorate_collback(callback, 'repositories'), options);
+        this.get_user(username).repositories.fetch(this.decorate_collback(callback, 'repositories', 'repositories'), params);
     };
 
     Provider.prototype.get_account_stars = function(username, callback, params) {
-        this.get_user(username).starred.fetch(this.decorate_collback(callback, 'starred'), params);
+        this.get_user(username).starred.fetch(this.decorate_collback(callback, 'starred', 'repositories'), params);
     };
 
     Provider.prototype.get_account_own_events = function(username, callback, params) {
@@ -304,27 +384,34 @@
     };
 
     Provider.prototype.get_account_followers = function(username, callback, params) {
-        this.get_user(username).followers.fetch(this.decorate_collback(callback, 'followers'), params);
+        this.get_user(username).followers.fetch(this.decorate_collback(callback, 'followers', 'accounts'), params);
     };
 
     Provider.prototype.get_account_following = function(username, callback, params) {
-        this.get_user(username).following.fetch(this.decorate_collback(callback, 'following'), params);
+        this.get_user(username).following.fetch(this.decorate_collback(callback, 'following', 'accounts'), params);
     };
 
     Provider.prototype.get_account_org_members = function(username, callback, params) {
-        this.get_user(username).members.fetch(this.decorate_collback(callback, 'members'), params);
+        this.get_user(username).members.fetch(this.decorate_collback(callback, 'members', 'accounts'), params);
     };
 
     Provider.prototype.get_account_orgs = function(username, callback, params) {
-        this.get_user(username).orgs.fetch(this.decorate_collback(callback, 'orgs'), params);
+        this.get_user(username).orgs.fetch(this.decorate_collback(callback, 'orgs', 'accounts'), params);
     };
 
     Provider.prototype.get_repository_details = function(path, callback, params) {
-        this.get_repo(path).fetch(callback, params);
+        var that = this;
+        function map_callback(error, data) {
+            if (!error && data) {
+                data = that.map_repository(data);
+            }
+            return callback(error, data);
+        }
+        this.get_repo(path).fetch(map_callback, params);
     };
 
     Provider.prototype.get_repository_readme = function(path, callback, params) {
-        this.get_repo(path).fetchReadme(this.decorate_collback(callback, 'readme', 'its-a-field'), params);
+        this.get_repo(path).fetchReadme(this.decorate_collback(callback, 'readme', 'field'), params);
     };
 
     Provider.prototype.get_repository_activity = function(path, callback, params) {
@@ -332,15 +419,15 @@
     };
 
     Provider.prototype.get_repository_forks = function(path, callback, params) {
-        this.get_repo(path).forks.fetch(this.decorate_collback(callback, 'forks'), params);
+        this.get_repo(path).forks.fetch(this.decorate_collback(callback, 'forks', 'repositories'), params);
     };
 
     Provider.prototype.get_repository_stars = function(path, callback, params) {
-        this.get_repo(path).stargazers.fetch(this.decorate_collback(callback, 'stargazers'), params);
+        this.get_repo(path).stargazers.fetch(this.decorate_collback(callback, 'stargazers', 'accounts'), params);
     };
 
     Provider.prototype.get_repository_contributors = function(path, callback, params) {
-        this.get_repo(path).contributors.fetch(this.decorate_collback(callback, 'contributors'), params);
+        this.get_repo(path).contributors.fetch(this.decorate_collback(callback, 'contributors', 'accounts'), params);
     };
 
     if (!App.Providers) { App.Providers = {}; }

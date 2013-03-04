@@ -90,9 +90,9 @@
             nodes.email.html(has_email ? account.details.email : '');
             nodes.email_container.toggle(has_email);
 
-            nodes.site.html(account.details.blog || '');
-            nodes.site_container.toggle(!!account.details.blog);
-            nodes.site.attr('href', account.details.blog || '/');
+            nodes.site.html(account.details.site || '');
+            nodes.site_container.toggle(!!account.details.site);
+            nodes.site.attr('href', account.details.site || '/');
 
 
             if (!is_org) {

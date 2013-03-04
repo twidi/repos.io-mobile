@@ -369,3 +369,7 @@ fieldset.buttons {
 .repo.no-data p.repo-last-push {
     display: none;
 }
+
+.ui-hidden {
+    display: none !important;
+}

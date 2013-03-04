@@ -71,8 +71,8 @@
         reset: function() {
             this.$super();
             var nodes = this.nodes();
-            nodes.load_buttons.hide();
             this.empty_list_node();
+            nodes.load_buttons.addClass('ui-hidden');
             nodes.load_more_button.addClass('ui-disabled');
             nodes.load_all_button.addClass('ui-disabled');
         },
@@ -146,7 +146,7 @@
         toggle_load_buttons_visible: function(visible) {
             var nodes = this.nodes();
             if (!nodes.load_buttons.length) { return; }
-            nodes.load_buttons.toggle(visible);
+            nodes.load_buttons.toggleClass('ui-hidden', !visible);
             if (!visible) {
                 this.disable_load_buttons();
             }

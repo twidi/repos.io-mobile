@@ -37,17 +37,19 @@
         for (var i=0; i<accounts.length; i++) {
             var account = accounts[i],
                 href = '#account_home!account=' + account.login + '@' + provider.name,
-                li = template.clone(),
-                a = li.children('a'),
-                img = a.children('img'),
-                username_holder = a.children('.account-username');
+                li = template[0].cloneNode(true),
+                a = li.getElementsByTagName('a')[0],
+                a_children = a.children,
+                img = a_children[0],
+                username_holder = a_children[1],
+                classes = [];
 
-            a.attr('href', href);
-            username_holder.html(account.login);
-            img.attr('src', account.avatar_url);
+            a.href = href;
+            username_holder.innerHTML = account.login;
+            img.src = account.avatar_url;
 
-            if (account.html_extended) {
-                a.append(account.html_extended);
+            if (account.html_prepend) {
+                $(a).prepend(account.html_prepend);
             }
 
             items.push(li);

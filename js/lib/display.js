@@ -380,17 +380,14 @@
         for (var i=0; i<events.length; i++) {
             event = events[i];
             if (event.day != cur_day) {
-                li = day_template.clone();
-                li.html(event.day);
+                li = day_template[0].cloneNode(true);
+                li.innerHTML = event.day;
                 cur_day = event.day;
                 items.push(li);
             }
 
-            li = event_template.clone();
-            li.html(event.html);
-            if (i == events.length - 1 ) {
-                li.addClass('ui-last-child');
-            }
+            li = event_template[0].cloneNode(true);
+            li.innerHTML = event.html;
             items.push(li);
         }
 

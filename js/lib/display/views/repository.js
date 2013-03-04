@@ -125,7 +125,7 @@
         },
         get_items: function(repository, contributors) {
             for (var i=0; i<contributors.length; i++) {
-                contributors[i].html_extended = '<p class="ui-li-aside count">' + contributors[i].contributions + '</p>';
+                contributors[i].html_prepend = '<p class="ui-li-aside count ui-li-desc">' + contributors[i].contributions + '</p>';
             }
             return this.$super(repository, contributors);
         }

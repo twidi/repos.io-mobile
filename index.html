@@ -253,7 +253,7 @@
                 </fieldset>
             </form>
         </div>
-        <ul data-role='listview' class='repos-list'>
+        <ul data-role='listview' class='repos-list ui-listview'>
         </ul>
         <div data-role="navbar" class="load-buttons" data-iconpos="left" id="account_repositories_load_buttons">
             <ul>
@@ -288,7 +288,7 @@
                 </fieldset>
             </form>
         </div>
-        <ul data-role='listview' class='repos-list'>
+        <ul data-role='listview' class='repos-list ui-listview'>
         </ul>
         <div data-role="navbar" class="load-buttons" data-iconpos="left" id="account_stars_load_buttons">
             <ul>
@@ -299,7 +299,7 @@
     </div>
 
     <div data-template-for="account_followers">
-        <ul data-role='listview' class='accounts-list'>
+        <ul data-role='listview' class='accounts-list ui-listview'>
         </ul>
         <div data-role="navbar" class="load-buttons" data-iconpos="left" id="account_followers_load_buttons">
             <ul>
@@ -310,7 +310,7 @@
     </div>
 
     <div data-template-for="account_following">
-        <ul data-role='listview' class='accounts-list'>
+        <ul data-role='listview' class='accounts-list ui-listview'>
         </ul>
         <div data-role="navbar" class="load-buttons" data-iconpos="left" id="account_following_load_buttons">
             <ul>
@@ -321,7 +321,7 @@
     </div>
 
     <div data-template-for="account_members">
-        <ul data-role='listview' class='accounts-list'>
+        <ul data-role='listview' class='accounts-list ui-listview'>
         </ul>
     </div>
 
@@ -401,7 +401,7 @@
                 </fieldset>
             </form>
         </div>
-        <ul data-role='listview' class='repos-list'>
+        <ul data-role='listview' class='repos-list ui-listview'>
         </ul>
         <div data-role="navbar" class="load-buttons" data-iconpos="left" id="repository_forks_load_buttons">
             <ul>
@@ -423,12 +423,12 @@
     </div>
 
     <div data-template-for="repository_contributors">
-        <ul data-role='listview' class='accounts-list'>
+        <ul data-role='listview' class='accounts-list ui-listview'>
         </ul>
     </div>
 
     <div data-template-for="repository_stars">
-        <ul data-role='listview' class='accounts-list'>
+        <ul data-role='listview' class='accounts-list ui-listview'>
         </ul>
         <div data-role="navbar" class="load-buttons" data-iconpos="left" id="repository_stars_load_buttons">
             <ul>
@@ -439,19 +439,21 @@
     </div>
 
     <ul>
-        <li data-template-for="repository-list-item">
-            <a href="#repository_home">
-                <h4>loading...</h4>
-                <p class="repo-desc"></p>
-                <p class="ui-li-aside ui-btn-up-e ui-btn-corner-all repo-is-fork">fork</p>
-                <p class="repo-last-push">Last push: <span></span></p>
+        <li data-template-for="repository-list-item" data-theme="c" class="ui-btn ui-btn-icon-right ui-li-has-arrow ui-li ui-btn-up-c repo"><div class="ui-btn-inner ui-li"><div class="ui-btn-text">
+            <a href="#repository_home" class="ui-link-inherit">
+                <p class="ui-li-aside ui-btn-up-e ui-btn-corner-all repo-is-fork ui-li-desc">fork</p>
+                <h4 class="ui-li-heading">loading...</h4>
+                <p class="repo-desc ui-li-desc"></p>
+                <p class="repo-last-push ui-li-desc">Last push: <span></span></p>
             </a>
+            </div><span class="ui-icon ui-icon-arrow-r ui-icon-shadow">&nbsp;</span></div></li>
         </li>
-        <li data-template-for="account-list-item">
-            <a href="#account_home">
-                <img src="img/default-avatar.png" />
+        <li data-template-for="account-list-item" data-theme="c" class="ui-btn ui-btn-icon-right ui-li-has-arrow ui-li ui-li-has-thumb ui-btn-up-c account"><div class="ui-btn-inner ui-li"><div class="ui-btn-text">
+            <a href="#account_home" class="ui-link-inherit">
+                <img src="img/default-avatar.png" class="ui-li-thumb">
                 <span class="account-username">loading...</span>
             </a>
+            </div><span class="ui-icon ui-icon-arrow-r ui-icon-shadow">&nbsp;</span></div>
         </li>
         <li data-template-for="event-list-day" class="ui-li ui-li-divider ui-bar-d"></li>
         <li data-template-for="event-list-item" class="ui-li ui-li-static ui-btn-up-c"></li>

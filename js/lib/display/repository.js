@@ -31,36 +31,41 @@
     App.Display.prototype.create_repositories_list_items = function(repositories, provider) {
         var template = this.get_template('repository-list-item'),
             items = [];
+
         for (var i=0; i<repositories.length; i++) {
             var repository = repositories[i],
                 path = repository.full_name || repository.name,
                 href = '#repository_home!repository=' + path.replace('/', ':') + '@' + provider.name,
-                li = template.clone(),
-                a = li.children('a'),
-                path_holder = a.children('h4'),
-                desc_holder = a.children('.repo-desc'),
-                fork_holder = a.children('.repo-is-fork'),
-                push_holder = a.children('.repo-last-push');
+                li = template[0].cloneNode(true),
+                a = li.getElementsByTagName('a')[0],
+                a_children = a.children,
+                path_holder = a_children[1],
+                desc_holder = a_children[2],
+                push_holder = a_children[3],
+                classes = [];
 
-            a.attr('href', href);
-            path_holder.html(path);
+            a.href = href;
+            path_holder.innerHTML = path;
 
             if (repository.description) {
-                desc_holder.html(repository.description);
+                desc_holder.innerHTML = repository.description;
             } else {
-                desc_holder.remove();
+                classes.push('no-desc');
             }
 
             if (!repository.fork) {
-                fork_holder.remove();
+                classes.push('no-fork');
             }
 
             if (repository.pushed_at) {
-                push_holder.children('span').html(this.format_date(repository.pushed_at, true));
+                push_holder.getElementsByTagName('span')[0].innerHTML = this.format_date(repository.pushed_at, true);
             } else {
-                push_holder.remove();
+                classes.push('no-date');
             }
 
+            if (classes.length) {
+                li.className +=  ' ' + classes.join(' ');
+            }
             items.push(li);
         }
 

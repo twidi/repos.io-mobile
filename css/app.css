@@ -358,5 +358,14 @@ fieldset.buttons {
 .load-buttons {
     margin: -1px -16px 0 !important;
     max-width: none;
+}
+
+.repo.no-fork p.repo-is-fork {
+    display: none;
+}
+.repo.no-desc p.repo-desc {
+    display: none;
+}
+.repo.no-data p.repo-last-push {
     display: none;
 }

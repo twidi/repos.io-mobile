@@ -71,23 +71,51 @@
         reset: function() {
             this.$super();
             var nodes = this.nodes();
-            nodes.list.empty();
             nodes.load_buttons.hide();
+            this.empty_list_node();
             nodes.load_more_button.addClass('ui-disabled');
             nodes.load_all_button.addClass('ui-disabled');
         },
 
+        empty_list_node: function() {
+            var nodes = this.nodes(),
+                list = nodes.list[0];
+            while (list.firstChild) {
+                list.removeChild(list.firstChild);
+            }
+        },
+
         update: function(obj, force) {
-            var nodes = this.nodes();
-            nodes.list.empty();
-            nodes.list.append(this.get_items(obj, this.get_data(obj)));
+            var nodes = this.nodes(),
+                items = this.get_items(obj, this.get_data(obj));
+            this.empty_list_node();
+            if (items.length) {
+                items[0].className += ' ui-first-child';
+                this.update_list_node(items);
+            }
             this.update_load_buttons(obj);
             this.refresh_widgets();
         },
 
+        update_list_node: function(items) {
+            var nodes = this.nodes(),
+                list = nodes.list[0],
+                actual_last = list.lastChild;
+            if (items.length) {
+                items[items.length-1].className += ' ui-last-child';
+                if (actual_last) {
+                    actual_last.className = actual_last.className.replace('ui-last-child', '');
+                }
+                for (var i=0; i < items.length; i++) {
+                    list.appendChild(items[i]);
+                }
+            }
+        },
+
         complete: function(obj, data) {
-            var nodes = this.nodes();
-            nodes.list.append(this.get_items(obj, data));
+            var nodes = this.nodes(),
+                items = this.get_items(obj, data);
+            this.update_list_node(items);
             this.refresh_widgets();
         },
 
@@ -127,7 +155,6 @@
         show_load_buttons: function() { this.toggle_load_buttons_visible(true); },
 
         refresh_widgets: function() {
-            this.nodes().list.listview('refresh');
         },
 
         get_data: function(obj) {

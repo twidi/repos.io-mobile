@@ -338,6 +338,8 @@
         full_name: 'full_name',
         description: 'description',
         pushed_at: 'pushed_at',
+        created_at: 'created_at',
+        updated_at: 'updated_at',
         fork: 'is_fork',
         forks_count: 'forks_count',
         watchers_count: 'watchers_count'

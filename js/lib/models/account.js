@@ -33,6 +33,8 @@
                 repositories: {
                     filter_type: function(repository) {return (repository.user.login == this.username); },
                     filter_type_method: {member: _.reject, owner: _.filter},
+                    filter_forks: function(repository) { return repository.is_fork; },
+                    filter_forks_method: {no: _.reject, yes: _.filter},
                     sort_field: {created: 'created_at', pushed: 'pushed_at', updated: 'updated_at', full_name: 'full_name'}
                 },
                 stars: {
@@ -60,6 +62,9 @@
 
             if (options.type && options.type != 'all') {
                 data = helpers.filter_type_method[options.type](data, helpers.filter_type, this);
+            }
+            if (options.forks && options.forks != 'all') {
+                data = helpers.filter_forks_method[options.forks](data, helpers.filter_forks, this);
             }
             if (force_data || options.sort != global.params.sort) {
                 data = _.sortBy(data, helpers.sort_field[options.sort]);

@@ -246,6 +246,12 @@
                         <label><input type="radio" name="account_repositories_options_direction" id="account_repositories_options_direction_asc" value="asc" />Asc</label>
                         <label><input type="radio" name="account_repositories_options_direction" id="account_repositories_options_direction_desc" value="desc" checked="checked" />Desc</label>
                     </fieldset>
+                    <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label">
+                        <legend>Forks: </legend>
+                        <label><input type="radio" name="account_repositories_options_forks" id="account_repositories_options_direction_all" value="all" checked="checked" />All</label>
+                        <label><input type="radio" name="account_repositories_options_forks" id="account_repositories_options_direction_no" value="no" />No forks</label>
+                        <label><input type="radio" name="account_repositories_options_forks" id="account_repositories_options_direction_yes" value="yes" />Only forks</label>
+                    </fieldset>
                 </div>
                 <fieldset class="buttons">
                     <button type="reset" data-mini="true" data-theme="c" data-icon="delete" data-inline="true" name="reset" value="reset-value">Default</button>

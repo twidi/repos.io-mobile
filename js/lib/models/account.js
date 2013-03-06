@@ -38,7 +38,9 @@
                     sort_field: {created: 'created_at', pushed: 'pushed_at', updated: 'updated_at', full_name: 'full_name'}
                 },
                 stars: {
-                    sort_field: {created: 'starred_order', updated: 'pushed_at'}
+                    sort_field: {created: 'starred_order', updated: 'pushed_at'},
+                    filter_forks: function(repository) { return repository.is_fork; },
+                    filter_forks_method: {no: _.reject, yes: _.filter}
                 }
             }
         },
@@ -94,15 +96,27 @@
                 helpers = this.$class.sort_and_filter_helpers.stars,
                 data = force_data || this.stars[global.str_params];
 
-            if (!global.default_order_saved) {
-                global.default_order_saved = true;
-                if (global.params.direction == 'desc') {
-                    data.reverse();
-                    global.params.direction = 'asc';
+            // hard stuff to keep starred order
+            if ((!global.all && options.sort == 'created') || (global.all && !global.default_order_saved)) {
+                if (global.all) {
+                    global.default_order_saved = true;
                 }
+
+                if ((global.all ? global.params : options).direction == 'desc') {
+                    data.reverse();
+                    if (global.all) { global.params.direction = 'asc'; }
+                }
+                var incr_base = global.all ? '' : _.uniqueId();
                 _.each(data, function(repository, index) {
-                    repository.starred_order = index;
+                    repository.starred_order = incr_base + index;
                 });
+                if (!global.all && options.direction == 'desc') {
+                    data.reverse();
+                }
+            }
+
+            if (options.forks && options.forks != 'all') {
+                data = helpers.filter_forks_method[options.forks](data, helpers.filter_forks, this);
             }
 
             if (force_data || options.sort != global.params.sort) {

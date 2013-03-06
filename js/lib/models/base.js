@@ -9,6 +9,7 @@
             fields: {},
             cache: {},
             default_params: {},
+            fetchable_params: {},
             get: function(id, controller) {
                 if (!this.cache[this.model_name]) {
                     this.cache[this.model_name] = {};
@@ -39,16 +40,46 @@
             }
         },
 
-        get_list: function(type, options) {
-            if (this.list_page_status[type].__global__.all && this['sort_and_filter_' + type]) {
-                var result = this['sort_and_filter_' + type](options);
-                if (result !== null) { return result; }
+        get_list: function(type, options, force_data) {
+            var fetchable_params = this.filter_fetchable_params(type, options);
+            if (this['sort_and_filter_' + type]) {
+                var sort_and_filter = this.list_page_status[type].__global__.all;
+                if (!sort_and_filter) {
+                    var unfetchable_params = this.filter_unfetchable_params(type, options);
+                    if (!_.isEmpty(unfetchable_params)) {
+                        force_data = force_data || this[type][$.param(fetchable_params)];
+                        sort_and_filter = true;
+                    }
+                }
+                if (sort_and_filter) {
+                    var result = this['sort_and_filter_' + type](options, force_data);
+                    if (result !== null) { return result; }
+                }
             }
-            return this[type][$.param(options)];
+            return force_data || this[type][$.param(fetchable_params)];
+        },
+
+        filter_fetchable_params: function(type, params) {
+            params = params || {};
+            if (this.$class.fetchable_params[type]) {
+                return _.pick(params, this.$class.fetchable_params[type]);
+            } else {
+                return params;
+            }
+        },
+
+        filter_unfetchable_params: function(type, params) {
+            params = params || {};
+            if (this.$class.fetchable_params[type]) {
+                return _.omit(params, this.$class.fetchable_params[type]);
+            } else {
+                return {};
+            }
         },
 
         fetch: function(type, success, failure, params, fail_if_404) {
             var that = this;
+            params = params || {};
             if (this.$class.default_params[type]) {
                 params = $.extend({}, this.$class.default_params[type], params);
                 delete params.max_pages;
@@ -66,10 +97,10 @@
             }, params);
         },
 
-        fetched: function(type, params) {
+        fetched: function(type, str_params) {
             if (this.$class.fields[type] instanceof Array) {
                 if (this.list_page_status[type].__global__.all) { return true; }
-                return (typeof this[type][params] != 'undefined');
+                return (typeof this[type][str_params] != 'undefined');
             } else {
                 return (this[type] !== null);
             }
@@ -80,7 +111,7 @@
                 is_list = (that.$class.fields[type] instanceof Array),
                 str_params;
 
-            params = params || {};
+            params = this.filter_fetchable_params(type, params);
             str_params = $.param(params);
 
             if (type != 'details' && !that.details) {
@@ -145,7 +176,7 @@
 
         _fetch_more: function(type, params, success, failure) {
             var that = this, str_params, final_params;
-            params = params || {};
+            params = this.filter_fetchable_params(type, params);
             str_params = $.param(params);
             final_params = $.extend({}, params, {
                 page: that.list_page_status[type][str_params].last_page + 1
@@ -173,7 +204,7 @@
 
         fetch_all: function(type, page_callback, callback, params, callback_error) {
             var that = this, str_params;
-            params = params || {};
+            params = this.filter_fetchable_params(type, params);
             str_params = $.param(params);
 
             that.list_page_status[type].__global__ = {all: false};

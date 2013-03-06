@@ -114,7 +114,7 @@
 
         complete: function(obj, data) {
             var nodes = this.nodes(),
-                items = this.get_items(obj, data);
+                items = this.get_items(obj, this.prepare_data(obj, data));
             this.update_list_node(items);
             this.refresh_widgets();
         },
@@ -159,6 +159,10 @@
 
         get_data: function(obj) {
             return obj.get_list(this.$class.data_field, this.options);
+        },
+
+        prepare_data: function(obj, data) {
+            return obj.get_list(this.$class.data_field, this.options, data);
         },
 
         get_items: function(obj, data) {

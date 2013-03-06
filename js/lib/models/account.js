@@ -24,11 +24,15 @@
                 following: {per_page: 50},
                 org_members: {per_page: 50}
             },
+            fetchable_params: {
+                repositories: ['direction', 'sort', 'type'],
+                stars: ['direction', 'sort']
+            },
 
             sort_and_filter_helpers: {
                 repositories: {
-                    filter: function(repository) {return (repository.user.login == this.username); },
-                    filter_method: {member: _.reject, owner: _.filter},
+                    filter_type: function(repository) {return (repository.user.login == this.username); },
+                    filter_type_method: {member: _.reject, owner: _.filter},
                     sort_field: {created: 'created_at', pushed: 'pushed_at', updated: 'updated_at', full_name: 'full_name'}
                 },
                 stars: {
@@ -49,15 +53,15 @@
             }
         },
 
-        sort_and_filter_repositories: function(options) {
+        sort_and_filter_repositories: function(options, force_data) {
             var global = this.list_page_status.repositories.__global__,
                 helpers = this.$class.sort_and_filter_helpers.repositories,
-                data = this.repositories[global.str_params];
+                data = force_data || this.repositories[global.str_params];
 
-            if (options.type != 'all') {
-                data = helpers.filter_method[options.type](data, helpers.filter, this);
+            if (options.type && options.type != 'all') {
+                data = helpers.filter_type_method[options.type](data, helpers.filter_type, this);
             }
-            if (options.sort != global.params.sort) {
+            if (force_data || options.sort != global.params.sort) {
                 data = _.sortBy(data, helpers.sort_field[options.sort]);
                 if (options.direction == 'desc') {
                     data.reverse();
@@ -80,10 +84,10 @@
             }
         },
 
-        sort_and_filter_stars: function(options) {
+        sort_and_filter_stars: function(options, force_data) {
             var global = this.list_page_status.stars.__global__,
                 helpers = this.$class.sort_and_filter_helpers.stars,
-                data = this.stars[global.str_params];
+                data = force_data || this.stars[global.str_params];
 
             if (!global.default_order_saved) {
                 global.default_order_saved = true;
@@ -96,7 +100,7 @@
                 });
             }
 
-            if (options.sort != global.params.sort) {
+            if (force_data || options.sort != global.params.sort) {
                 data = _.sortBy(data, helpers.sort_field[options.sort]);
                 if (options.direction == 'desc') {
                     data.reverse();

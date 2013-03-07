@@ -64,10 +64,6 @@
                 helpers = this.$class.sort_and_filter_helpers.repositories,
                 data = force_data || this.repositories[global.str_params];
 
-            if (!options.languages || !options.languages.length) {
-                return [];
-            }
-
             if (options.type && options.type != 'all') {
                 data = helpers.filter_type_method[options.type](data, helpers.filter_type, this);
             }
@@ -76,8 +72,8 @@
                 data = helpers.filter_forks_method[options.forks](data, helpers.filter_forks, this);
             }
 
-            if (options.languages && options.languages.length != this.$class.number_of_languages) {
-                data = _.filter(data, function(repository) { return (repository.language && options.languages.indexOf(repository.language) != -1); });
+            if (options.language) {
+                data = _.filter(data, function(repository) { return (repository.language && options.language == repository.language); });
             }
 
             if (force_data || options.sort != global.params.sort) {
@@ -128,12 +124,8 @@
                 }
             }
 
-            if (!options.languages || !options.languages.length) {
-                return [];
-            }
-
-            if (options.languages && options.languages.length != this.$class.number_of_languages) {
-                data = _.filter(data, function(repository) { return (repository.language && options.languages.indexOf(repository.language) != -1); });
+            if (options.language) {
+                data = _.filter(data, function(repository) { return (repository.language && options.language == repository.language); });
             }
 
             if (options.forks && options.forks != 'all') {

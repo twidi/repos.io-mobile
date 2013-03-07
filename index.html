@@ -252,36 +252,37 @@
                         <label><input type="radio" name="account_repositories_options_forks" id="account_repositories_options_direction_no" value="no" />No forks</label>
                         <label><input type="radio" name="account_repositories_options_forks" id="account_repositories_options_direction_yes" value="yes" />Only forks</label>
                     </fieldset>
-                    <div data-role="fieldcontain">
-                        <label for="account_repositories_options_languages" class="select">Languages:</label>
-                        <select name="account_repositories_options_languages" id="account_repositories_options_languages" multiple="multiple" data-native-menu="false" data-mini="true">
-                            <option value="ActionScript" selected="selected">ActionScript</option>
-                            <option value="Bash" selected="selected">Bash</option>
-                            <option value="C" selected="selected">C</option>
-                            <option value="C#" selected="selected">C#</option>
-                            <option value="C++" selected="selected">C++</option>
-                            <option value="CSS" selected="selected">CSS</option>
-                            <option value="Common Lisp" selected="selected">Common Lisp</option>
-                            <option value="Diff" selected="selected">Diff</option>
-                            <option value="Emacs Lisp" selected="selected">Emacs Lisp</option>
-                            <option value="Erlang" selected="selected">Erlang</option>
-                            <option value="HTML" selected="selected">HTML</option>
-                            <option value="Haskell" selected="selected">Haskell</option>
-                            <option value="Java" selected="selected">Java</option>
-                            <option value="JavaScript" selected="selected">JavaScript</option>
-                            <option value="Lua" selected="selected">Lua</option>
-                            <option value="Objective-C" selected="selected">Objective-C</option>
-                            <option value="PHP" selected="selected">PHP</option>
-                            <option value="Perl" selected="selected">Perl</option>
-                            <option value="Python" selected="selected">Python</option>
-                            <option value="Ruby" selected="selected">Ruby</option>
-                            <option value="SQL" selected="selected">SQL</option>
-                            <option value="Scala" selected="selected">Scala</option>
-                            <option value="Scheme" selected="selected">Scheme</option>
-                            <option value="TeX" selected="selected">TeX</option>
-                            <option value="XML" selected="selected">XML</option>
+                    <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label">
+                        <label for="account_repositories_options_language" class="select">language:</label>
+                        <select name="account_repositories_options_language" id="account_repositories_options_language" data-mini="true">
+                            <option value="" selected="selected">All languages</option>
+                            <option value="ActionScript">ActionScript</option>
+                            <option value="Bash">Bash</option>
+                            <option value="C">C</option>
+                            <option value="C#">C#</option>
+                            <option value="C++">C++</option>
+                            <option value="CSS">CSS</option>
+                            <option value="Common Lisp">Common Lisp</option>
+                            <option value="Diff">Diff</option>
+                            <option value="Emacs Lisp">Emacs Lisp</option>
+                            <option value="Erlang">Erlang</option>
+                            <option value="HTML">HTML</option>
+                            <option value="Haskell">Haskell</option>
+                            <option value="Java">Java</option>
+                            <option value="JavaScript">JavaScript</option>
+                            <option value="Lua">Lua</option>
+                            <option value="Objective-C">Objective-C</option>
+                            <option value="PHP">PHP</option>
+                            <option value="Perl">Perl</option>
+                            <option value="Python">Python</option>
+                            <option value="Ruby">Ruby</option>
+                            <option value="SQL">SQL</option>
+                            <option value="Scala">Scala</option>
+                            <option value="Scheme">Scheme</option>
+                            <option value="TeX">TeX</option>
+                            <option value="XML">XML</option>
                         </select>
-                    </div>
+                    </fieldset>
                 </div>
                 <fieldset class="buttons">
                     <button type="reset" data-mini="true" data-theme="c" data-icon="delete" data-inline="true" name="reset" value="reset-value">Default</button>
@@ -323,36 +324,37 @@
                         <label><input type="radio" name="account_stars_options_forks" id="account_stars_options_direction_no" value="no" />No forks</label>
                         <label><input type="radio" name="account_stars_options_forks" id="account_stars_options_direction_yes" value="yes" />Only forks</label>
                     </fieldset>
-                    <div data-role="fieldcontain">
-                        <label for="account_stars_options_languages" class="select">Languages:</label>
-                        <select name="account_stars_options_languages" id="account_stars_options_languages" multiple="multiple" data-native-menu="false" data-mini="true">
-                            <option value="ActionScript" selected="selected">ActionScript</option>
-                            <option value="Bash" selected="selected">Bash</option>
-                            <option value="C" selected="selected">C</option>
-                            <option value="C#" selected="selected">C#</option>
-                            <option value="C++" selected="selected">C++</option>
-                            <option value="CSS" selected="selected">CSS</option>
-                            <option value="Common Lisp" selected="selected">Common Lisp</option>
-                            <option value="Diff" selected="selected">Diff</option>
-                            <option value="Emacs Lisp" selected="selected">Emacs Lisp</option>
-                            <option value="Erlang" selected="selected">Erlang</option>
-                            <option value="HTML" selected="selected">HTML</option>
-                            <option value="Haskell" selected="selected">Haskell</option>
-                            <option value="Java" selected="selected">Java</option>
-                            <option value="JavaScript" selected="selected">JavaScript</option>
-                            <option value="Lua" selected="selected">Lua</option>
-                            <option value="Objective-C" selected="selected">Objective-C</option>
-                            <option value="PHP" selected="selected">PHP</option>
-                            <option value="Perl" selected="selected">Perl</option>
-                            <option value="Python" selected="selected">Python</option>
-                            <option value="Ruby" selected="selected">Ruby</option>
-                            <option value="SQL" selected="selected">SQL</option>
-                            <option value="Scala" selected="selected">Scala</option>
-                            <option value="Scheme" selected="selected">Scheme</option>
-                            <option value="TeX" selected="selected">TeX</option>
-                            <option value="XML" selected="selected">XML</option>
+                    <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label">
+                        <label for="account_stars_options_language" class="select">Language:</label>
+                        <select name="account_stars_options_language" id="account_stars_options_language" data-mini="true">
+                            <option value="" selected="selected">All languages</option>
+                            <option value="ActionScript">ActionScript</option>
+                            <option value="Bash">Bash</option>
+                            <option value="C">C</option>
+                            <option value="C#">C#</option>
+                            <option value="C++">C++</option>
+                            <option value="CSS">CSS</option>
+                            <option value="Common Lisp">Common Lisp</option>
+                            <option value="Diff">Diff</option>
+                            <option value="Emacs Lisp">Emacs Lisp</option>
+                            <option value="Erlang">Erlang</option>
+                            <option value="HTML">HTML</option>
+                            <option value="Haskell">Haskell</option>
+                            <option value="Java">Java</option>
+                            <option value="JavaScript">JavaScript</option>
+                            <option value="Lua">Lua</option>
+                            <option value="Objective-C">Objective-C</option>
+                            <option value="PHP">PHP</option>
+                            <option value="Perl">Perl</option>
+                            <option value="Python">Python</option>
+                            <option value="Ruby">Ruby</option>
+                            <option value="SQL">SQL</option>
+                            <option value="Scala">Scala</option>
+                            <option value="Scheme">Scheme</option>
+                            <option value="TeX">TeX</option>
+                            <option value="XML">XML</option>
                         </select>
-                    </div>
+                    </fieldset>
                 </div>
                 <fieldset class="buttons">
                     <button type="reset" data-mini="true" data-theme="c" data-icon="delete" data-inline="true" name="reset" value="reset-value">Default</button>

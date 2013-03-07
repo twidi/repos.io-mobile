@@ -342,7 +342,8 @@
         updated_at: 'updated_at',
         fork: 'is_fork',
         forks_count: 'forks_count',
-        watchers_count: 'watchers_count'
+        watchers_count: 'watchers_count',
+        language: 'language'
     };
     Provider.prototype.map_repository = function(data) {
         var result = {};

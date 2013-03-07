@@ -64,12 +64,22 @@
                 helpers = this.$class.sort_and_filter_helpers.repositories,
                 data = force_data || this.repositories[global.str_params];
 
+            if (!options.languages || !options.languages.length) {
+                return [];
+            }
+
             if (options.type && options.type != 'all') {
                 data = helpers.filter_type_method[options.type](data, helpers.filter_type, this);
             }
+
             if (options.forks && options.forks != 'all') {
                 data = helpers.filter_forks_method[options.forks](data, helpers.filter_forks, this);
             }
+
+            if (options.languages && options.languages.length != this.$class.number_of_languages) {
+                data = _.filter(data, function(repository) { return (repository.language && options.languages.indexOf(repository.language) != -1); });
+            }
+
             if (force_data || options.sort != global.params.sort) {
                 data = _.sortBy(data, helpers.sort_field[options.sort]);
                 if (options.direction == 'desc') {
@@ -83,6 +93,7 @@
                     }
                 }
             }
+
             return data;
         }, // sort_and_filter_repositories
 
@@ -117,6 +128,14 @@
                 }
             }
 
+            if (!options.languages || !options.languages.length) {
+                return [];
+            }
+
+            if (options.languages && options.languages.length != this.$class.number_of_languages) {
+                data = _.filter(data, function(repository) { return (repository.language && options.languages.indexOf(repository.language) != -1); });
+            }
+
             if (options.forks && options.forks != 'all') {
                 data = helpers.filter_forks_method[options.forks](data, helpers.filter_forks, this);
             }
@@ -132,6 +151,7 @@
                     global.params.direction = options.direction;  // change the saved direction because we update real data
                 }
             }
+
             return data;
         }, // sort_and_filter_stars
 

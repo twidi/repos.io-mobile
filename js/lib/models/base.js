@@ -19,6 +19,7 @@
                 }
                 return this.cache[this.model_name][id];
             },
+            number_of_languages: 25,
             number_of_events_types: 15
         },
 

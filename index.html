@@ -224,7 +224,7 @@
         <div data-role="collapsible" data-corners="false" data-theme="e" data-content-theme="c" data-inset="false" data-mini="true" class="view-options"> 
             <h3>Options and filters</h3>
             <form id="account_repositories_options" data-ajax="false">
-                <div class="radio-fieldsets">
+                <div class="fieldsets">
                     <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label ui-with-radio-legend">
                         <legend>Type: </legend>
                         <label><input type="radio" name="account_repositories_options_type" id="account_repositories_options_type__label" value="__label__" disabled="disabled" data-theme="a" />Type: </label>
@@ -274,7 +274,7 @@
         <div data-role="collapsible" data-corners="false" data-theme="e" data-content-theme="c" data-inset="false" data-mini="true" class="view-options"> 
             <h3>Options and filters</h3>
             <form id="account_stars_options" data-ajax="false">
-                <div class="radio-fieldsets">
+                <div class="fieldsets">
                     <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label ui-with-radio-legend"> 
                         <legend>Sort: </legend>
                         <label><input type="radio" name="account_stars_options_sort" id="account_stars_options_sort__label" value="__label__" disabled="disabled" data-theme="a" />Sort: </label>
@@ -338,6 +338,44 @@
     </div>
 
     <div data-template-for="account_activity">
+
+        <div data-role="collapsible" data-corners="false" data-theme="e" data-content-theme="c" data-inset="false" data-mini="true" class="view-options"> 
+            <h3>Options and filters</h3>
+            <form id="account_activity_options" data-ajax="false">
+                <div class="fieldsets">
+
+                    <div data-role="fieldcontain">
+                        <label for="account_activity_options_types" class="select">Type of events:</label>
+                        <select name="account_activity_options_types" id="account_activity_options_types" multiple="multiple" data-native-menu="false" data-mini="true">
+                            <option value="CommitCommentEvent" selected="selected">Commit comment</option>
+                            <option value="CreateEvent" selected="selected">Create</option>
+                            <option value="DeleteEvent" selected="selected">Delete</option>
+                            <!-- <option value="DownloadEvent" selected="selected">Download</option> -->
+                            <option value="FollowEvent" selected="selected">Follow</option>
+                            <option value="ForkEvent" selected="selected">Fork</option>
+                            <!-- <option value="ForkApplyEvent" selected="selected">Apply Fork</option> -->
+                            <option value="GistEvent" selected="selected">Gist</option>
+                            <option value="IssueCommentEvent" selected="selected">Issue comment</option>
+                            <option value="IssuesEvent" selected="selected">Issue</option>
+                            <option value="MemberEvent" selected="selected">Member</option>
+                            <option value="PublicEvent" selected="selected">Open source</option>
+                            <option value="PullRequestEvent" selected="selected">Pull request</option>
+                            <option value="PullRequestReviewCommentEvent" selected="selected">Pull request comment</option>
+                            <option value="PushEvent" selected="selected">Push</option>
+                            <!-- <option value="TeamAddEvent" selected="selected">Team add</option> -->
+                            <option value="WatchEvent" selected="selected">Star</option>
+                            <option value="GollumEvent" selected="selected">Wiki</option>
+                        </select>
+                    </div>
+
+                </div>
+                <fieldset class="buttons">
+                    <button type="reset" data-mini="true" data-theme="c" data-icon="delete" data-inline="true" name="reset" value="reset-value">Default</button>
+                    <button type="submit" data-mini="true" data-theme="b" data-icon="check" data-inline="true" name="submit" value="submit-value">Update</button>
+                </fieldset>
+            </form>
+        </div>
+
         <ul class="ui-listview list-events" data-mobile-listview='{"options":{}}'>
         </ul>
         <div data-role="navbar" class="load-buttons" data-iconpos="left" id="account_activity_load_buttons">
@@ -349,6 +387,44 @@
     </div>
 
     <div data-template-for="account_events">
+
+        <div data-role="collapsible" data-corners="false" data-theme="e" data-content-theme="c" data-inset="false" data-mini="true" class="view-options"> 
+            <h3>Options and filters</h3>
+            <form id="account_events_options" data-ajax="false">
+                <div class="fieldsets">
+
+                    <div data-role="fieldcontain">
+                        <label for="account_events_options_types" class="select">Type of events:</label>
+                        <select name="account_events_options_types" id="account_events_options_types" multiple="multiple" data-native-menu="false" data-mini="true">
+                            <option value="CommitCommentEvent" selected="selected">Commit comment</option>
+                            <option value="CreateEvent" selected="selected">Create</option>
+                            <option value="DeleteEvent" selected="selected">Delete</option>
+                            <!-- <option value="DownloadEvent" selected="selected">Download</option> -->
+                            <option value="FollowEvent" selected="selected">Follow</option>
+                            <option value="ForkEvent" selected="selected">Fork</option>
+                            <!-- <option value="ForkApplyEvent" selected="selected">Apply Fork</option> -->
+                            <option value="GistEvent" selected="selected">Gist</option>
+                            <option value="IssueCommentEvent" selected="selected">Issue comment</option>
+                            <option value="IssuesEvent" selected="selected">Issue</option>
+                            <option value="MemberEvent" selected="selected">Member</option>
+                            <option value="PublicEvent" selected="selected">Open source</option>
+                            <option value="PullRequestEvent" selected="selected">Pull request</option>
+                            <option value="PullRequestReviewCommentEvent" selected="selected">Pull request comment</option>
+                            <option value="PushEvent" selected="selected">Push</option>
+                            <!-- <option value="TeamAddEvent" selected="selected">Team add</option> -->
+                            <option value="WatchEvent" selected="selected">Star</option>
+                            <option value="GollumEvent" selected="selected">Wiki</option>
+                        </select>
+                    </div>
+
+                </div>
+                <fieldset class="buttons">
+                    <button type="reset" data-mini="true" data-theme="c" data-icon="delete" data-inline="true" name="reset" value="reset-value">Default</button>
+                    <button type="submit" data-mini="true" data-theme="b" data-icon="check" data-inline="true" name="submit" value="submit-value">Update</button>
+                </fieldset>
+            </form>
+        </div>
+
         <ul class="ui-listview list-events" data-mobile-listview='{"options":{}}'>
         </ul>
         <div data-role="navbar" class="load-buttons" data-iconpos="left" id="account_events_load_buttons">
@@ -398,7 +474,7 @@
         <div data-role="collapsible" data-corners="false" data-theme="e" data-content-theme="c" data-inset="false" data-mini="true" class="view-options"> 
             <h3>Options and filters</h3>
             <form id="repository_forks_options" data-ajax="false">
-                <div class="radio-fieldsets">
+                <div class="fieldsets">
                     <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label ui-with-radio-legend"> 
                         <legend>Sort: </legend>
                         <label><input type="radio" name="repository_forks_options_sort" id="repository_forks_options_sort__label" value="__label__" disabled="disabled" data-theme="a" />Sort: </label>
@@ -430,6 +506,43 @@
     </div>
 
     <div data-template-for="repository_activity">
+        <div data-role="collapsible" data-corners="false" data-theme="e" data-content-theme="c" data-inset="false" data-mini="true" class="view-options"> 
+            <h3>Options and filters</h3>
+            <form id="repository_activity_options" data-ajax="false">
+                <div class="fieldsets">
+
+                    <div data-role="fieldcontain">
+                        <label for="repository_activity_options_types" class="select">Type of events:</label>
+                        <select name="repository_activity_options_types" id="repository_activity_options_types" multiple="multiple" data-native-menu="false" data-mini="true">
+                            <option value="CommitCommentEvent" selected="selected">Commit comment</option>
+                            <option value="CreateEvent" selected="selected">Create</option>
+                            <option value="DeleteEvent" selected="selected">Delete</option>
+                            <!-- <option value="DownloadEvent" selected="selected">Download</option> -->
+                            <option value="FollowEvent" selected="selected">Follow</option>
+                            <option value="ForkEvent" selected="selected">Fork</option>
+                            <!-- <option value="ForkApplyEvent" selected="selected">Apply Fork</option> -->
+                            <option value="GistEvent" selected="selected">Gist</option>
+                            <option value="IssueCommentEvent" selected="selected">Issue comment</option>
+                            <option value="IssuesEvent" selected="selected">Issue</option>
+                            <option value="MemberEvent" selected="selected">Member</option>
+                            <option value="PublicEvent" selected="selected">Open source</option>
+                            <option value="PullRequestEvent" selected="selected">Pull request</option>
+                            <option value="PullRequestReviewCommentEvent" selected="selected">Pull request comment</option>
+                            <option value="PushEvent" selected="selected">Push</option>
+                            <!-- <option value="TeamAddEvent" selected="selected">Team add</option> -->
+                            <option value="WatchEvent" selected="selected">Star</option>
+                            <option value="GollumEvent" selected="selected">Wiki</option>
+                        </select>
+                    </div>
+
+                </div>
+                <fieldset class="buttons">
+                    <button type="reset" data-mini="true" data-theme="c" data-icon="delete" data-inline="true" name="reset" value="reset-value">Default</button>
+                    <button type="submit" data-mini="true" data-theme="b" data-icon="check" data-inline="true" name="submit" value="submit-value">Update</button>
+                </fieldset>
+            </form>
+        </div>
+
         <ul class="ui-listview list-events" data-mobile-listview='{"options":{}}'>
         </ul>
         <div data-role="navbar" class="load-buttons" data-iconpos="left" id="repository_activity_load_buttons">

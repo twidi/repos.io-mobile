@@ -19,7 +19,8 @@
                 contributors: {per_page: 100} // no pagination !?
             },
             fetchable_params: {
-                forks: ['sort']
+                forks: ['sort'],
+                activity: []
             },
             sort_and_filter_helpers: {
                 forks: {
@@ -50,11 +51,13 @@
             }
 
             return data;
-        }
+        },
 
-        ////////////
-        // HAS PUSh => pushed_at > created_at
-        ////////////
+        sort_and_filter_activity: function(options, force_data) {
+            var global = this.list_page_status.activity.__global__,
+                data = force_data || this.activity[global.str_params];
+            return this.sort_and_filter_events(options, data);
+        }
 
     });
 

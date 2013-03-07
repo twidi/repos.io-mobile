@@ -176,12 +176,22 @@
         },
         save_options: function() {
             var fields = this.options_form().serializeArray(),
-                name, dict = {}, sorted_names = [], sorted_dict = {};
+                name, dict = {}, sorted_names = [], sorted_dict = {}, multiples = {};
             for (var i=0; i<fields.length; i++) {
                 name = fields[i].name.replace(this.$class.view_name + '_options_', '');
                 if (name == 'submit') { continue; }
-                sorted_names.push(name);
-                dict[name] = fields[i].value;
+                if (!_.contains(sorted_names, name)) {
+                    sorted_names.push(name);
+                    multiples[name] = $('#'+fields[i].name).is('select[multiple=multiple]');
+                }
+                if (multiples[name]) {
+                    if (!dict[name]) {
+                        dict[name] = [];
+                    }
+                    dict[name].push(fields[i].value);
+                } else {
+                    dict[name] = fields[i].value;
+                }
             }
             sorted_names.sort();
             for (var j=0; j<sorted_names.length; j++) {

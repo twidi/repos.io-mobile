@@ -224,6 +224,10 @@
                 that._fetch_more(type, params, one_fetch_success, one_fetch_error);
             };
             one_fetch();
+        },
+
+        sort_and_filter_events: function(options, data) {
+            return _.filter(data, function(event) { return (options.types.indexOf(event.type) != -1); });
         }
 
     });

@@ -26,7 +26,9 @@
             },
             fetchable_params: {
                 repositories: ['direction', 'sort', 'type'],
-                stars: ['direction', 'sort']
+                stars: ['direction', 'sort'],
+                own_events: [],
+                received_events: []
             },
 
             sort_and_filter_helpers: {
@@ -131,7 +133,19 @@
                 }
             }
             return data;
-        } // sort_and_filter_stars
+        }, // sort_and_filter_stars
+
+        sort_and_filter_own_events: function(options, force_data) {
+            var global = this.list_page_status.own_events.__global__,
+                data = force_data || this.own_events[global.str_params];
+            return this.sort_and_filter_events(options, data);
+        },
+
+        sort_and_filter_received_events: function(options, force_data) {
+            var global = this.list_page_status.received_events.__global__,
+                data = force_data || this.received_events[global.str_params];
+            return this.sort_and_filter_events(options, data);
+        }
 
     });
 

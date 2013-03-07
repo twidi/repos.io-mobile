@@ -170,7 +170,8 @@
         __classvars__: {
             model: 'account',
             view_name: 'account_activity',
-            data_field: 'own_events'
+            data_field: 'own_events',
+            accept_options: true
         }
     });
 
@@ -178,7 +179,8 @@
         __classvars__: {
             model: 'account',
             view_name: 'account_events',
-            data_field: 'received_events'
+            data_field: 'received_events',
+            accept_options: true
         }
     });
 

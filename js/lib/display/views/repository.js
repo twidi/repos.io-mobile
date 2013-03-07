@@ -113,7 +113,8 @@
         __classvars__: {
             model: 'repository',
             view_name: 'repository_activity',
-            data_field: 'activity'
+            data_field: 'activity',
+            accept_options: true
         }
     });
 

@@ -327,10 +327,10 @@ ul li.ui-li.failover,
 .view-options.ui-collapsible-collapsed {
     margin-bottom: 14px;    
 }
-.radio-fieldsets {
+.fieldsets {
     margin-right: -15px;
 }
-.radio-fieldsets fieldset {
+.fieldsets fieldset {
     display: inline-block;
     margin-right: 15px !important;
 }

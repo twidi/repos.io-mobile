@@ -406,6 +406,12 @@
                         <label><input type="radio" name="repository_forks_options_sort" id="repository_forks_options_sort_oldest" value="oldest" />Oldest</label>
                         <label><input type="radio" name="repository_forks_options_sort" id="repository_forks_options_sort_watchers" value="watchers" />Watchers</label>
                     </fieldset>
+                    <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label ui-with-radio-legend"> 
+                        <legend>Never updated: </legend>
+                        <label><input type="radio" name="repository_forks_options_never_updated" id="repository_forks_options_never_updated__label" value="__label__" disabled="disabled" data-theme="a" />Never updated: </label>
+                        <label><input type="radio" name="repository_forks_options_never_updated" id="repository_forks_options_never_updated_show" value="show" checked="checked" />Show</label>
+                        <label><input type="radio" name="repository_forks_options_never_updated" id="repository_forks_options_never_updated_hide" value="hide" />Hide</label>
+                    </fieldset>
                 </div>
                 <fieldset class="buttons">
                     <button type="reset" data-mini="true" data-theme="c" data-icon="delete" data-inline="true" name="reset" value="reset-value">Default</button>

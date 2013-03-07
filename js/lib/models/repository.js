@@ -23,7 +23,8 @@
             },
             sort_and_filter_helpers: {
                 forks: {
-                    sort_field: {newest: 'created_at', oldest: 'created_at', watchers: 'watchers_count'}
+                    sort_field: {newest: 'created_at', oldest: 'created_at', watchers: 'watchers_count'},
+                    filter_never_updated: function(repository) {return repository.pushed_at <= repository.created_at; }
                 }
             }
         },
@@ -39,6 +40,10 @@
                 helpers = this.$class.sort_and_filter_helpers.forks,
                 data = force_data || this.forks[global.str_params];
 
+            if (options.never_updated == 'hide') {
+                data = _.reject(data, helpers.filter_never_updated);
+            }
+
             data = _.sortBy(data, helpers.sort_field[options.sort]);
             if (options.sort != 'oldest') {
                 data.reverse();
@@ -46,6 +51,10 @@
 
             return data;
         }
+
+        ////////////
+        // HAS PUSh => pushed_at > created_at
+        ////////////
 
     });
 

@@ -18,8 +18,7 @@
                     this.cache[this.model_name][id] = new this(id, controller);
                 }
                 return this.cache[this.model_name][id];
-            },
-            number_of_events_types: 15
+            }
         },
 
         __init__: function(id, controller) {
@@ -228,13 +227,10 @@
         },
 
         sort_and_filter_events: function(options, data) {
-            if (!options.types || options.types.length === 0) {
-                return [];
-            } else if (options.types.length == this.$class.number_of_events_types) {
+            if (!options.type) {
                 return data;
-            } else {
-                return _.filter(data, function(event) { return (options.types.indexOf(event.type) != -1); });
             }
+            return _.filter(data, function(event) { return (options.type == event.type); });
         }
 
     });

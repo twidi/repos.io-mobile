@@ -406,29 +406,30 @@
             <form id="account_activity_options" data-ajax="false">
                 <div class="fieldsets">
 
-                    <div data-role="fieldcontain">
-                        <label for="account_activity_options_types" class="select">Type of events:</label>
-                        <select name="account_activity_options_types" id="account_activity_options_types" multiple="multiple" data-native-menu="false" data-mini="true">
-                            <option value="CommitCommentEvent" selected="selected">Commit comment</option>
-                            <option value="CreateEvent" selected="selected">Create</option>
-                            <option value="DeleteEvent" selected="selected">Delete</option>
-                            <!-- <option value="DownloadEvent" selected="selected">Download</option> -->
-                            <option value="FollowEvent" selected="selected">Follow</option>
-                            <option value="ForkEvent" selected="selected">Fork</option>
-                            <!-- <option value="ForkApplyEvent" selected="selected">Apply Fork</option> -->
-                            <option value="GistEvent" selected="selected">Gist</option>
-                            <option value="IssueCommentEvent" selected="selected">Issue comment</option>
-                            <option value="IssuesEvent" selected="selected">Issue</option>
-                            <option value="MemberEvent" selected="selected">Member</option>
-                            <option value="PublicEvent" selected="selected">Open source</option>
-                            <option value="PullRequestEvent" selected="selected">Pull request</option>
-                            <option value="PullRequestReviewCommentEvent" selected="selected">Pull request comment</option>
-                            <option value="PushEvent" selected="selected">Push</option>
-                            <!-- <option value="TeamAddEvent" selected="selected">Team add</option> -->
-                            <option value="WatchEvent" selected="selected">Star</option>
-                            <option value="GollumEvent" selected="selected">Wiki</option>
+                    <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label">
+                        <label for="account_activity_options_type" class="select">Type of events:</label>
+                        <select name="account_activity_options_type" id="account_activity_options_type"data-mini="true">
+                            <option value="" selected="selected">All events</option>
+                            <option value="CommitCommentEvent">Commit comment</option>
+                            <option value="CreateEvent">Create</option>
+                            <option value="DeleteEvent">Delete</option>
+                            <!-- <option value="DownloadEvent">Download</option> -->
+                            <option value="FollowEvent">Follow</option>
+                            <option value="ForkEvent">Fork</option>
+                            <!-- <option value="ForkApplyEvent">Apply Fork</option> -->
+                            <option value="GistEvent">Gist</option>
+                            <option value="IssueCommentEvent">Issue comment</option>
+                            <option value="IssuesEvent">Issue</option>
+                            <option value="MemberEvent">Member</option>
+                            <option value="PublicEvent">Open source</option>
+                            <option value="PullRequestEvent">Pull request</option>
+                            <option value="PullRequestReviewCommentEvent">Pull request comment</option>
+                            <option value="PushEvent">Push</option>
+                            <!-- <option value="TeamAddEvent">Team add</option> -->
+                            <option value="WatchEvent">Star</option>
+                            <option value="GollumEvent">Wiki</option>
                         </select>
-                    </div>
+                    </fieldset>
 
                 </div>
                 <fieldset class="buttons">
@@ -455,29 +456,30 @@
             <form id="account_events_options" data-ajax="false">
                 <div class="fieldsets">
 
-                    <div data-role="fieldcontain">
-                        <label for="account_events_options_types" class="select">Type of events:</label>
-                        <select name="account_events_options_types" id="account_events_options_types" multiple="multiple" data-native-menu="false" data-mini="true">
-                            <option value="CommitCommentEvent" selected="selected">Commit comment</option>
-                            <option value="CreateEvent" selected="selected">Create</option>
-                            <option value="DeleteEvent" selected="selected">Delete</option>
-                            <!-- <option value="DownloadEvent" selected="selected">Download</option> -->
-                            <option value="FollowEvent" selected="selected">Follow</option>
-                            <option value="ForkEvent" selected="selected">Fork</option>
-                            <!-- <option value="ForkApplyEvent" selected="selected">Apply Fork</option> -->
-                            <option value="GistEvent" selected="selected">Gist</option>
-                            <option value="IssueCommentEvent" selected="selected">Issue comment</option>
-                            <option value="IssuesEvent" selected="selected">Issue</option>
-                            <option value="MemberEvent" selected="selected">Member</option>
-                            <option value="PublicEvent" selected="selected">Open source</option>
-                            <option value="PullRequestEvent" selected="selected">Pull request</option>
-                            <option value="PullRequestReviewCommentEvent" selected="selected">Pull request comment</option>
-                            <option value="PushEvent" selected="selected">Push</option>
-                            <!-- <option value="TeamAddEvent" selected="selected">Team add</option> -->
-                            <option value="WatchEvent" selected="selected">Star</option>
-                            <option value="GollumEvent" selected="selected">Wiki</option>
+                    <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label">
+                        <label for="account_events_options_type" class="select">Type of events:</label>
+                        <select name="account_events_options_type" id="account_events_options_type" data-mini="true">
+                            <option value="" selected="selected">All events</option>
+                            <option value="CommitCommentEvent">Commit comment</option>
+                            <option value="CreateEvent">Create</option>
+                            <option value="DeleteEvent">Delete</option>
+                            <!-- <option value="DownloadEvent">Download</option> -->
+                            <option value="FollowEvent">Follow</option>
+                            <option value="ForkEvent">Fork</option>
+                            <!-- <option value="ForkApplyEvent">Apply Fork</option> -->
+                            <option value="GistEvent">Gist</option>
+                            <option value="IssueCommentEvent">Issue comment</option>
+                            <option value="IssuesEvent">Issue</option>
+                            <option value="MemberEvent">Member</option>
+                            <option value="PublicEvent">Open source</option>
+                            <option value="PullRequestEvent">Pull request</option>
+                            <option value="PullRequestReviewCommentEvent">Pull request comment</option>
+                            <option value="PushEvent">Push</option>
+                            <!-- <option value="TeamAddEvent">Team add</option> -->
+                            <option value="WatchEvent">Star</option>
+                            <option value="GollumEvent">Wiki</option>
                         </select>
-                    </div>
+                    </fieldset>
 
                 </div>
                 <fieldset class="buttons">
@@ -573,29 +575,30 @@
             <form id="repository_activity_options" data-ajax="false">
                 <div class="fieldsets">
 
-                    <div data-role="fieldcontain">
-                        <label for="repository_activity_options_types" class="select">Type of events:</label>
-                        <select name="repository_activity_options_types" id="repository_activity_options_types" multiple="multiple" data-native-menu="false" data-mini="true">
-                            <option value="CommitCommentEvent" selected="selected">Commit comment</option>
-                            <option value="CreateEvent" selected="selected">Create</option>
-                            <option value="DeleteEvent" selected="selected">Delete</option>
-                            <!-- <option value="DownloadEvent" selected="selected">Download</option> -->
-                            <option value="FollowEvent" selected="selected">Follow</option>
-                            <option value="ForkEvent" selected="selected">Fork</option>
-                            <!-- <option value="ForkApplyEvent" selected="selected">Apply Fork</option> -->
-                            <option value="GistEvent" selected="selected">Gist</option>
-                            <option value="IssueCommentEvent" selected="selected">Issue comment</option>
-                            <option value="IssuesEvent" selected="selected">Issue</option>
-                            <option value="MemberEvent" selected="selected">Member</option>
-                            <option value="PublicEvent" selected="selected">Open source</option>
-                            <option value="PullRequestEvent" selected="selected">Pull request</option>
-                            <option value="PullRequestReviewCommentEvent" selected="selected">Pull request comment</option>
-                            <option value="PushEvent" selected="selected">Push</option>
-                            <!-- <option value="TeamAddEvent" selected="selected">Team add</option> -->
-                            <option value="WatchEvent" selected="selected">Star</option>
-                            <option value="GollumEvent" selected="selected">Wiki</option>
+                    <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label">
+                        <label for="repository_activity_options_type" class="select">Type of events:</label>
+                        <select name="repository_activity_options_type" id="repository_activity_options_type" data-mini="true">
+                            <option value="" selected="selected">All events</option>
+                            <option value="CommitCommentEvent">Commit comment</option>
+                            <option value="CreateEvent">Create</option>
+                            <option value="DeleteEvent">Delete</option>
+                            <!-- <option value="DownloadEvent">Download</option> -->
+                            <option value="FollowEvent">Follow</option>
+                            <option value="ForkEvent">Fork</option>
+                            <!-- <option value="ForkApplyEvent">Apply Fork</option> -->
+                            <option value="GistEvent">Gist</option>
+                            <option value="IssueCommentEvent">Issue comment</option>
+                            <option value="IssuesEvent">Issue</option>
+                            <option value="MemberEvent">Member</option>
+                            <option value="PublicEvent">Open source</option>
+                            <option value="PullRequestEvent">Pull request</option>
+                            <option value="PullRequestReviewCommentEvent">Pull request comment</option>
+                            <option value="PushEvent">Push</option>
+                            <!-- <option value="TeamAddEvent">Team add</option> -->
+                            <option value="WatchEvent">Star</option>
+                            <option value="GollumEvent">Wiki</option>
                         </select>
-                    </div>
+                    </fieldset>
 
                 </div>
                 <fieldset class="buttons">

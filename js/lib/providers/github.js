@@ -60,7 +60,7 @@
     EventFormatter.prototype.CommitCommentEvent = function(event, source) {
         var part = '<a href="#" class="collapsible-trigger">commented</a> a commit on',
             more = '<div data-role="collapsible" data-content-theme="d" data-corners="false" data-mini="true"><h3>Comment</h3>';
-        more += '<p class="ui-li ui-li-static ui-btn-up-d ui-first-child ui-last-child"><em>' + event.payload.comment.body.replace(/\n/g, '<br />') + '</em></p>';
+        more += this.markdown_event_more(event.payload.comment.body);
         more += '</div>';
         return this.base_format(event, source, part, null, null, more);
     };
@@ -154,6 +154,13 @@
         return this.base_format(event, source, part, null, ' ', more);
     };
 
+    EventFormatter.prototype.markdown_event_more = function(text) {
+        result = '<div class="ui-li ui-li-static ui-btn-up-d ui-first-child ui-last-child markdown">';
+        result += marked(text, {sanitize: true, breaks: true, smartLists: true});
+        result +='</div>';
+        return result;
+    };
+
     EventFormatter.prototype.IssueCommentEvent = function(event, source) {
         var is_pull_request = !!(event.payload.issue.pull_request && event.payload.issue.pull_request.html_url),
             part = event.payload.action == 'created' ? '<a href="#" class="collapsible-trigger">commented</a> ' + (is_pull_request ? 'a pull request' : 'an issue') + ' on' : event.payload.action + ' a ' + (event.payload.action == 'deleted' ? 'comment' : '<a href="#" class="collapsible-trigger">comment</a>') + ' on an issue on',
@@ -161,7 +168,7 @@
             more;
         if (event.payload.action != 'deleted') {
             more = '<div data-role="collapsible" data-content-theme="d" data-corners="false" data-mini="true"><h3>Comment</h3>';
-            more += '<p class="ui-li ui-li-static ui-btn-up-d ui-first-child ui-last-child"><em>' + event.payload.comment.body.replace(/\n/g, '<br />') + '</em></p>';
+            more += this.markdown_event_more(event.payload.comment.body);
             more += '</div>';
         }
         return this.base_format(event, source, part, desc, null, more);
@@ -173,7 +180,7 @@
             more;
         if (event.payload.issue.body) {
             more = '<div data-role="collapsible" data-content-theme="d" data-corners="false" data-mini="true"><h3>Comment</h3>';
-            more += '<p class="ui-li ui-li-static ui-btn-up-d ui-first-child ui-last-child"><em>' + event.payload.issue.body.replace(/\n/g, '<br />') + '</em></p>';
+            more += this.markdown_event_more(event.payload.issue.body);
             more += '</div>';
         }
         return this.base_format(event, source, part, desc, null, more);
@@ -196,7 +203,7 @@
             more;
         if (event.payload.pull_request.body) {
             more = '<div data-role="collapsible" data-content-theme="d" data-corners="false" data-mini="true"><h3>Comment</h3>';
-            more += '<p class="ui-li ui-li-static ui-btn-up-d ui-first-child ui-last-child"><em>' + event.payload.pull_request.body.replace(/\n/g, '<br />') + '</em></p>';
+            more += this.markdown_event_more(event.payload.pull_request.body);
             more += '</div>';
         }
         return this.base_format(event, source, part, desc, null, more);
@@ -206,7 +213,7 @@
         var part = '<a href="#" class="collapsible-trigger">commented</a> a pull request on',
             PR_num = event.payload.comment._links.pull_request.href,
             more = '<div data-role="collapsible" data-content-theme="d" data-corners="false" data-mini="true"><h3>Comment</h3>';
-        more += '<p class="ui-li ui-li-static ui-btn-up-d ui-first-child ui-last-child"><em>' + event.payload.comment.body.replace(/\n/g, '<br />') + '</em></p>';
+        more += this.markdown_event_more(event.payload.comment.body);
         more += '</div>';
         
         if (PR_num) {

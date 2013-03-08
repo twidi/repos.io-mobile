@@ -238,6 +238,46 @@ span.repo-links > span:last-of-type {
 .list-events li .ui-collapsible .ui-collapsible-content > p {
     padding: 0.5em 10px;
 }
+.list-events li .ui-collapsible .ui-collapsible-content > div.markdown {
+    padding: 0.5em 10px;
+}
+div.markdown p {
+    margin: 0.5em 0;
+}
+div.markdown code {
+    background: #f8f8f8;
+    border: 1px solid #eaeaea;
+    padding: 2px;
+    margin: 0 2px;
+    /*border-radius: 3px;*/
+    line-height: 2em;
+}
+div.markdown pre {
+    background: #f8f8f8;
+    border: 1px solid #ccc;
+    display: inline-block;
+    margin: 0.5em 0;
+    padding: 1ex;
+    /*border-radius: 3px;*/
+    overflow-x: auto;
+}
+div.markdown pre code {
+    background: transparent;
+    padding: 0;
+    margin: 0;
+    border: none;
+    line-height: 1.4em;
+}
+div.markdown blockquote {
+    border-left: 4px solid #ccc;
+    margin: 1em 0.5em 1em 2em;
+    padding: 0 0 0 0.5em;
+}
+
+div.markdown li {
+    overflow: inherit;
+    list-style-type: disc;
+}
 
 .list-events li.with-extension > em {
     cursor: pointer;

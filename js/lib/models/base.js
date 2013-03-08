@@ -230,7 +230,13 @@
             if (!options.type) {
                 return data;
             }
-            return _.filter(data, function(event) { return (options.type == event.type); });
+            var type_method = _.filter,
+                type = options.type;
+            if (options.type.charAt(0) == '-') {
+                type = options.type.slice(1);
+                type_method = _.reject;
+            }
+            return type_method(data, function(event) { return (type == event.type); });
         }
 
     });

@@ -167,9 +167,15 @@
     };
 
     EventFormatter.prototype.IssuesEvent = function(event, source) {
-        var part = event.payload.action + ' an issue on',
-            desc = 'Issue: <strong>#' + event.payload.issue.number + ' - ' + event.payload.issue.title + '</strong>';
-        return this.base_format(event, source, part, desc);
+        var part = event.payload.action + ' an ' + (event.payload.issue.body ? '<a href="#" class="collapsible-trigger">issue</a>' : 'issue') + ' on',
+            desc = 'Issue: <strong>#' + event.payload.issue.number + ' - ' + event.payload.issue.title + '</strong>',
+            more;
+        if (event.payload.issue.body) {
+            more = '<div data-role="collapsible" data-content-theme="d" data-corners="false" data-mini="true"><h3>Comment</h3>';
+            more += '<p class="ui-li ui-li-static ui-btn-up-d ui-first-child ui-last-child"><em>' + event.payload.issue.body.replace(/\n/g, '<br />') + '</em></p>';
+            more += '</div>';
+        }
+        return this.base_format(event, source, part, desc, null, more);
     };
 
     EventFormatter.prototype.MemberEvent = function(event, source) {

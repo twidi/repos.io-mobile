@@ -168,7 +168,7 @@
 
     EventFormatter.prototype.IssuesEvent = function(event, source) {
         var part = event.payload.action + ' an ' + (event.payload.issue.body ? '<a href="#" class="collapsible-trigger">issue</a>' : 'issue') + ' on',
-            desc = 'Issue: <strong>#' + event.payload.issue.number + ' - ' + event.payload.issue.title + '</strong>',
+            desc = 'Issue <strong>#' + event.payload.issue.number + ' - ' + event.payload.issue.title + '</strong>',
             more;
         if (event.payload.issue.body) {
             more = '<div data-role="collapsible" data-content-theme="d" data-corners="false" data-mini="true"><h3>Comment</h3>';

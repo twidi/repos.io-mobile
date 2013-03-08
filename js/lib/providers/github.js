@@ -190,9 +190,15 @@
     };
 
     EventFormatter.prototype.PullRequestEvent = function(event, source) {
-        var part = event.payload.action + ' a pull request on',
-            desc = 'Pull request <strong>#' + event.payload.number + ' - ' + event.payload.pull_request.title + '</strong>';
-        return this.base_format(event, source, part, desc);
+        var part = event.payload.action + ' a ' + (event.payload.pull_request.body ? '<a href="#" class="collapsible-trigger">pull request</a>' : 'issue') + ' on',
+            desc = 'Pull request <strong>#' + event.payload.number + ' - ' + event.payload.pull_request.title + '</strong>',
+            more;
+        if (event.payload.pull_request.body) {
+            more = '<div data-role="collapsible" data-content-theme="d" data-corners="false" data-mini="true"><h3>Comment</h3>';
+            more += '<p class="ui-li ui-li-static ui-btn-up-d ui-first-child ui-last-child"><em>' + event.payload.pull_request.body.replace(/\n/g, '<br />') + '</em></p>';
+            more += '</div>';
+        }
+        return this.base_format(event, source, part, desc, null, more);
     };
 
     EventFormatter.prototype.PullRequestReviewCommentEvent = function(event, source) {

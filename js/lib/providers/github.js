@@ -109,16 +109,19 @@
     };
 
     EventFormatter.prototype.ForkEvent = function(event, source) {
-        var part = '<a href="#" class="collapsible-trigger">forked</a>',
+        var has_more = isNaN(event.payload.forkee),
+            part = has_more ? '<a href="#" class="collapsible-trigger">forked</a>' : 'forked',
             more;
-        more = '<div data-role="collapsible" data-content-theme="d" data-corners="false" data-mini="true"><h3>Fork</h3>';
-        more += '<p class="ui-li ui-li-static ui-btn-up-d ui-first-child ui-last-child">Fork: ' + this.format_repo(event.payload.forkee, event.actor, source) + '</p>';
-        more += '</div>';
+        if (has_more) { // old, when the forkee was the new repo's id
+            more = '<div data-role="collapsible" data-content-theme="d" data-corners="false" data-mini="true"><h3>Fork</h3>';
+            more += '<p class="ui-li ui-li-static ui-btn-up-d ui-first-child ui-last-child">Fork: ' + this.format_repo(event.payload.forkee, event.actor, source) + '</p>';
+            more += '</div>';
+        }
         return this.base_format(event, source, part, null, null, more);
     };
 
     EventFormatter.prototype.ForkApplyEvent = function(event, source) {
-
+        return this.base_format(event, source, 'applied the fork queue to');
     };
 
     EventFormatter.prototype.GistEvent = function(event, source) {
@@ -208,25 +211,36 @@
 
     EventFormatter.prototype.PushEvent = function(event, source) {
         var part = 'pushed ' + (event.payload.size ? '<a href="#" class="collapsible-trigger">' + event.payload.size + ' commit' + (event.payload.size > 1 ? 's' : '') + '</a> ' : '') + 'to',
-            more;
+            more, commits, old_style = false;
         if (event.payload.size) {
-            more = '<div data-role="collapsible" data-content-theme="d" data-corners="false" data-mini="true"><h3>Commits</h3>';
-            more += '<ul data-role="listview" data-theme="d">';
-            for (var i=0; i<event.payload.commits.length;i++) {
-                var commit = event.payload.commits[i],
-                    lines = commit.message.split('\n'),
-                    first_part = lines.shift(),
-                    other_part = lines.length ? '<br />' + lines.join('<br />') : '';
+            if (event.payload.commits) {
+                commits = event.payload.commits;
+            } else if (event.payload.shas) {
+                commits = event.payload.shas;
+                old_style = true;
+            }
+            if (commits) {
+                more = '<div data-role="collapsible" data-content-theme="d" data-corners="false" data-mini="true"><h3>Commits</h3>';
+                more += '<ul data-role="listview" data-theme="d">';
 
-                more += '<li' + (other_part.length ? ' class="with-extension"' : '') + '>';
-                more += '<strong>' + commit.author.name + '</strong>'; // we have the name, not the username :(
-                more += ' — <em>';
-                more += first_part;
-                if (other_part) {
-                    more += '<span class="extension">' + other_part + '</span>';
+                for (var i=0; i<commits.length;i++) {
+                    var commit = commits[i],
+                        message = old_style ? commit[2] : commit.message,
+                        lines = message.split('\n'),
+                        first_part = lines.shift(),
+                        other_part = lines.length ? '<br />' + lines.join('<br />') : '',
+                        author = old_style ? commit[3] : commit.author.name;
+
+                    more += '<li' + (other_part.length ? ' class="with-extension"' : '') + '>';
+                    more += '<strong>' + author + '</strong>'; // we have the name, not the username :(
+                    more += ' — <em>';
+                    more += first_part;
+                    if (other_part) {
+                        more += '<span class="extension">' + other_part + '</span>';
+                    }
+                    more += '</em>';
+                    more += '</li>';
                 }
-                more += '</em>';
-                more += '</li>';
             }
             more += '</ul></div>';
         }

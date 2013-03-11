@@ -57,28 +57,39 @@
         return result;
     };
 
+    EventFormatter.prototype.markdown_event_more = function(text) {
+        if (!text) { return ''; }
+        result = '<div class="ui-li ui-li-static ui-btn-up-d ui-first-child ui-last-child markdown">';
+        result += marked(text, {sanitize: true, breaks: true, smartLists: true});
+        result +='</div>';
+        return result;
+    };
+
     EventFormatter.prototype.CommitCommentEvent = function(event, source) {
-        var part = '<a href="#" class="collapsible-trigger">commented</a> a commit on',
+        var part = (event.comment.body ? '<a href="#" class="collapsible-trigger">commented</a>' : 'commented') +  ' a commit on',
+            more;
+        if (event.comment.body) {
             more = '<div data-role="collapsible" data-content-theme="d" data-corners="false" data-mini="true"><h3>Comment</h3>';
-        more += this.markdown_event_more(event.payload.comment.body);
-        more += '</div>';
+            more += this.markdown_event_more(event.comment.body);
+            more += '</div>';
+        }
         return this.base_format(event, source, part, null, null, more);
     };
 
     EventFormatter.prototype.CreateEvent = function(event, source) {
         var part = 'created', desc;
-        switch(event.payload.ref_type) {
+        switch( event.ref_type) {
             case 'branch':
                 part += ' a branch on';
-                desc = 'Branch: <strong>' + event.payload.ref + '</strong>';
+                desc = 'Branch: <strong>' + event.ref + '</strong>';
                 break;
             case 'repository':
-                if (event.payload.description) {
-                    desc = 'Description: <strong>' + event.payload.description + '</strong>';
+                if (event.description) {
+                    desc = 'Description: <strong>' + event.description + '</strong>';
                 }
                 break;
             case 'tag':
-                desc = 'Tag: <strong>' + event.payload.ref + '</strong>';
+                desc = 'Tag: <strong>' + event.ref + '</strong>';
                 break;
         }
         return this.base_format(event, source, part, desc);
@@ -86,13 +97,13 @@
 
     EventFormatter.prototype.DeleteEvent = function(event, source) {
         var part = 'deleted', desc;
-        switch(event.payload.ref_type) {
+        switch(event.ref_type) {
             case 'branch':
                 part += ' a branch on';
-                desc = 'Branch: <strong>' + event.payload.ref + '</strong>';
+                desc = 'Branch: <strong>' + event.ref + '</strong>';
                 break;
             case 'tag':
-                desc = 'Tag: <strong>' + event.payload.ref + '</strong>';
+                desc = 'Tag: <strong>' + event.ref + '</strong>';
                 break;
         }
         return this.base_format(event, source, part, desc);
@@ -104,17 +115,16 @@
     };
 
     EventFormatter.prototype.FollowEvent = function(event, source) {
-        var target = this.format_actor(event.payload.target, source);
+        var target = this.format_actor(event.target, source);
         return this.base_format(event, source, 'started following', null, target);
     };
 
     EventFormatter.prototype.ForkEvent = function(event, source) {
-        var has_more = isNaN(event.payload.forkee),
-            part = has_more ? '<a href="#" class="collapsible-trigger">forked</a>' : 'forked',
+        var part = event.forkee ? '<a href="#" class="collapsible-trigger">forked</a>' : 'forked',
             more;
-        if (has_more) { // old, when the forkee was the new repo's id
+        if (event.forkee) {
             more = '<div data-role="collapsible" data-content-theme="d" data-corners="false" data-mini="true"><h3>Fork</h3>';
-            more += '<p class="ui-li ui-li-static ui-btn-up-d ui-first-child ui-last-child">Fork: ' + this.format_repo(event.payload.forkee, event.actor, source) + '</p>';
+            more += '<p class="ui-li ui-li-static ui-btn-up-d ui-first-child ui-last-child">Fork: ' + this.format_repo(event.forkee, event.actor, source) + '</p>';
             more += '</div>';
         }
         return this.base_format(event, source, part, null, null, more);
@@ -125,7 +135,7 @@
     };
 
     EventFormatter.prototype.GistEvent = function(event, source) {
-        var action = event.payload.action, part, desc;
+        var action = event.action, part, desc;
         if (!action.match(/d$/)) {
             if (!action.match(/e$/)) {
                 action += 'e';  // fork
@@ -133,7 +143,7 @@
             action += 'd';  // create/update
         }
         part = action + ' a gist',
-        desc = 'Description: <strong>' + event.payload.gist.description + '</strong>';
+        desc = 'Description: <strong>' + event.gist.description + '</strong>';
         return this.base_format(event, source, part, desc, null);
     };
 
@@ -143,8 +153,8 @@
             more = '';
         more = '<div data-role="collapsible" data-content-theme="d" data-corners="false" data-mini="true"><h3>Actions</h3>';
         more += '<ul data-role="listview" data-theme="d">';
-        for (var i=0; i<event.payload.pages.length; i++) {
-            var page = event.payload.pages[i];
+        for (var i=0; i<event.pages.length; i++) {
+            var page = event.pages[i];
             more += '<li>';
             more += '<em>' + page.title + '</em> — <strong>' + page.action + '</strong>';
             more += '</li>';
@@ -154,42 +164,50 @@
         return this.base_format(event, source, part, null, ' ', more);
     };
 
-    EventFormatter.prototype.markdown_event_more = function(text) {
-        result = '<div class="ui-li ui-li-static ui-btn-up-d ui-first-child ui-last-child markdown">';
-        result += marked(text, {sanitize: true, breaks: true, smartLists: true});
-        result +='</div>';
-        return result;
-    };
-
     EventFormatter.prototype.IssueCommentEvent = function(event, source) {
-        var is_pull_request = !!(event.payload.issue.pull_request && event.payload.issue.pull_request.html_url),
-            part = event.payload.action == 'created' ? '<a href="#" class="collapsible-trigger">commented</a> ' + (is_pull_request ? 'a pull request' : 'an issue') + ' on' : event.payload.action + ' a ' + (event.payload.action == 'deleted' ? 'comment' : '<a href="#" class="collapsible-trigger">comment</a>') + ' on an issue on',
-            desc = (is_pull_request ? 'Pull request' : 'Issue') + ': <strong>#' + event.payload.issue.number + ' - ' + event.payload.issue.title + '</strong>',
+        var part, // = event.action == 'created' ? '<a href="#" class="collapsible-trigger">commented</a> ' + (event.is_pull_request ? 'a pull request' : 'an issue') + ' on' : event.action + ' a ' + (event.action == 'deleted ||' ? 'comment' : '<a href="#" class="collapsible-trigger">comment</a>') + ' on an issue on',
+            desc = (event.is_pull_request ? 'Pull request' : 'Issue') + ': <strong>#' + event.issue.number + ' - ' + event.issue.title + '</strong>',
             more;
-        if (event.payload.action != 'deleted') {
+        if (event.action == 'created') {
+            if (event.comment.body) {
+                part = '<a href="#" class="collapsible-trigger">commented</a>';
+            } else {
+                part = 'commented';
+            }
+            part += ' ' + (part += event.is_pull_request ? 'a pull request' : 'an issue') + ' on';
+        } else {
+            part = event.action + ' a ';
+            if (event.action != 'deleted' && event.comment.body) {
+                part += '<a href="#" class="collapsible-trigger">comment</a>';
+            } else {
+                part += 'comment';
+            }
+            part += ' on an issue on';
+        }
+        if (event.action != 'deleted' && event.comment.body) {
             more = '<div data-role="collapsible" data-content-theme="d" data-corners="false" data-mini="true"><h3>Comment</h3>';
-            more += this.markdown_event_more(event.payload.comment.body);
+            more += this.markdown_event_more(event.comment.body);
             more += '</div>';
         }
         return this.base_format(event, source, part, desc, null, more);
     };
 
     EventFormatter.prototype.IssuesEvent = function(event, source) {
-        var part = event.payload.action + ' an ' + (event.payload.issue.body ? '<a href="#" class="collapsible-trigger">issue</a>' : 'issue') + ' on',
-            desc = 'Issue <strong>#' + event.payload.issue.number + ' - ' + event.payload.issue.title + '</strong>',
+        var part = event.action + ' an ' + (event.issue.body ? '<a href="#" class="collapsible-trigger">issue</a>' : 'issue') + ' on',
+            desc = 'Issue <strong>#' + event.issue.number + ' - ' + event.issue.title + '</strong>',
             more;
-        if (event.payload.issue.body) {
+        if (event.issue.body) {
             more = '<div data-role="collapsible" data-content-theme="d" data-corners="false" data-mini="true"><h3>Comment</h3>';
-            more += this.markdown_event_more(event.payload.issue.body);
+            more += this.markdown_event_more(event.issue.body);
             more += '</div>';
         }
         return this.base_format(event, source, part, desc, null, more);
     };
 
     EventFormatter.prototype.MemberEvent = function(event, source) {
-        var part = event.payload.action + ' ';
-        part += this.format_actor(event.payload.member, source);
-        part += ' as a member ' + (event.payload.action == 'added' ? 'to' : 'from');
+        var part = event.action + ' ';
+        part += this.format_actor(event.member, source);
+        part += ' as a member ' + (event.action == 'added' ? 'to' : 'from');
         return this.base_format(event, source, part);
     };
 
@@ -198,69 +216,55 @@
     };
 
     EventFormatter.prototype.PullRequestEvent = function(event, source) {
-        var part = event.payload.action + ' a ' + (event.payload.pull_request.body ? '<a href="#" class="collapsible-trigger">pull request</a>' : 'issue') + ' on',
-            desc = 'Pull request <strong>#' + event.payload.number + ' - ' + event.payload.pull_request.title + '</strong>',
+        var part = event.action + ' a ' + (event.pull_request.body ? '<a href="#" class="collapsible-trigger">pull request</a>' : 'pull request') + ' on',
+            desc = 'Pull request <strong>#' + event.pull_request.number + ' - ' + event.pull_request.title + '</strong>',
             more;
-        if (event.payload.pull_request.body) {
+        if (event.pull_request.body) {
             more = '<div data-role="collapsible" data-content-theme="d" data-corners="false" data-mini="true"><h3>Comment</h3>';
-            more += this.markdown_event_more(event.payload.pull_request.body);
+            more += this.markdown_event_more(event.pull_request.body);
             more += '</div>';
         }
         return this.base_format(event, source, part, desc, null, more);
     };
 
     EventFormatter.prototype.PullRequestReviewCommentEvent = function(event, source) {
-        var part = '<a href="#" class="collapsible-trigger">commented</a> a pull request on',
-            PR_num = event.payload.comment._links.pull_request.href,
+        var part = (event.comment.body ? '<a href="#" class="collapsible-trigger">commented</a>' : 'commented') + ' a pull request on',
+            more;
+        if (event.comment.body) {
             more = '<div data-role="collapsible" data-content-theme="d" data-corners="false" data-mini="true"><h3>Comment</h3>';
-        more += this.markdown_event_more(event.payload.comment.body);
-        more += '</div>';
-        
-        if (PR_num) {
-            PR_num = PR_num.match(/(\d+)\/?$/);
-            if (PR_num) {
-                PR_num = PR_num[1];
-            }
+            more += this.markdown_event_more(event.comment.body);
+            more += '</div>';
         }
-        if (PR_num) {
-            desc = 'Pull request <strong>#' + PR_num + '</strong>';
+        
+        if (event.pull_request.number) {
+            desc = 'Pull request <strong>#' + event.pull_request.number + '</strong>';
         }
         
         return this.base_format(event, source, part, desc, null, more);
     };
 
     EventFormatter.prototype.PushEvent = function(event, source) {
-        var part = 'pushed ' + (event.payload.size ? '<a href="#" class="collapsible-trigger">' + event.payload.size + ' commit' + (event.payload.size > 1 ? 's' : '') + '</a> ' : '') + 'to',
+        var part = 'pushed ' + ((event.size && event.commits.length) ? '<a href="#" class="collapsible-trigger">' + event.size + ' commit' + (event.size > 1 ? 's' : '') + '</a> ' : '') + 'to',
             more, commits, old_style = false;
-        if (event.payload.size) {
-            if (event.payload.commits) {
-                commits = event.payload.commits;
-            } else if (event.payload.shas) {
-                commits = event.payload.shas;
-                old_style = true;
-            }
-            if (commits) {
-                more = '<div data-role="collapsible" data-content-theme="d" data-corners="false" data-mini="true"><h3>Commits</h3>';
-                more += '<ul data-role="listview" data-theme="d">';
+        if (event.size && event.commits.length) {
+            more = '<div data-role="collapsible" data-content-theme="d" data-corners="false" data-mini="true"><h3>Commits</h3>';
+            more += '<ul data-role="listview" data-theme="d">';
 
-                for (var i=0; i<commits.length;i++) {
-                    var commit = commits[i],
-                        message = old_style ? commit[2] : commit.message,
-                        lines = message.split('\n'),
-                        first_part = lines.shift(),
-                        other_part = lines.length ? '<br />' + lines.join('<br />') : '',
-                        author = old_style ? commit[3] : commit.author.name;
+            for (var i=0; i<event.commits.length;i++) {
+                var commit = event.commits[i],
+                    lines = commit.message.split('\n'),
+                    first_part = lines.shift(),
+                    other_part = lines.length ? '<br />' + lines.join('<br />') : '';
 
-                    more += '<li' + (other_part.length ? ' class="with-extension"' : '') + '>';
-                    more += '<strong>' + author + '</strong>'; // we have the name, not the username :(
-                    more += ' — <em>';
-                    more += first_part;
-                    if (other_part) {
-                        more += '<span class="extension">' + other_part + '</span>';
-                    }
-                    more += '</em>';
-                    more += '</li>';
+                more += '<li' + (other_part.length ? ' class="with-extension"' : '') + '>';
+                more += '<strong>' + commit.author.name + '</strong>'; // we have the name, not the username :(
+                more += ' — <em>';
+                more += first_part;
+                if (other_part) {
+                    more += '<span class="extension">' + other_part + '</span>';
                 }
+                more += '</em>';
+                more += '</li>';
             }
             more += '</ul></div>';
         }
@@ -272,7 +276,7 @@
     };
 
     EventFormatter.prototype.WatchEvent = function(event, source) {
-        return this.base_format(event, source, event.payload.action + ' watching');
+        return this.base_format(event, source, event.action + ' watching');
     };
 
 
@@ -291,7 +295,7 @@
             Gh3.Helper.headers['Authorization'] = authorization;
         }
 
-        Gh3.Helper.cache = false;
+        // Gh3.Helper.cache = false;
 
         this.controller = controller;
         this.formatter = new EventFormatter(this);
@@ -306,7 +310,7 @@
         return new Gh3.Repository(parts[1], this.get_user(parts[0]));
     };
 
-    Provider.prototype.map_type = {accounts: 'account', repositories: 'repository'};
+    Provider.prototype.map_type = {accounts: 'account', repositories: 'repository', events: 'event'};
     Provider.prototype.decorate_collback = function(callback, name, type) {
         var that = this;
         return function(err, data) {
@@ -318,8 +322,9 @@
                         break;
                     case 'repositories':
                     case 'accounts':
-                        // call "map_account" or "map_repositories" for each entry
-                        // in the list obtained by a call to "getAll"
+                    case 'events':
+                        // call "map_account", "map_repository" or "map_event"
+                        // for each entry in the list obtained by a call to "getAll"
                         final_data = _.map(data[name].getAll(), that['map_' + that.map_type[type]], that);
                         break;
                     default:
@@ -331,32 +336,23 @@
     };
 
     Provider.prototype.map = function(data, mapping) {
-        var result = {};
+        var result = {}, key_in;
         if (data) {
-            for (var key in mapping) {
-                if (typeof(data[key]) == 'undefined') {
+            for (var i = 0; i < mapping._.length; i++) {
+                key_in = mapping._[i];
+                if (typeof(data[key_in]) == 'undefined') {
                     continue;
                 }
-                result[mapping[key]] = data[key];
+                result[mapping[key_in] || key_in] = data[key_in];
             }
         }
         return result;
     };
 
     Provider.prototype.account_mapping = {
-        login: 'login',
-        type: 'type',
-        avatar_url: 'avatar_url',
-        name: 'name',
-        created_at: 'created_at',
-        company: 'company',
-        location: 'location',
-        email: 'email',
+        _: ['login', 'type', 'avatar_url', 'name', 'created_at', 'company', 'location', 'email', 'blog', 'public_repos', 'followers_count', 'following_count', 'contributions'],
         blog: 'site',
-        public_repos: 'repos_count',
-        followers_count: 'followers_count',
-        following_count: 'following_count',
-        contributions: 'contributions'
+        public_repos: 'repos_count'
     };
 
     Provider.prototype.map_account = function(data) {
@@ -368,17 +364,10 @@
     };
 
     Provider.prototype.repository_mapping = {
-        name: 'name',
-        full_name: 'full_name',
-        description: 'description',
-        pushed_at: 'pushed_at',
-        created_at: 'created_at',
-        updated_at: 'updated_at',
-        fork: 'is_fork',
-        forks_count: 'forks_count',
-        watchers_count: 'watchers_count',
-        language: 'language'
+        _: ['name', 'full_name', 'description', 'pushed_at', 'created_at', 'updated_at', 'forks_count', 'fork', 'watchers_count', 'language'],
+        fork: 'is_fork'
     };
+
     Provider.prototype.map_repository = function(data) {
         var result = {};
         if (data) {
@@ -391,6 +380,112 @@
             }
         }
         return result;
+    };
+
+    Provider.prototype.map_event = function(data) {
+        var event = {}, payload;
+        if (data) {
+            payload = data.payload || {};
+            switch (data.type) {
+                case 'CommitCommentEvent':
+                    event.comment = this.map(payload.comment, {_:['body']});
+                    break;
+                case 'CreateEvent':
+                    event = this.map(payload, {_:['ref_type', 'ref', 'description']});
+                    break;
+                case 'DeleteEvent':
+                    event = this.map(payload, {_:['ref_type', 'ref']});
+                    break;
+                case 'FollowEvent':
+                    if (payload.target && payload.target.login) { event.target = {login: payload.target.login}; }
+                    break;
+                case 'ForkEvent':
+                    // in old events, forkee was the github id of the repository, so we don't have any name
+                    if (payload.forkee && isNaN(payload.forkee)) { event.forkee = this.map(payload.forkee, {_:['name', 'full_name']}); }
+                    break;
+                case 'GistEvent':
+                    event = this.map(payload, {_:['action']});
+                    event.gist = this.map(payload.gist, {_:['description']});
+                    break;
+                case 'GollumEvent':
+                    event.pages = [];
+                    if (payload.pages && payload.pages.length) {
+                        for (var page_number = 0; page_number < payload.pages.length; page_number++) {
+                            event.pages.push(this.map(payload.pages[page_number], {_:['title', 'action']}));
+                        }
+                    }
+                    break;
+                case 'IssueCommentEvent':
+                    event = this.map(payload, {_:['action']});
+                    event.issue = this.map(payload.issue, {_:['number', 'title']});
+                    event.issue.is_pull_request = (payload.issue && payload.issue.pull_request && payload.issue.pull_request.html_url);
+                    event.comment = this.map(payload.comment, {_:['body']});
+                    break;
+                case 'IssuesEvent':
+                    event = this.map(payload, {_:['action']});
+                    event.issue = this.map(payload.issue, {_:['number', 'title', 'body']});
+                    break;
+                case 'MemberEvent':
+                    event = this.map(payload, {_:['action']});
+                    if (payload.member && payload.member.login) { event.member = {login: payload.member.login}; }
+                    break;
+                case 'PullRequestEvent':
+                    event = this.map(payload, {_:['action', 'number']});
+                    event.pull_request = this.map(payload.pull_request, {_:['body', 'title']});
+                    if (event.number) {
+                        event.pull_request.number = event.number;
+                        delete event.number;
+                    }
+                    break;
+                case 'PullRequestReviewCommentEvent':
+                    // hack the pull request url to get its number, not officialy available in the payload
+                    var PR_num;
+                    event.pull_request = {};
+                    if (payload.comment._links && payload.comment._links.pull_request && payload.comment._links.pull_request.href) {
+                        PR_num = payload.comment._links.pull_request.href;
+                        PR_num = PR_num.match(/(\d+)\/?$/);
+                        PR_num = PR_num ? PR_num[1] : null;
+                        if (PR_num) { event.pull_request.number = PR_num; }
+                    }
+                    event.comment = this.map(payload.comment, {_:['body']});
+                    break;
+                case 'PushEvent':
+                    // in old events, commit infos are available as arrays in 'shas', not as objects in 'commits'
+                    var old_style;
+                    event = this.map(payload, {_:['size']});
+                    event.commits = [];
+                    if (event.size) {
+                        if (payload.commits) {
+                            commits = payload.commits;
+                            old_style = false;
+                        } else if (payload.shas) {
+                            commits = payload.shas;
+                            old_style = true;
+                        }
+                        for (var i=0; i<commits.length;i++) {
+                            var commit = commits[i],
+                                message = old_style ? commit[2] : commit.message,
+                                author_name = old_style ? commit[3] : commit.author.name;
+                            event.commits.push({
+                                message: message,
+                                author: {name: author_name}
+                            });
+                        }
+                    }
+                    break;
+                case 'WatchEvent':
+                    event = this.map(payload, {_:['action']});
+                    break;
+            } // switch data.type
+
+            event.type = data.type;
+            event.created_at = data.created_at;
+            event.actor = this.map(data.actor, {_:['login']});
+            event.repository = this.map(data.repository, {_:['name', 'full_name']});
+
+        }
+
+        return event;
     };
 
     Provider.prototype.get_account_details = function(username, callback, params) {
@@ -413,11 +508,11 @@
     };
 
     Provider.prototype.get_account_own_events = function(username, callback, params) {
-        this.get_user(username).events.fetch(this.decorate_collback(callback, 'events'), params);
+        this.get_user(username).events.fetch(this.decorate_collback(callback, 'events', 'events'), params);
     };
 
     Provider.prototype.get_account_received_events = function(username, callback, params) {
-        this.get_user(username).received_events.fetch(this.decorate_collback(callback, 'received_events'), params);
+        this.get_user(username).received_events.fetch(this.decorate_collback(callback, 'received_events', 'events'), params);
     };
 
     Provider.prototype.get_account_followers = function(username, callback, params) {
@@ -452,7 +547,7 @@
     };
 
     Provider.prototype.get_repository_activity = function(path, callback, params) {
-        this.get_repo(path).events.fetch(this.decorate_collback(callback, 'events'), params);
+        this.get_repo(path).events.fetch(this.decorate_collback(callback, 'events', 'events'), params);
     };
 
     Provider.prototype.get_repository_forks = function(path, callback, params) {

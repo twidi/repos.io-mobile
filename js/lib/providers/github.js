@@ -41,7 +41,7 @@
     EventFormatter.prototype.base_format = function(event, source, middle_part, desc, target, more) {
         var result = '';
         result += '<p class="ui-li-aside">' + this.provider.controller.display.format_date(event.created_at, 'show-time', null, 'time-only') + '</p>';
-        if (!target && event.repository && event.repository.name != '/') {
+        if (!target && event.repository && (event.repository.name || event.repository.full_name)) {
             target = this.format_repo(event.repository, event.actor, source);
         }
         result += this.format_actor(event.actor, source) + ' ' + middle_part;
@@ -142,8 +142,8 @@
             }
             action += 'd';  // create/update
         }
-        part = action + ' a gist',
-        desc = 'Description: <strong>' + event.gist.description + '</strong>';
+        part = action + ' a gist';
+        if (event.gist.description) { desc = 'Description: <strong>' + event.gist.description + '</strong>'; }
         return this.base_format(event, source, part, desc, null);
     };
 
@@ -481,7 +481,7 @@
             event.type = data.type;
             event.created_at = data.created_at;
             event.actor = this.map(data.actor, {_:['login']});
-            event.repository = this.map(data.repository, {_:['name', 'full_name']});
+            event.repository = this.map(data.repository || data.repo, {_:['name', 'full_name']});
 
         }
 

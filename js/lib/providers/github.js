@@ -241,8 +241,12 @@
     };
 
     EventFormatter.prototype.PushEvent = function(event, source) {
-        var part = 'pushed ' + (event.size ? this.trigger_text(event.size + ' commit' + (event.size > 1 ? 's' : ''), true) : '') + ' to';
-        return this.base_format(event, source, part);
+        var part = 'pushed ' + (event.size ? this.trigger_text(event.size + ' commit' + (event.size > 1 ? 's' : ''), true) : '') + ' to',
+            desc;
+            if (event.ref && event.ref.indexOf('refs/heads/') === 0) {
+                desc = 'Branch: <strong>' + event.ref.replace('refs/heads/', '') + '</strong>';
+            }
+        return this.base_format(event, source, part, desc);
     };
 
     EventFormatter.prototype.more_PushEvent = function(event, source) {
@@ -449,7 +453,7 @@
                 case 'PushEvent':
                     // in old events, commit infos are available as arrays in 'shas', not as objects in 'commits'
                     var old_style;
-                    event = this.map(payload, {_:['size']});
+                    event = this.map(payload, {_:['size', 'ref']});
                     event.commits = [];
                     if (event.size) {
                         if (payload.commits) {

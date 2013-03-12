@@ -165,7 +165,7 @@
     };
 
     EventFormatter.prototype.IssueCommentEvent = function(event, source) {
-        var part, // = event.action == 'created' ? '<a href="#" class="collapsible-trigger">commented</a> ' + (event.is_pull_request ? 'a pull request' : 'an issue') + ' on' : event.action + ' a ' + (event.action == 'deleted ||' ? 'comment' : '<a href="#" class="collapsible-trigger">comment</a>') + ' on an issue on',
+        var part,
             desc = (event.is_pull_request ? 'Pull request' : 'Issue') + ': <strong>#' + event.issue.number + ' - ' + event.issue.title + '</strong>',
             more;
         if (event.action == 'created') {
@@ -174,7 +174,7 @@
             } else {
                 part = 'commented';
             }
-            part += ' ' + (part += event.is_pull_request ? 'a pull request' : 'an issue') + ' on';
+            part += ' ' + (event.is_pull_request ? 'a pull request' : 'an issue') + ' on';
         } else {
             part = event.action + ' a ';
             if (event.action != 'deleted' && event.comment.body) {

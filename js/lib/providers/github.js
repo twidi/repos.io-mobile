@@ -295,7 +295,7 @@
             Gh3.Helper.headers['Authorization'] = authorization;
         }
 
-        // Gh3.Helper.cache = false;
+        Gh3.Helper.cache = false;
 
         this.controller = controller;
         this.formatter = new EventFormatter(this);

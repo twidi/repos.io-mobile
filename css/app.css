@@ -172,20 +172,24 @@ span.repo-links > span:last-of-type {
     width: 5ex;
 }
 
-.list-events li a.collapsible-trigger {
+.list-events li .collapsible-trigger {
     border-bottom: 1px dashed;
     color: inherit;
     text-decoration: none;
     display: inline-block;
     margin-bottom: 1px;
 }
-.list-events li .ui-collapsible {
+.list-events li .event-more {
     margin: 0;
-}
-.list-events li .ui-collapsible h3.ui-collapsible-heading {
     display: none;
 }
-.list-events li .ui-collapsible .ui-collapsible-content {
+.list-events li .event-more.ui-collapsible {
+    display: block;
+}
+.list-events li .event-more > h3 {
+    display: none;
+}
+.list-events li .event-more > div {
     padding: 0;
     margin-top: 5px;
     background: none repeat scroll 0 0 transparent;
@@ -204,12 +208,11 @@ span.repo-links > span:last-of-type {
     -webkit-transition: all 0.2s ease 0s;
     transition: all 0.2s ease 0s;
 }
-.list-events li .ui-collapsible .ui-collapsible-content > * {
+.list-events li .ui-collapsible > div > .ui-listview,
+.list-events li .ui-collapsible > div > .ui-li {
     margin: 1px 0 0 0;
     margin-top: 1px;
     font-size: smaller;
-}
-.list-events li .ui-collapsible .ui-collapsible-content-collapsed > * {
 }
 .list-events li .ui-collapsible .ui-collapsible-content-collapsed {
     margin-top: 1px;

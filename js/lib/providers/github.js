@@ -10,7 +10,13 @@
             if (!result) {
                 result = this.base_format(event, source, '<em>(' + event.type.replace('Event', '').toLowerCase() + ')</em>');
             }
-            return { html: result, day: this.provider.controller.display.format_date(event.created_at) };
+            return {
+                event: event,
+                source: source,
+                provider: this,
+                html: result,
+                day: this.provider.controller.display.format_date(event.created_at)
+            };
         }
         return null;
     };
@@ -38,7 +44,7 @@
         return result;
     };
 
-    EventFormatter.prototype.base_format = function(event, source, middle_part, desc, target, more) {
+    EventFormatter.prototype.base_format = function(event, source, middle_part, desc, target) {
         var result = '';
         result += '<p class="ui-li-aside">' + this.provider.controller.display.format_date(event.created_at, 'show-time', null, 'time-only') + '</p>';
         if (!target && event.repository && (event.repository.name || event.repository.full_name)) {
@@ -51,9 +57,6 @@
         if (desc) {
             result += '<p class="ui-li-desc">' + desc + '</p>';
         }
-        if (more) {
-            result += more;
-        }
         return result;
     };
 
@@ -65,15 +68,28 @@
         return result;
     };
 
-    EventFormatter.prototype.CommitCommentEvent = function(event, source) {
-        var part = (event.comment.body ? '<a href="#" class="collapsible-trigger">commented</a>' : 'commented') +  ' a commit on',
-            more;
-        if (event.comment.body) {
-            more = '<div data-role="collapsible" data-content-theme="d" data-corners="false" data-mini="true"><h3>Comment</h3>';
-            more += this.markdown_event_more(event.comment.body);
-            more += '</div>';
+    EventFormatter.prototype.trigger_text = function(text, triggerable) {
+        if (triggerable) {
+            return '<a href="#" class="collapsible-trigger">' + text + '</a>';
+        } else {
+            return text;
         }
-        return this.base_format(event, source, part, null, null, more);
+    };
+
+    EventFormatter.prototype.more = function(html) {
+        var more = '<div data-role="collapsible" data-content-theme="d" data-corners="false" data-mini="true" class="event-more"><h3>More</h3>';
+        more += html;
+        more += '</div>';
+        return more;
+    };
+
+    EventFormatter.prototype.CommitCommentEvent = function(event, source) {
+        var part = this.trigger_text('commented', event.comment.body) +  ' a commit on';
+        return this.base_format(event, source, part);
+    };
+
+    EventFormatter.prototype.more_CommitCommentEvent = function(event, source) {
+        return this.more(this.markdown_event_more(event.comment.body));
     };
 
     EventFormatter.prototype.CreateEvent = function(event, source) {
@@ -120,14 +136,12 @@
     };
 
     EventFormatter.prototype.ForkEvent = function(event, source) {
-        var part = event.forkee ? '<a href="#" class="collapsible-trigger">forked</a>' : 'forked',
-            more;
-        if (event.forkee) {
-            more = '<div data-role="collapsible" data-content-theme="d" data-corners="false" data-mini="true"><h3>Fork</h3>';
-            more += '<p class="ui-li ui-li-static ui-btn-up-d ui-first-child ui-last-child">Fork: ' + this.format_repo(event.forkee, event.actor, source) + '</p>';
-            more += '</div>';
-        }
-        return this.base_format(event, source, part, null, null, more);
+        var part = this.trigger_text('forked', event.forkee);
+        return this.base_format(event, source, part);
+    };
+
+    EventFormatter.prototype.more_ForkEvent = function(event, source) {
+        return this.more('<p class="ui-li ui-li-static ui-btn-up-d ui-first-child ui-last-child">Fork: ' + this.format_repo(event.forkee, event.actor, source) + '</p>');
     };
 
     EventFormatter.prototype.ForkApplyEvent = function(event, source) {
@@ -144,15 +158,17 @@
         }
         part = action + ' a gist';
         if (event.gist.description) { desc = 'Description: <strong>' + event.gist.description + '</strong>'; }
-        return this.base_format(event, source, part, desc, null);
+        return this.base_format(event, source, part, desc);
     };
 
     EventFormatter.prototype.GollumEvent = function(event, source) {
         var target = this.format_repo(event.repository, event.actor, source),
-            part = '<a href="#" class="collapsible-trigger">edited</a> the ' + target + ' wiki';
-            more = '';
-        more = '<div data-role="collapsible" data-content-theme="d" data-corners="false" data-mini="true"><h3>Actions</h3>';
-        more += '<ul data-role="listview" data-theme="d">';
+            part = this.trigger_text('edited', true) + ' the ' + target + ' wiki';
+        return this.base_format(event, source, part, null, ' ');
+    };
+
+    EventFormatter.prototype.more_GollumEvent = function(event, source) {
+        var more = '<ul data-role="listview" data-theme="d">';
         for (var i=0; i<event.pages.length; i++) {
             var page = event.pages[i];
             more += '<li>';
@@ -160,48 +176,35 @@
             more += '</li>';
         }
         more += '</ul>';
-        more += '</div>';
-        return this.base_format(event, source, part, null, ' ', more);
+        return this.more(more);
     };
 
     EventFormatter.prototype.IssueCommentEvent = function(event, source) {
         var part,
-            desc = (event.is_pull_request ? 'Pull request' : 'Issue') + ': <strong>#' + event.issue.number + ' - ' + event.issue.title + '</strong>',
-            more;
+            desc = (event.is_pull_request ? 'Pull request' : 'Issue') + ': <strong>#' + event.issue.number + ' - ' + event.issue.title + '</strong>';
         if (event.action == 'created') {
-            if (event.comment.body) {
-                part = '<a href="#" class="collapsible-trigger">commented</a>';
-            } else {
-                part = 'commented';
-            }
+            part = this.trigger_text('commented', event.comment.body);
             part += ' ' + (event.is_pull_request ? 'a pull request' : 'an issue') + ' on';
         } else {
             part = event.action + ' a ';
-            if (event.action != 'deleted' && event.comment.body) {
-                part += '<a href="#" class="collapsible-trigger">comment</a>';
-            } else {
-                part += 'comment';
-            }
+            part += this.trigger_text('comment', event.action != 'deleted' && event.comment.body);
             part += ' on an issue on';
         }
-        if (event.action != 'deleted' && event.comment.body) {
-            more = '<div data-role="collapsible" data-content-theme="d" data-corners="false" data-mini="true"><h3>Comment</h3>';
-            more += this.markdown_event_more(event.comment.body);
-            more += '</div>';
-        }
-        return this.base_format(event, source, part, desc, null, more);
+        return this.base_format(event, source, part, desc);
+    };
+
+    EventFormatter.prototype.more_IssueCommentEvent = function(event, source) {
+        return this.more(this.markdown_event_more(event.comment.body));
     };
 
     EventFormatter.prototype.IssuesEvent = function(event, source) {
-        var part = event.action + ' an ' + (event.issue.body ? '<a href="#" class="collapsible-trigger">issue</a>' : 'issue') + ' on',
-            desc = 'Issue <strong>#' + event.issue.number + ' - ' + event.issue.title + '</strong>',
-            more;
-        if (event.issue.body) {
-            more = '<div data-role="collapsible" data-content-theme="d" data-corners="false" data-mini="true"><h3>Comment</h3>';
-            more += this.markdown_event_more(event.issue.body);
-            more += '</div>';
-        }
-        return this.base_format(event, source, part, desc, null, more);
+        var part = event.action + ' an ' + this.trigger_text('issue', event.issue.body) + ' on',
+            desc = 'Issue <strong>#' + event.issue.number + ' - ' + event.issue.title + '</strong>';
+        return this.base_format(event, source, part, desc);
+    };
+
+    EventFormatter.prototype.more_IssuesEvent = function(event, source) {
+        return this.more(this.markdown_event_more(event.issue.body));
     };
 
     EventFormatter.prototype.MemberEvent = function(event, source) {
@@ -216,59 +219,53 @@
     };
 
     EventFormatter.prototype.PullRequestEvent = function(event, source) {
-        var part = event.action + ' a ' + (event.pull_request.body ? '<a href="#" class="collapsible-trigger">pull request</a>' : 'pull request') + ' on',
-            desc = 'Pull request <strong>#' + event.pull_request.number + ' - ' + event.pull_request.title + '</strong>',
-            more;
-        if (event.pull_request.body) {
-            more = '<div data-role="collapsible" data-content-theme="d" data-corners="false" data-mini="true"><h3>Comment</h3>';
-            more += this.markdown_event_more(event.pull_request.body);
-            more += '</div>';
-        }
-        return this.base_format(event, source, part, desc, null, more);
+        var part = event.action + ' a ' + this.trigger_text('pull request', event.pull_request.body) + ' on',
+            desc = 'Pull request <strong>#' + event.pull_request.number + ' - ' + event.pull_request.title + '</strong>';
+        return this.base_format(event, source, part, desc);
+    };
+
+    EventFormatter.prototype.more_PullRequestEvent = function(event, source) {
+        return this.more(this.markdown_event_more(event.pull_request.body));
     };
 
     EventFormatter.prototype.PullRequestReviewCommentEvent = function(event, source) {
-        var part = (event.comment.body ? '<a href="#" class="collapsible-trigger">commented</a>' : 'commented') + ' a pull request on',
-            more;
-        if (event.comment.body) {
-            more = '<div data-role="collapsible" data-content-theme="d" data-corners="false" data-mini="true"><h3>Comment</h3>';
-            more += this.markdown_event_more(event.comment.body);
-            more += '</div>';
-        }
-        
+        var part = this.trigger_text('commented', event.comment.body) + ' a pull request on';
         if (event.pull_request.number) {
             desc = 'Pull request <strong>#' + event.pull_request.number + '</strong>';
         }
-        
-        return this.base_format(event, source, part, desc, null, more);
+        return this.base_format(event, source, part, desc);
+    };
+
+    EventFormatter.prototype.more_PullRequestReviewCommentEvent = function(event, source) {
+        return this.more(this.markdown_event_more(event.comment.body));
     };
 
     EventFormatter.prototype.PushEvent = function(event, source) {
-        var part = 'pushed ' + ((event.size && event.commits.length) ? '<a href="#" class="collapsible-trigger">' + event.size + ' commit' + (event.size > 1 ? 's' : '') + '</a> ' : '') + 'to',
-            more, commits, old_style = false;
-        if (event.size && event.commits.length) {
-            more = '<div data-role="collapsible" data-content-theme="d" data-corners="false" data-mini="true"><h3>Commits</h3>';
-            more += '<ul data-role="listview" data-theme="d">';
+        var part = 'pushed ' + (event.size ? this.trigger_text(event.size + ' commit' + (event.size > 1 ? 's' : ''), true) : '') + ' to';
+        return this.base_format(event, source, part);
+    };
 
-            for (var i=0; i<event.commits.length;i++) {
-                var commit = event.commits[i],
-                    lines = commit.message.split('\n'),
-                    first_part = lines.shift(),
-                    other_part = lines.length ? '<br />' + lines.join('<br />') : '';
+    EventFormatter.prototype.more_PushEvent = function(event, source) {
+        var more = '<ul data-role="listview" data-theme="d">';
 
-                more += '<li' + (other_part.length ? ' class="with-extension"' : '') + '>';
-                more += '<strong>' + commit.author.name + '</strong>'; // we have the name, not the username :(
-                more += ' — <em>';
-                more += first_part;
-                if (other_part) {
-                    more += '<span class="extension">' + other_part + '</span>';
-                }
-                more += '</em>';
-                more += '</li>';
+        for (var i=0; i<event.commits.length;i++) {
+            var commit = event.commits[i],
+                lines = commit.message.split('\n'),
+                first_part = lines.shift(),
+                other_part = lines.length ? '<br />' + lines.join('<br />') : '';
+
+            more += '<li' + (other_part.length ? ' class="with-extension"' : '') + '>';
+            more += '<strong>' + commit.author.name + '</strong>'; // we have the name, not the username :(
+            more += ' — <em>';
+            more += first_part;
+            if (other_part) {
+                more += '<span class="extension">' + other_part + '</span>';
             }
-            more += '</ul></div>';
+            more += '</em>';
+            more += '</li>';
         }
-        return this.base_format(event, source, part, null, null, more);
+        more += '</ul>';
+        return this.more(more);
     };
 
     EventFormatter.prototype.TeamAddEvent = function(event, source) {
@@ -462,14 +459,18 @@
                             commits = payload.shas;
                             old_style = true;
                         }
-                        for (var i=0; i<commits.length;i++) {
-                            var commit = commits[i],
-                                message = old_style ? commit[2] : commit.message,
-                                author_name = old_style ? commit[3] : commit.author.name;
-                            event.commits.push({
-                                message: message,
-                                author: {name: author_name}
-                            });
+                        if (!commits.length) {
+                            event.size = 0;
+                        } else {
+                            for (var i=0; i<commits.length;i++) {
+                                var commit = commits[i],
+                                    message = old_style ? commit[2] : commit.message,
+                                    author_name = old_style ? commit[3] : commit.author.name;
+                                event.commits.push({
+                                    message: message,
+                                    author: {name: author_name}
+                                });
+                            }
                         }
                     }
                     break;

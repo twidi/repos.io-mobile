@@ -44,7 +44,7 @@
         return result;
     };
 
-    EventFormatter.prototype.base_format = function(event, source, middle_part, desc, target) {
+    EventFormatter.prototype.base_format = function(event, source, middle_part, desc, target, external_link) {
         var result = '';
         result += '<p class="ui-li-aside">' + this.provider.controller.display.format_date(event.created_at, 'show-time', null, 'time-only') + '</p>';
         if (!target && event.repository && (event.repository.name || event.repository.full_name)) {
@@ -56,6 +56,9 @@
         }
         if (desc) {
             result += '<p class="ui-li-desc">' + desc + '</p>';
+        }
+        if (external_link) {
+            result += this.format_external_link(external_link);
         }
         return result;
     };
@@ -99,9 +102,20 @@
         return desc;
     };
 
+    EventFormatter.prototype.format_external_link = function(href) {
+        var html = '<a class="ui-li-link-alt ui-btn ui-btn-icon-notext ui-btn-up-c" data-theme="c" href="' + href + '" target="_blank">';
+        html += '<span class="ui-btn ui-btn-icon-notext">';
+        html += '<span class="ui-btn-inner">';
+        html += '<span class="ui-icon ui-icon-arrow-r">&nbsp;</span>';
+        html += '</span>';
+        html += '</span>';
+        html += '</a>';
+        return html;
+    };
+
     EventFormatter.prototype.CommitCommentEvent = function(event, source) {
         var part = this.trigger_text('commented', event.comment.body) +  ' a commit on';
-        return this.base_format(event, source, part);
+        return this.base_format(event, source, part, null, null, event.comment.html_url);
     };
 
     EventFormatter.prototype.more_CommitCommentEvent = function(event, source) {
@@ -109,22 +123,26 @@
     };
 
     EventFormatter.prototype.CreateEvent = function(event, source) {
-        var part = 'created', desc;
+        var part = 'created', desc, link;
         switch( event.ref_type) {
             case 'branch':
                 part += ' a branch on';
                 desc = 'Branch: <strong>' + event.ref + '</strong>';
+                link = 'https://github.com/' + event.repository.name + '/tree/' + event.ref;
                 break;
             case 'repository':
                 if (event.description) {
                     desc = 'Description: <strong>' + event.description + '</strong>';
                 }
+                link = 'https://github.com/' + event.repository.name;
                 break;
             case 'tag':
+                part += ' a tag on';
                 desc = 'Tag: <strong>' + event.ref + '</strong>';
+                link = 'https://github.com/' + event.repository.name + '/tree/' + event.ref;
                 break;
         }
-        return this.base_format(event, source, part, desc);
+        return this.base_format(event, source, part, desc, null, link);
     };
 
     EventFormatter.prototype.DeleteEvent = function(event, source) {
@@ -175,13 +193,14 @@
         }
         part = action + ' a gist';
         if (event.gist.description) { desc = 'Description: <strong>' + event.gist.description + '</strong>'; }
-        return this.base_format(event, source, part, desc);
+        return this.base_format(event, source, part, desc, null, event.gist.html_url);
     };
 
     EventFormatter.prototype.GollumEvent = function(event, source) {
         var target = this.format_repo(event.repository, event.actor, source),
-            part = this.trigger_text('edited', true) + ' the ' + target + ' wiki';
-        return this.base_format(event, source, part, null, ' ');
+            part = this.trigger_text('edited', true) + ' the ' + target + ' wiki',
+            link = 'https://github.com/' + event.repository.name + '/wiki';
+        return this.base_format(event, source, part, null, ' ', link);
     };
 
     EventFormatter.prototype.more_GollumEvent = function(event, source) {
@@ -198,7 +217,8 @@
 
     EventFormatter.prototype.IssueCommentEvent = function(event, source) {
         var part,
-            desc = (event.is_pull_request ? 'Pull request' : 'Issue') + ': <strong>#' + event.issue.number + ' - ' + event.issue.title + '</strong>';
+            desc = (event.is_pull_request ? 'Pull request' : 'Issue') + ': <strong>#' + event.issue.number + ' - ' + event.issue.title + '</strong>',
+            link;
         if (event.action == 'created') {
             part = this.trigger_text('commented', event.comment.body);
             part += ' ' + (event.is_pull_request ? 'a pull request' : 'an issue') + ' on';
@@ -207,7 +227,12 @@
             part += this.trigger_text('comment', event.action != 'deleted' && event.comment.body);
             part += ' on an issue on';
         }
-        return this.base_format(event, source, part, desc);
+        if (event.comment.html_url) {
+            link = event.comment.html_url;
+        } else if (event.issue.html_url && event.comment.id) {
+            link = event.issue.html_url + '#issuecomment-' + event.comment.id;
+        }
+        return this.base_format(event, source, part, desc, null, link);
     };
 
     EventFormatter.prototype.more_IssueCommentEvent = function(event, source) {
@@ -217,7 +242,7 @@
     EventFormatter.prototype.IssuesEvent = function(event, source) {
         var part = event.action + ' an ' + this.trigger_text('issue', event.issue.body) + ' on',
             desc = 'Issue <strong>#' + event.issue.number + ' - ' + event.issue.title + '</strong>';
-        return this.base_format(event, source, part, desc);
+        return this.base_format(event, source, part, desc, null, event.issue.html_url);
     };
 
     EventFormatter.prototype.more_IssuesEvent = function(event, source) {
@@ -238,7 +263,7 @@
     EventFormatter.prototype.PullRequestEvent = function(event, source) {
         var part = event.action + ' a ' + this.trigger_text('pull request', event.pull_request.body) + ' on',
             desc = 'Pull request <strong>#' + event.pull_request.number + ' - ' + event.pull_request.title + '</strong>';
-        return this.base_format(event, source, part, desc);
+        return this.base_format(event, source, part, desc, null, event.pull_request.html_url);
     };
 
     EventFormatter.prototype.more_PullRequestEvent = function(event, source) {
@@ -246,11 +271,12 @@
     };
 
     EventFormatter.prototype.PullRequestReviewCommentEvent = function(event, source) {
-        var part = this.trigger_text('commented', event.comment.body) + ' a pull request on';
+        var part = this.trigger_text('commented', event.comment.body) + ' a pull request on',
+            desc;
         if (event.pull_request.number) {
             desc = 'Pull request <strong>#' + event.pull_request.number + '</strong>';
         }
-        return this.base_format(event, source, part, desc);
+        return this.base_format(event, source, part, desc, null, event.comment.html_url);
     };
 
     EventFormatter.prototype.more_PullRequestReviewCommentEvent = function(event, source) {
@@ -259,11 +285,16 @@
 
     EventFormatter.prototype.PushEvent = function(event, source) {
         var part = 'pushed ' + (event.size ? this.trigger_text(event.size + ' commit' + (event.size > 1 ? 's' : ''), true) : '') + ' to',
-            desc;
+            desc, link;
             if (event.ref && event.ref.indexOf('refs/heads/') === 0) {
                 desc = 'Branch: <strong>' + event.ref.replace('refs/heads/', '') + '</strong>';
             }
-        return this.base_format(event, source, part, desc);
+            if (event.size == 1) {
+                link = 'https://github.com/' + event.repository.name + '/commit/' + event.commits[0].sha;
+            } else if (event.before && event.head) {
+                link = 'https://github.com/' + event.repository.name + '/compare/' + event.before + '...' + event.head;
+            }
+        return this.base_format(event, source, part, desc, null, link);
     };
 
     EventFormatter.prototype.more_PushEvent = function(event, source) {
@@ -408,7 +439,7 @@
             payload = data.payload || {};
             switch (data.type) {
                 case 'CommitCommentEvent':
-                    event.comment = this.map(payload.comment, {_:['body']});
+                    event.comment = this.map(payload.comment, {_:['body', 'html_url']});
                     break;
                 case 'CreateEvent':
                     event = this.map(payload, {_:['ref_type', 'ref', 'description']});
@@ -425,7 +456,7 @@
                     break;
                 case 'GistEvent':
                     event = this.map(payload, {_:['action']});
-                    event.gist = this.map(payload.gist, {_:['description']});
+                    event.gist = this.map(payload.gist, {_:['description', 'html_url']});
                     break;
                 case 'GollumEvent':
                     event.pages = [];
@@ -437,13 +468,13 @@
                     break;
                 case 'IssueCommentEvent':
                     event = this.map(payload, {_:['action']});
-                    event.issue = this.map(payload.issue, {_:['number', 'title']});
+                    event.issue = this.map(payload.issue, {_:['number', 'title', 'html_url']});
                     event.issue.is_pull_request = (payload.issue && payload.issue.pull_request && payload.issue.pull_request.html_url);
-                    event.comment = this.map(payload.comment, {_:['body']});
+                    event.comment = this.map(payload.comment, {_:['body', 'html_url', 'id']});
                     break;
                 case 'IssuesEvent':
                     event = this.map(payload, {_:['action']});
-                    event.issue = this.map(payload.issue, {_:['number', 'title', 'body']});
+                    event.issue = this.map(payload.issue, {_:['number', 'title', 'body', 'html_url']});
                     break;
                 case 'MemberEvent':
                     event = this.map(payload, {_:['action']});
@@ -451,7 +482,7 @@
                     break;
                 case 'PullRequestEvent':
                     event = this.map(payload, {_:['action', 'number']});
-                    event.pull_request = this.map(payload.pull_request, {_:['body', 'title']});
+                    event.pull_request = this.map(payload.pull_request, {_:['body', 'title', 'html_url']});
                     if (event.number) {
                         event.pull_request.number = event.number;
                         delete event.number;
@@ -467,12 +498,15 @@
                         PR_num = PR_num ? PR_num[1] : null;
                         if (PR_num) { event.pull_request.number = PR_num; }
                     }
-                    event.comment = this.map(payload.comment, {_:['body']});
+                    event.comment = this.map(payload.comment, {_:['body', 'html_url']});
+                    if (!event.comment.html_url && payload.comment && payload.comment._links && payload.comment._links.html) {
+                        event.comment.html_url = payload.comment._links.html.href;
+                    }
                     break;
                 case 'PushEvent':
                     // in old events, commit infos are available as arrays in 'shas', not as objects in 'commits'
                     var old_style, commits;
-                    event = this.map(payload, {_:['size', 'ref']});
+                    event = this.map(payload, {_:['size', 'ref', 'before', 'head']});
                     event.commits = [];
                     if (event.size) {
                         if (payload.commits) {
@@ -486,12 +520,11 @@
                             event.size = 0;
                         } else {
                             for (var i=0; i<commits.length;i++) {
-                                var commit = commits[i],
-                                    message = old_style ? commit[2] : commit.message,
-                                    author_name = old_style ? commit[3] : commit.author.name;
+                                var commit = commits[i];
                                 event.commits.push({
-                                    message: message,
-                                    author: {name: author_name}
+                                    sha: old_style ? commit[0] : commit.sha,
+                                    message: old_style ? commit[2] : commit.message,
+                                    author: {name: old_style ? commit[3] : commit.author.name}
                                 });
                             }
                         }

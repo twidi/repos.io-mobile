@@ -119,7 +119,7 @@
                         markup += '<a href="/" data-role="button" data-icon="home" data-rel="home" data-theme="a">Home</a>';
                         markup += '<label><input type="checkbox" name="fullscreen" class="fullscreen-control" id="fullscreen-' + cur_page.id + '" data-theme="a"/>Full screen</label>';
                         markup += '<a href="#" data-role="button" data-icon="refresh" class="refresh-control" data-theme="a">Refresh</a>';
-                        markup += '<a href="#" data-role="button" data-icon="arrow-r" class="go-button" data-theme="a">View on <span class="provider"></span></a>';
+                        markup += '<a href="#" data-role="button" data-icon="arrow-r" class="go-button" data-theme="a" target="_blank">View on <span class="provider"></span></a>';
                     markup += '</div>';
                 markup += '</div>';
 

@@ -21,20 +21,20 @@
         return null;
     };
 
-    EventFormatter.prototype.format_actor  = function(actor, source) {
-        if (source.name != 'account' || source.username != actor.login) {
+    EventFormatter.prototype.format_actor  = function(actor, source, force_link) {
+        if (force_link || source.$class.model_name != 'account' || source.username != actor.login) {
             return this.provider.controller.display.account_link(actor.login, source.provider.name);
         } else {
             return '<strong>' + actor.login + '</strong>';
         }
     };
 
-    EventFormatter.prototype.format_repo  = function(repository, actor, source) {
+    EventFormatter.prototype.format_repo  = function(repository, actor, source, force_link, force_name) {
         var full_name = repository.full_name || repository.name,
             parts = full_name.split('/'), result;
-        if (source.name != 'repository' || source.path != full_name) {
+        if (force_link || source.$class.model_name != 'repository' || source.path != full_name) {
                 result = this.provider.controller.display.repository_link(full_name, parts[1], source.provider.name);
-            if (actor.login != parts[0] && (source.name != 'account' || source.username != parts[0])) {
+            if (force_name || actor.login != parts[0] && (source.$class.model_name != 'account' || source.username != parts[0])) {
                 result += '<span> by <strong>' + parts[0] + '</strong></span>'; //this.format_actor({login: parts[0]}, source);
                 result = '<span class="repo-links">' + result + '</span>';
             }
@@ -81,6 +81,22 @@
         more += html;
         more += '</div>';
         return more;
+    };
+
+    EventFormatter.prototype.description_fetcher = function(event, source) {
+        var desc, repository;
+        if (event.repository.name && event.repository.name != source.path) {
+            repository = App.Models.repository.get(event.repository.name + '@github', this.provider.controller),
+            desc = 'Description: ';
+            if (!repository.details) {
+                desc += '<a href="#" class="fetch-desc-trigger" data-repository="' + repository.id + '">click to fetch</a>';
+            } else if (repository.details.description) {
+                desc += '<strong>' + repository.details.description + '</strong>';
+            } else {
+                desc += '<em>no description</em>';
+            }
+        }
+        return desc;
     };
 
     EventFormatter.prototype.CommitCommentEvent = function(event, source) {
@@ -136,12 +152,13 @@
     };
 
     EventFormatter.prototype.ForkEvent = function(event, source) {
-        var part = this.trigger_text('forked', event.forkee);
-        return this.base_format(event, source, part);
+        var part = this.trigger_text('forked', event.forkee),
+            desc = this.description_fetcher(event, source);
+        return this.base_format(event, source, part, desc);
     };
 
     EventFormatter.prototype.more_ForkEvent = function(event, source) {
-        return this.more('<p class="ui-li ui-li-static ui-btn-up-d ui-first-child ui-last-child">Fork: ' + this.format_repo(event.forkee, event.actor, source) + '</p>');
+        return this.more('<p class="ui-li ui-li-static ui-btn-up-d ui-first-child ui-last-child">Fork: ' + this.format_repo(event.forkee, event.actor, source, null, true) + '</p>');
     };
 
     EventFormatter.prototype.ForkApplyEvent = function(event, source) {
@@ -277,7 +294,9 @@
     };
 
     EventFormatter.prototype.WatchEvent = function(event, source) {
-        return this.base_format(event, source, event.action + ' watching');
+        var part = event.action + ' watching',
+            desc = this.description_fetcher(event, source);
+        return this.base_format(event, source, part, desc);
     };
 
 
@@ -452,7 +471,7 @@
                     break;
                 case 'PushEvent':
                     // in old events, commit infos are available as arrays in 'shas', not as objects in 'commits'
-                    var old_style;
+                    var old_style, commits;
                     event = this.map(payload, {_:['size', 'ref']});
                     event.commits = [];
                     if (event.size) {

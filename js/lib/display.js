@@ -51,7 +51,7 @@
             if (!page.method) { page.method = page.name; }
         }
 
-        var all_markup = '';
+        var all_markup = '',
             extended_navbar = (pages.length > 4);
 
         for (var i=0; i<pages.length; i++) {
@@ -228,6 +228,51 @@
             }
             link.toggleClass('opened', !opened);
             return false;
+        });
+        $(document).on('click', '.list-events a.fetch-desc-trigger', function(e) {
+            // fetch a repository to update its description when asked for
+            e.preventDefault();
+            e.stopPropagation();
+            var link = $(this),
+                repository_id = link.data('repository'),
+                repository = App.Models.repository.get(repository_id, that.controller),
+                set_content = function(html) {
+                    $('p.ui-li-desc[data-fetching-repository="' + repository_id + '"]').each(function() {
+                        var desc = $(this);
+                        desc.children().remove();
+                        desc.append(html);
+                    });
+                },
+                on_success = function(data) {
+                    var html;
+                    repository.details = data;
+                    if (repository.details.description) {
+                        html = '<strong>' + repository.details.description + ' </strong>';
+                    } else {
+                        html = '<em>no description</em>';
+                    }
+                    set_content(html);
+                },
+                on_failure = function(data) {
+                    set_content('<em>Loading failed ! </em><a href="#" class="fetch-desc-trigger" data-repository="' + repository.id + '">Retry ?</a>');
+                };
+            $('a.fetch-desc-trigger[data-repository="' + repository_id + '"]').each(function() {
+                var link = $(this),
+                    desc = link.parent();
+                desc.children().remove();
+                desc.append('<em>loading...</em>').attr('data-fetching-repository', repository_id);
+            });
+            if (repository.details) {
+                on_success();
+            } else {
+                repository.fetch( // type, success, failure, params, fail_if_404
+                    'details',
+                    on_success,
+                    on_failure,
+                    null,
+                    'fail_if_404'
+                );
+            }
         });
         $(document).on('click', 'li.with-extension', function(e) {
             e.preventDefault();

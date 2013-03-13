@@ -172,6 +172,7 @@ span.repo-links > span:last-of-type {
     width: 5ex;
 }
 
+.list-events li .fetch-desc-trigger, 
 .list-events li .collapsible-trigger {
     border-bottom: 1px dashed;
     color: inherit;

@@ -253,8 +253,8 @@
                     }
                     set_content(html);
                 },
-                on_failure = function(data) {
-                    set_content('<em>Loading failed ! </em><a href="#" class="fetch-desc-trigger" data-repository="' + repository.id + '">Retry ?</a>');
+                on_failure = function(error) {
+                    set_content('<em>Loading failed! (' + that.get_error_text(error) + ') </em><a href="#" class="fetch-desc-trigger" data-repository="' + repository.id + '">Retry ?</a>');
                 };
             $('a.fetch-desc-trigger[data-repository="' + repository_id + '"]').each(function() {
                 var link = $(this),

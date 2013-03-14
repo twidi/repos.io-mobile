@@ -166,6 +166,7 @@ span.repo-links > span:last-of-type {
 .list-events li p.ui-li-desc {
     margin-top: 3px;
     margin-bottom: 0;
+    white-space: normal;
 }
 .list-events li .ui-li-aside {
     font-size: smaller;
@@ -236,9 +237,7 @@ span.repo-links > span:last-of-type {
 .list-events li .ui-collapsible .ui-collapsible-content > ul li.ui-li {
     padding: 0.5em 10px;
 }
-.list-events li .ui-collapsible .ui-collapsible-content > ul .ui-li-desc {
-    white-space: normal;
-}
+
 .list-events li .ui-collapsible .ui-collapsible-content > p {
     padding: 0.5em 10px;
 }

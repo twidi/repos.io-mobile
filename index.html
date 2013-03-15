@@ -405,13 +405,17 @@
             <h3>Options and filters</h3>
             <form id="account_activity_options" data-ajax="false">
                 <div class="fieldsets">
-
+                    <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label">
+                        <legend>Mode: </legend>
+                        <label><input type="radio" name="account_activity_options_mode" id="account_activity_options_mode_display" value="display" checked="checked" />Display</label>
+                        <label><input type="radio" name="account_activity_options_mode" id="account_activity_options_mode_hide" value="hide" />Hide</label>
+                    </fieldset>
                     <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label">
                         <label for="account_activity_options_type" class="select">Type of events:</label>
                         <select name="account_activity_options_type" id="account_activity_options_type"data-mini="true">
                             <optgroup label="Presets">
                                 <option value="" selected="selected">All events</option>
-                                <option value="-WatchEvent,FollowEvent,ForkEvent" >All but stars/follow/forks</option>
+                                <option value="WatchEvent,FollowEvent,ForkEvent" >All about stars/follow/forks</option>
                                 <option value="CommitCommentEvent,IssueCommentEvent,IssuesEvent,PullRequestEvent,PullRequestReviewCommentEvent">All about issues/PR/comments</option>
                                 <option value="PushEvent,CreateEvent,DeleteEvent,PullRequestEvent,GistEvent,PublicEvent">All about code</option>
                             </optgroup>
@@ -437,7 +441,6 @@
                             </optgroup>
                         </select>
                     </fieldset>
-
                 </div>
                 <fieldset class="buttons">
                     <button type="reset" data-mini="true" data-theme="c" data-icon="delete" data-inline="true" name="reset" value="reset-value">Default</button>
@@ -462,13 +465,17 @@
             <h3>Options and filters</h3>
             <form id="account_events_options" data-ajax="false">
                 <div class="fieldsets">
-
+                    <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label">
+                        <legend>Mode: </legend>
+                        <label><input type="radio" name="account_events_options_mode" id="account_events_options_mode_display" value="display" checked="checked" />Display</label>
+                        <label><input type="radio" name="account_events_options_mode" id="account_events_options_mode_hide" value="hide" />Hide</label>
+                    </fieldset>
                     <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label">
                         <label for="account_events_options_type" class="select">Type of events:</label>
                         <select name="account_events_options_type" id="account_events_options_type" data-mini="true">
                             <optgroup label="Presets">
                                 <option value="" selected="selected">All events</option>
-                                <option value="-WatchEvent,FollowEvent,ForkEvent" >All but stars/follow/forks</option>
+                                <option value="WatchEvent,FollowEvent,ForkEvent" >All about stars/follow/forks</option>
                                 <option value="CommitCommentEvent,IssueCommentEvent,IssuesEvent,PullRequestEvent,PullRequestReviewCommentEvent">All about issues/PR/comments</option>
                                 <option value="PushEvent,CreateEvent,DeleteEvent,PullRequestEvent,GistEvent,PublicEvent">All about code</option>
                             </optgroup>
@@ -494,7 +501,6 @@
                             </optgroup>
                         </select>
                     </fieldset>
-
                 </div>
                 <fieldset class="buttons">
                     <button type="reset" data-mini="true" data-theme="c" data-icon="delete" data-inline="true" name="reset" value="reset-value">Default</button>
@@ -588,13 +594,17 @@
             <h3>Options and filters</h3>
             <form id="repository_activity_options" data-ajax="false">
                 <div class="fieldsets">
-
+                    <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label">
+                        <legend>Mode: </legend>
+                        <label><input type="radio" name="repository_activity_options_mode" id="repository_activity_options_mode_display" value="display" checked="checked" />Display</label>
+                        <label><input type="radio" name="repository_activity_options_mode" id="repository_activity_options_mode_hide" value="hide" />Hide</label>
+                    </fieldset>
                     <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label">
                         <label for="repository_activity_options_type" class="select">Type of events:</label>
                         <select name="repository_activity_options_type" id="repository_activity_options_type" data-mini="true">
                             <optgroup label="Presets">
                                 <option value="" selected="selected">All events</option>
-                                <option value="-WatchEvent,FollowEvent,ForkEvent" >All but stars/follow/forks</option>
+                                <option value="WatchEvent,FollowEvent,ForkEvent" >All about stars/follow/forks</option>
                                 <option value="CommitCommentEvent,IssueCommentEvent,IssuesEvent,PullRequestEvent,PullRequestReviewCommentEvent">All about issues/PR/comments</option>
                                 <option value="PushEvent,CreateEvent,DeleteEvent,PullRequestEvent,GistEvent,PublicEvent">All about code</option>
                             </optgroup>
@@ -620,7 +630,6 @@
                             </optgroup>
                         </select>
                     </fieldset>
-
                 </div>
                 <fieldset class="buttons">
                     <button type="reset" data-mini="true" data-theme="c" data-icon="delete" data-inline="true" name="reset" value="reset-value">Default</button>

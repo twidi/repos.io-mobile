@@ -227,17 +227,13 @@
         },
 
         sort_and_filter_events: function(options, data) {
+            var display = options.mode === 'display',
+                type_method, choices;
             if (!options.type) {
-                return data;
+                return display ? data : [];
             }
-            var type_method = _.filter,
-                choice = options.type,
-                choices = [];
-            if (choice.charAt(0) == '-') {
-                choice = options.type.slice(1);
-                type_method = _.reject;
-            }
-            choices = choice.split(',');
+            type_method = display ? _.filter : _.reject;
+            choices = options.type.split(',');
             return type_method(data, function(event) { return (choices.indexOf(event.type) !== -1); });
         }
 

@@ -231,12 +231,14 @@
                 return data;
             }
             var type_method = _.filter,
-                type = options.type;
-            if (options.type.charAt(0) == '-') {
-                type = options.type.slice(1);
+                choice = options.type,
+                choices = [];
+            if (choice.charAt(0) == '-') {
+                choice = options.type.slice(1);
                 type_method = _.reject;
             }
-            return type_method(data, function(event) { return (type == event.type); });
+            choices = choice.split(',');
+            return type_method(data, function(event) { return (choices.indexOf(event.type) !== -1); });
         }
 
     });

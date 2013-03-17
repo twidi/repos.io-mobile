@@ -62,7 +62,8 @@
         sort_and_filter_repositories: function(options, force_data) {
             var global = this.list_page_status.repositories.__global__,
                 helpers = this.$class.sort_and_filter_helpers.repositories,
-                data = force_data || this.repositories[global.str_params];
+                data = force_data || this.repositories[global.str_params],
+                language;
 
             if (options.type && options.type != 'all') {
                 data = helpers.filter_type_method[options.type](data, helpers.filter_type, this);
@@ -73,7 +74,9 @@
             }
 
             if (options.language) {
-                data = _.filter(data, function(repository) { return (repository.language && options.language == repository.language); });
+                language = options.language;
+                if (language == 'CSharp') { language = 'C#';}
+                data = _.filter(data, function(repository) { return (repository.language && language == repository.language); });
             }
 
             if (force_data || options.sort != global.params.sort) {
@@ -103,7 +106,8 @@
         sort_and_filter_stars: function(options, force_data) {
             var global = this.list_page_status.stars.__global__,
                 helpers = this.$class.sort_and_filter_helpers.stars,
-                data = force_data || this.stars[global.str_params];
+                data = force_data || this.stars[global.str_params],
+                language;
 
             // hard stuff to keep starred order
             if ((!global.all && options.sort == 'created') || (global.all && !global.default_order_saved)) {
@@ -125,7 +129,9 @@
             }
 
             if (options.language) {
-                data = _.filter(data, function(repository) { return (repository.language && options.language == repository.language); });
+                language = options.language;
+                if (language == 'CSharp') { language = 'C#';}
+                data = _.filter(data, function(repository) { return (repository.language && language == repository.language); });
             }
 
             if (options.forks && options.forks != 'all') {

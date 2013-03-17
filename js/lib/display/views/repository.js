@@ -105,7 +105,11 @@
             model: 'repository',
             view_name: 'repository_forks',
             data_field: 'forks',
-            accept_options: true
+            accept_options: true,
+            default_options: {
+                never_updated: 'show',
+                sort: 'newest'
+            }
         }
     });
 
@@ -114,7 +118,11 @@
             model: 'repository',
             view_name: 'repository_activity',
             data_field: 'activity',
-            accept_options: true
+            accept_options: true,
+            default_options: {
+                mode: 'display',
+                type: null
+            }
         }
     });
 

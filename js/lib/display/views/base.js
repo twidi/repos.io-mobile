@@ -174,11 +174,12 @@
             }
             return this._options_form;
         },
-        save_options: function() {
+        get_options_from_form: function() {
             var fields = this.options_form().serializeArray(),
-                name, dict = {}, sorted_names = [], sorted_dict = {}, multiples = {};
+                name, dict = {}, sorted_names = [], sorted_dict = {}, multiples = {},
+                common_part = this.$class.view_name + '_options_';
             for (var i=0; i<fields.length; i++) {
-                name = fields[i].name.replace(this.$class.view_name + '_options_', '');
+                name = fields[i].name.replace(common_part, '');
                 if (name == 'submit') { continue; }
                 if (!_.contains(sorted_names, name)) {
                     sorted_names.push(name);
@@ -197,7 +198,35 @@
             for (var j=0; j<sorted_names.length; j++) {
                 sorted_dict[sorted_names[j]] = dict[sorted_names[j]];
             }
-            this.options = sorted_dict;
+            return sorted_dict;
+        },
+        manage_options: function(url_options) {
+            var options, key, form_options = {},
+                common_part = this.$class.view_name + '_options_';
+
+            // reset the form
+            this.options_form()[0].reset.click();
+
+            // get default options
+            options = $.extend({}, this.$class.default_options);
+
+            // if options in url, use them
+            if (url_options) {
+                // update options from url
+                for (key in url_options) {
+                    if (typeof(options[key]) !== 'undefined') {
+                        options[key] = decodeURIComponent(url_options[key]);
+                    }
+                }
+            }
+
+            // update form with options (from url or default one if none)
+            for (key in options) {
+                form_options[common_part + key] = options[key];
+            }
+            this.options_form().unserializeForm($.param(form_options));
+
+            this.options = options;
             return this.options;
         },
         init_events: function() {
@@ -205,9 +234,15 @@
                 on_submit = function(ev) {
                     ev.preventDefault();
                     ev.stopPropagation();
-                    var page = view.display.pages[$.mobile.activePage.data('url')];
-                    $.mobile.loading('show');
-                    view.display.ask_for_page(page.id, view.display.controller[page.type].id);
+                    var options = view.get_options_from_form(),
+                        url_options = {},
+                        hash = '#' + view.$class.view_name;
+                    hash += '!' + view.$class.model + '=' + view.display.controller[view.$class.model].id;
+                    for (var key in options) {
+                        url_options[key] = encodeURIComponent(options[key]);
+                    }
+                    hash += '&' + $.param(url_options);
+                    window.location.hash = hash;
                     return false;
                 },
                 on_load_more = function(ev) {

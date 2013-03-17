@@ -129,7 +129,14 @@
             model: 'account',
             view_name: 'account_repositories',
             data_field: 'repositories',
-            accept_options: true
+            accept_options: true,
+            default_options: {
+                direction: 'desc',
+                forks: 'all',
+                language: null,
+                sort: 'pushed',
+                type: 'all'
+            }
         }
     });
 
@@ -138,7 +145,13 @@
             model: 'account',
             view_name: 'account_stars',
             data_field: 'stars',
-            accept_options: true
+            accept_options: true,
+            default_options: {
+                direction: 'desc',
+                forks: 'all',
+                language: null,
+                sort: 'created'
+            }
         }
     });
 
@@ -171,7 +184,11 @@
             model: 'account',
             view_name: 'account_activity',
             data_field: 'own_events',
-            accept_options: true
+            accept_options: true,
+            default_options: {
+                mode: 'display',
+                type: null
+            }
         }
     });
 
@@ -180,7 +197,11 @@
             model: 'account',
             view_name: 'account_events',
             data_field: 'received_events',
-            accept_options: true
+            accept_options: true,
+            default_options: {
+                mode: 'display',
+                type: null
+            }
         }
     });
 

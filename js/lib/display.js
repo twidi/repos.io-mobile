@@ -284,8 +284,9 @@
             e.preventDefault();
             e.stopPropagation();
             var page = that.pages[$.mobile.activePage.data('url')];
+                options = page.view.accept_options ? page.view.get_options_from_form() : null;
             $.mobile.loading('show');
-            that.ask_for_page(page.id, that.controller[page.type].id, 'force');
+            that.ask_for_page(page.id, that.controller[page.type].id, options, 'force');
             page.nodes.main_menu.popup('close');
         });
         if (screenfull.enabled) {
@@ -322,7 +323,7 @@
                 page = this.pages[page_id];
                 if (data.options.pageData && data.options.pageData[page.type]) {
                     $.mobile.loading('show');
-                    this.ask_for_page(page.id, data.options.pageData[page.type]);
+                    this.ask_for_page(page.id, data.options.pageData[page.type], _.omit(data.options.pageData, page.type));
                     return;
                 }
             }
@@ -344,13 +345,13 @@
         return true;
     };
 
-    Display.prototype.ask_for_page = function(page_id, obj_id, force) {
+    Display.prototype.ask_for_page = function(page_id, obj_id, url_params, force) {
         obj_id = obj_id.replace(':', '/');
         var that = this,
             page = this.pages[page_id],
             changed = this.controller.set_current_object(page.type, obj_id),
             obj = this.controller[page.type],
-            options = page.view.accept_options ? page.view.save_options() : {};
+            options = page.view.accept_options ? page.view.manage_options(url_params) : {};
 
         $('.current_page, .page_loaded').removeClass('current_page page_loaded');
         page.node.addClass('current_page');

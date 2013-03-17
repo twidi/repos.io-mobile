@@ -141,7 +141,7 @@
             final_page.nodes = {
                 links: $('a.' + final_page.id + '-link'),
                 page: page_node,
-                header: page_node.find(':jqmData(role=header)').find('h3'),
+                header: page_node.children(':jqmData(role=header)').children('h3'),
                 content: page_node.children(":jqmData(role=content)"),
                 main_menu: main_menu,
                 refresh_control: main_menu.find('.refresh-control'),
@@ -355,6 +355,8 @@
 
         $('.current_page, .page_loaded').removeClass('current_page page_loaded');
         page.node.addClass('current_page');
+
+        page.node.data('title', page.nodes.header.text());
 
         if (!force && this.is_page_for(page, obj, options)) {
             this.post_render_page(page);

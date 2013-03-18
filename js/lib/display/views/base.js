@@ -172,8 +172,22 @@
         }), // get_items
 
         options_form: (function View_list__options_form () {
+            var view = this;
             if (!this._options_form) {
                 this._options_form = $('#' + this.$class.view_name + '_options');
+                if (!this._options_form.parent().hasClass('ui-collapsible-content')) {
+                    setTimeout(function() {
+                        // create forms from templates if not already done
+                        var template = view.display.get_template(view.$class.view_name + '_options', true);
+                        var $template = $(template);
+                        $template.collapsible();
+                        $.mobile.checkboxradio.prototype.enhanceWithin(view._options_form, true);
+                        $.mobile.button.prototype.enhanceWithin(view._options_form, true);
+                        $.mobile.selectmenu.prototype.enhanceWithin(view._options_form, true);
+                        $.mobile.controlgroup.prototype.enhanceWithin(view._options_form, true);
+                        view.page.nodes.content.prepend(template);
+                    }, 500);
+                }
             }
             return this._options_form;
         }), // options_form

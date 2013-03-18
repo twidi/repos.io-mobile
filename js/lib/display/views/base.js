@@ -7,85 +7,85 @@
             view_name: null,
             views: {},
             views_cache: {},
-            get: function(page, display) {
+            get: (function View__class__get (page, display) {
                 if (!this.views_cache[page.id]) {
                     this.views_cache[page.id] = new this.views[page.id](page, display);
                 }
                 return this.views_cache[page.id];
-            }
-        },
+            }) // get
+        }, // __classvars__
 
-        __init__: function(page, display) {
+        __init__: (function View__constructor (page, display) {
             this.page = page;
             this.display = display;
             this.nodes_cache = null;
             this.container = null;
             this.init_events();
             this.accept_options = this.__classvars__.accept_options;
-        },
+        }), // __init__
 
-        init_events: function() {
-        },
+        init_events: (function View__init_events () {
+        }), // init_events
 
-        cache_nodes: function() {
+        cache_nodes: (function View__cache_nodes () {
             this.container = this.page.nodes.content;
             this.nodes_cache = {};
-        },
+        }), // cache_nodes
 
-        nodes: function() {
+        nodes: (function View__nodes () {
             if (!this.nodes_cache) {
                 this.cache_nodes();
             }
             return this.nodes_cache;
-        },
+        }), // nodes
 
-        reset: function() {
+        reset: (function View__reset () {
             if (!this.page.node.data('mobile-page')) {
                 this.page.node.page();
             }
-        },
+        }), // reset
 
-        update: function(obj, force) {
-        }
+        update: (function View__update (obj, force) {
+        }) // update
 
-    });
+    }); // View
 
 
     App.View.views._list = App.View.$extend({
         // provide a "data_field" in __classvars__ to know which field of the
         // object to use as data (or override get_data)
 
-        __init__: function(page, display) {
+        __init__: (function View_list__constructor (page, display) {
             this.$super(page, display);
             this.options = {};
-        },
+        }), // __init__
 
-        cache_nodes: function() {
+        cache_nodes: (function View_list__cache_nodes () {
             this.$super();
             this.nodes_cache.list = this.container.children('ul');
             this.nodes_cache.load_buttons = this.container.children('.load-buttons');
             this.nodes_cache.load_more_button = this.nodes_cache.load_buttons.find('a.list-more-button');
             this.nodes_cache.load_all_button = this.nodes_cache.load_buttons.find('a.list-all-button');
-        },
+        }), // cache_nodes
 
-        reset: function() {
+        reset: (function View_list__reset () {
             this.$super();
             var nodes = this.nodes();
             this.empty_list_node();
             nodes.load_buttons.addClass('ui-hidden');
             nodes.load_more_button.addClass('ui-disabled');
             nodes.load_all_button.addClass('ui-disabled');
-        },
+        }), // reset
 
-        empty_list_node: function() {
+        empty_list_node: (function View_list__empty_list_node () {
             var nodes = this.nodes(),
                 list = nodes.list[0];
             while (list.firstChild) {
                 list.removeChild(list.firstChild);
             }
-        },
+        }), // empty_list_node
 
-        update: function(obj, force) {
+        update: (function View_list__update (obj, force) {
             var nodes = this.nodes(),
                 items = this.get_items(obj, this.get_data(obj));
             this.empty_list_node();
@@ -95,9 +95,9 @@
             }
             this.update_load_buttons(obj);
             this.refresh_widgets();
-        },
+        }), // update
 
-        update_list_node: function(items) {
+        update_list_node: (function View_list__update_list_node (items) {
             var nodes = this.nodes(),
                 list = nodes.list[0],
                 actual_last = list.lastChild;
@@ -110,16 +110,16 @@
                     list.appendChild(items[i]);
                 }
             }
-        },
+        }), // update_list_node
 
-        complete: function(obj, data) {
+        complete: (function View_list__complete (obj, data) {
             var nodes = this.nodes(),
                 items = this.get_items(obj, this.prepare_data(obj, data));
             this.update_list_node(items);
             this.refresh_widgets();
-        },
+        }), // complete
 
-        update_load_buttons: function(obj) {
+        update_load_buttons: (function View_list__update_load_buttons (obj) {
             var nodes = this.nodes();
             if (!nodes.load_buttons.length) { return; }
             var str_options = $.param(this.options),
@@ -129,9 +129,9 @@
             } else {
                 this.hide_load_buttons();
             }
-        },
+        }), // update_load_buttons
 
-        toggle_load_buttons_enabled: function(enabled) {
+        toggle_load_buttons_enabled: (function View_list__toggle_load_buttons_enabled (enabled) {
             var nodes = this.nodes();
             if (!nodes.load_buttons.length) { return; }
             nodes.load_more_button.toggleClass('ui-disabled', !enabled);
@@ -139,42 +139,46 @@
             if (enabled) {
                 this.show_load_buttons();
             }
-        },
-        disable_load_buttons: function() { this.toggle_load_buttons_enabled(false); },
-        enable_load_buttons: function() { this.toggle_load_buttons_enabled(true); },
+        }), // toggle_load_buttons_enabled
 
-        toggle_load_buttons_visible: function(visible) {
+        disable_load_buttons: (function View_list__disable_load_buttons () { this.toggle_load_buttons_enabled(false); }),
+        enable_load_buttons: (function View_list__enable_load_buttons () { this.toggle_load_buttons_enabled(true); }),
+
+        toggle_load_buttons_visible: (function View_list__toggle_load_buttons_visible (visible) {
             var nodes = this.nodes();
             if (!nodes.load_buttons.length) { return; }
             nodes.load_buttons.toggleClass('ui-hidden', !visible);
             if (!visible) {
                 this.disable_load_buttons();
             }
-        },
-        hide_load_buttons: function() { this.toggle_load_buttons_visible(false); },
-        show_load_buttons: function() { this.toggle_load_buttons_visible(true); },
+        }), // toggle_load_buttons_visible
 
-        refresh_widgets: function() {
-        },
+        hide_load_buttons: (function View_list__hide_load_buttons () { this.toggle_load_buttons_visible(false); }),
+        show_load_buttons: (function View_list__show_load_buttons () { this.toggle_load_buttons_visible(true); }),
 
-        get_data: function(obj) {
+        refresh_widgets: (function View_list__refresh_widgets () {
+        }), // refresh_widgets
+
+        get_data: (function View_list__get_data (obj) {
             return obj.get_list(this.$class.data_field, this.options);
-        },
+        }), // get_data
 
-        prepare_data: function(obj, data) {
+        prepare_data: (function View_list__prepare_data (obj, data) {
             return obj.get_list(this.$class.data_field, this.options, data);
-        },
+        }), // prepare_data
 
-        get_items: function(obj, data) {
+        get_items: (function View_list__get_items (obj, data) {
             // return some "li"s
-        },
-        options_form: function() {
+        }), // get_items
+
+        options_form: (function View_list__options_form () {
             if (!this._options_form) {
                 this._options_form = $('#' + this.$class.view_name + '_options');
             }
             return this._options_form;
-        },
-        get_options_from_form: function() {
+        }), // options_form
+
+        get_options_from_form: (function View_list__get_options_from_form () {
             var fields = this.options_form().serializeArray(),
                 name, dict = {}, sorted_names = [], sorted_dict = {}, multiples = {},
                 common_part = this.$class.view_name + '_options_';
@@ -199,8 +203,9 @@
                 sorted_dict[sorted_names[j]] = dict[sorted_names[j]];
             }
             return sorted_dict;
-        },
-        manage_options: function(url_options) {
+        }), // get_options_from_form
+
+        manage_options: (function View_list__manage_options (url_options) {
             var options, key, form_options = {},
                 common_part = this.$class.view_name + '_options_';
 
@@ -228,10 +233,11 @@
 
             this.options = options;
             return this.options;
-        },
-        init_events: function() {
+        }), // manage_options
+
+        init_events: (function View_list__init_events () {
             var view = this,
-                on_submit = function(ev) {
+                on_submit = (function View_list__on_submit(ev) {
                     ev.preventDefault();
                     ev.stopPropagation();
                     var options = view.get_options_from_form(),
@@ -244,8 +250,8 @@
                     hash += '&' + $.param(url_options);
                     window.location.hash = hash;
                     return false;
-                },
-                on_load_more = function(ev) {
+                }), // on_submit
+                on_load_more = (function View_list__on_load_more (ev) {
                     ev.preventDefault();
                     ev.stopPropagation();
                     if (!$(this).hasClass('ui-disabled')) {
@@ -255,8 +261,8 @@
                         view.display.ask_for_more(page);
                     }
                     return false;
-                },
-                on_load_all = function(ev) {
+                }), // on_load_more
+                on_load_all = (function View_list__on_load_all (ev) {
                     ev.preventDefault();
                     ev.stopPropagation();
                     if (!$(this).hasClass('ui-disabled')) {
@@ -266,39 +272,39 @@
                         view.display.ask_for_all(page);
                     }
                     return false;
-                };
+                }); // on_load_all
             $(document).on('submit', '#' + this.__classvars__.view_name + '_options', on_submit);
             $(document).on('click', '#' + this.__classvars__.view_name + '_load_buttons .list-more-button', on_load_more);
             $(document).on('click', '#' + this.__classvars__.view_name + '_load_buttons .list-all-button', on_load_all);
-        }
+        }) // init_events
 
-    });
+    }); // View.__list
 
     App.View.views._accounts = App.View.views._list.$extend({
-        get_items: function(obj, data) {
+        get_items: (function View_accounts__get_items (obj, data) {
             return this.display.create_accounts_list_items(data, obj.provider);
-        }
-    });
+        }) // get_items
+    }); // View._accounts
 
     App.View.views._repositories = App.View.views._list.$extend({
-        get_items: function(obj, data) {
+        get_items: (function View_repositories__get_items (obj, data) {
             return this.display.create_repositories_list_items(data, obj.provider);
-        }
-    });
+        }) // get_items
+    }); // View._repositories
 
     App.View.views._events = App.View.views._list.$extend({
-        get_items: function(obj, events) {
+        get_items: (function View__events__get_items (obj, events) {
             var real_events = [];
             for (var i=0; i < events.length; i++) {
                 var event = obj.provider.formatter.format(events[i], obj);
                 if (event) { real_events.push(event); }
             }
             return this.display.create_events_list_items(real_events);
-        },
+        }), // get_items
 
-        refresh_widgets: function() {
+        refresh_widgets: (function View_events__refresh_widgets () {
             this.display.render_widgets(this.nodes().list);
-        }
-    });
+        }) // refresh_widgets
+    }); // View._events
 
 })(Reposio);

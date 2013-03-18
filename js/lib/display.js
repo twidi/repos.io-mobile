@@ -1,13 +1,12 @@
 (function(App) {
 
 
-    var Display = function(controller) {
+    var Display = (function Display__constructor (controller) {
         this.controller = controller;
-    };
+    }); // Display
 
-    Display.prototype.init = function() {
+    Display.prototype.init = (function Display__init () {
         this.templates_container = $('#templates');
-
 
         for (var obj_type in this.pages_list) {
             this.construct_pages(obj_type, this.pages_list[obj_type]);
@@ -22,9 +21,9 @@
         $('div[data-role=page]:not(.ui-page)').page();
 
         this.init_events();
-    };
+    }); // init
 
-    Display.prototype.format_date = function(str_date, show_time, show_seconds, time_only) {
+    Display.prototype.format_date = (function Display__format_date(str_date, show_time, show_seconds, time_only) {
         if (!str_date) { return ''; }
         var parts = str_date.split('T');
         if (show_time) {
@@ -33,14 +32,14 @@
         } else {
             return parts[0];
         }
-    };
+    }); // format_date
 
     Display.prototype.nodes = {};
     Display.prototype.templates = {};
     Display.prototype.pages_list = {};  // to define pages in display/*.js
     Display.prototype.pages = {};  // to hold all final pages
 
-    Display.prototype.construct_pages = function(type, pages) {
+    Display.prototype.construct_pages = (function Display__construct_pages(type, pages) {
 
         for (var l=0; l<pages.length; l++) {
             var page = pages[l];
@@ -159,11 +158,12 @@
 
         } // for
 
-    }; // construct_pages
+    }); // construct_pages
 
-    Display.prototype.init_events = function() {
+    Display.prototype.init_events = (function Display__init_events () {
         var that = this;
-        $(document).on("pagebeforechange", function(e, data) {
+
+        $(document).on("pagebeforechange", (function Display__on_pagebeforechange (e, data) {
             if (typeof data.toPage !== "string") { return; }
             if (data.options.dataUrl) {
                 data.options.dataUrl = data.options.dataUrl.replace('?', '!');
@@ -173,8 +173,9 @@
                 data.options.transition = 'none';  // we stay on the same view
             }
             that.on_before_page_change(e, data);
-        });
-        $(document).on("pagechange", function(e, data) {
+        })); // pagebeforechange
+
+        $(document).on("pagechange", (function Display__on_pagechange (e, data) {
             that.update_fullscreen_control();
             if ($.mobile.activePage && $.mobile.activePage.hasClass('current_page') && !$.mobile.activePage.hasClass('page_loaded')) {
                 $.mobile.loading('show');
@@ -186,8 +187,9 @@
                 go_button.toggleClass('ui-disabled', !real_url);
                 go_button.attr('href', real_url || '');
             } catch(ex) {}
-        });
-        $('.nav-menu').on("popupafterclose", function() {
+        })); // pagechange
+
+        $('.nav-menu').on("popupafterclose", (function Display__on_popupafterclose () {
             // restore previous active link in navbar when closing popup menu
             var menu = $(this),
                 link = menu.find('a.ui-btn-active'),
@@ -199,8 +201,9 @@
                     parent.find('.ui-header .ui-navbar a[href="' + href + '"]').addClass('ui-btn-active');
                 }
             }
-        });
-        $(document).on('click', '.list-events a.collapsible-trigger', function(e) {
+        })); // popupafterclose
+
+        $(document).on('click', '.list-events a.collapsible-trigger', (function Display__on_collapsible_trigger_click (e) {
             // open/close collapsible when clicking triggering links in list of events
             e.preventDefault();
             e.stopPropagation();
@@ -218,9 +221,7 @@
                     collapsible.collapsible();
                     that.render_widgets(collapsible);
                     link.data('collapsible', collapsible);
-                    setTimeout(function() {
-                        collapsible.trigger(opened ? 'collapse' : 'expand');
-                    }, 100);
+                    _.delay(collapsible.trigger, 100, opened ? 'collapse' : 'expand');
                 }
             } else {
                 collapsible = link.data('collapsible');
@@ -228,22 +229,33 @@
             }
             link.toggleClass('opened', !opened);
             return false;
-        });
-        $(document).on('click', '.list-events a.fetch-desc-trigger', function(e) {
+        })); // collapsible-trigger.click
+
+        $(document).on('click', '.list-events a.fetch-desc-trigger', (function Display__on_fetch_desc_trigger_click (e) {
             // fetch a repository to update its description when asked for
             e.preventDefault();
             e.stopPropagation();
+
             var link = $(this),
                 repository_id = link.data('repository'),
                 repository = App.Models.repository.get(repository_id, that.controller),
-                set_content = function(html) {
-                    $('p.ui-li-desc[data-fetching-repository="' + repository_id + '"]').each(function() {
+
+                set_content = (function Display__set_event_repo_desc_all(html) {
+                    $('p.ui-li-desc[data-fetching-repository="' + repository_id + '"]').each((function Display__set_event_repo_desc_one () {
                         var desc = $(this);
                         desc.children().remove();
                         desc.append(html);
-                    });
-                },
-                on_success = function(data) {
+                    }));
+                }), // set_content
+
+                set_loading = (function Display__set_loading_repo_desc () {
+                    var link = $(this),
+                        desc = link.parent();
+                    desc.children().remove();
+                    desc.append('<em>loading...</em>').attr('data-fetching-repository', repository_id);
+                }), // set loading
+
+                on_success = (function Display__on_fetch_desc_success (data) {
                     var html;
                     repository.details = data;
                     if (repository.details.description) {
@@ -252,16 +264,14 @@
                         html = '<em>no description</em>';
                     }
                     set_content(html);
-                },
-                on_failure = function(error) {
+                }), // on_success
+
+                on_failure = (function Display__on_fetch_desc_error (error) {
                     set_content('<em>Loading failed! (' + that.get_error_text(error) + ') </em><a href="#" class="fetch-desc-trigger" data-repository="' + repository.id + '">Retry ?</a>');
-                };
-            $('a.fetch-desc-trigger[data-repository="' + repository_id + '"]').each(function() {
-                var link = $(this),
-                    desc = link.parent();
-                desc.children().remove();
-                desc.append('<em>loading...</em>').attr('data-fetching-repository', repository_id);
-            });
+                }); // on_failure
+
+            $('a.fetch-desc-trigger[data-repository="' + repository_id + '"]').each(set_loading);
+
             if (repository.details) {
                 on_success();
             } else {
@@ -273,14 +283,16 @@
                     'fail_if_404'
                 );
             }
-        });
-        $(document).on('click', 'li.with-extension', function(e) {
+        })); // fetch-desc-trigger.click
+
+        $(document).on('click', 'li.with-extension', (function Display__with_extension_click (e) {
             e.preventDefault();
             e.stopPropagation();
             $(this).toggleClass('extended');
             return false;
-        });
-        $(document).on('click', '.refresh-control', function(e) {
+        })); // with-extension.click
+
+        $(document).on('click', '.refresh-control', (function Display__refresh_click (e) {
             e.preventDefault();
             e.stopPropagation();
             var page = that.pages[$.mobile.activePage.data('url')];
@@ -288,21 +300,22 @@
             $.mobile.loading('show');
             that.ask_for_page(page.id, that.controller[page.type].id, options, 'force');
             page.nodes.main_menu.popup('close');
-        });
+        })); // refresh-control.click
+
         if (screenfull.enabled) {
-            $(document).on('change', '.fullscreen-control', function(e) {
+            $(document).on('change', '.fullscreen-control', (function Display__fullscreen_click (e) {
                 $(this).parents('.main-nav-menu').popup('close');
                 screenfull.toggle();
-            });
+            })); // fullscreen.click
             screenfull.onchange = that.update_fullscreen_control;
-
         } else {
             var controls = $('.fullscreen-control');
             controls.parents('.ui-checkbox').add(controls.parents('label')).remove();
         }
-    };
 
-    Display.prototype.update_fullscreen_control = function() {
+    }); // init_events
+
+    Display.prototype.update_fullscreen_control = (function Display__update_fullscreen_control () {
         $('.fullscreen-control')
             .attr("checked", screenfull.isFullscreen)
             .each(function() {
@@ -310,9 +323,9 @@
                         $(this).checkboxradio("refresh");
                     } catch(ex) {}
             });
-    };
+    }); // update_fullscreen_control
 
-    Display.prototype.on_before_page_change = function(e, data) {
+    Display.prototype.on_before_page_change = (function Display__on_before_page_change (e, data) {
         var url = $.mobile.path.parseUrl(data.toPage),
             page_id, page;
 
@@ -334,18 +347,18 @@
             e.preventDefault();
         }
 
-    };
+    }); // on_before_page_change
 
-    Display.prototype.is_page_for = function(page, obj, options) {
+    Display.prototype.is_page_for = (function Display__is_page_for (page, obj, options) {
         var current_for = page.node.data('current-for');
         if (!current_for || current_for != obj.id) { return false; }
         if (page.view.accept_options && page.node.data('current-options') != $.param(options)) {
             return false;
         }
         return true;
-    };
+    }); // is_page_for
 
-    Display.prototype.ask_for_page = function(page_id, obj_id, url_params, force) {
+    Display.prototype.ask_for_page = (function Display__ask_for_page (page_id, obj_id, url_params, force) {
         obj_id = obj_id.replace(':', '/');
         var that = this,
             page = this.pages[page_id],
@@ -367,71 +380,71 @@
                 page.node.data('current-options', $.param(options));
             }
             page.node.data('current-for', obj.id);
-            obj.fetch_full(page.method, function() {
+            obj.fetch_full(page.method, (function Display__on_page_fetched () {
                 that.render_page(page, obj, options, force);
-            }, options, force);
+            }), options, force);
         }
-    };
+    }); // ask_for_page
 
-    Display.prototype.ask_for_more = function(page) {
+    Display.prototype.ask_for_more = (function Display__ask_for_more (page) {
         var that = this,
             obj = this.controller[page.type],
             options = page.view.options;
 
-        obj.fetch_more(page.method, function(data) {
+        obj.fetch_more(page.method, (function Dislpay__on_more_fetched (data) {
             if (!that.is_page_for(page, obj, options)) { return; }
             page.view.complete(obj, data);
             page.view.update_load_buttons(obj);
             if (page.node.hasClass('current_page')) {
                 $.mobile.loading('hide');
             }
-        }, options, function() {
+        }), options, (function Display__on_ask_for_more_failed_and_canceled () {
             page.view.enable_load_buttons();
-        });
-    };
+        }));
+    }); // ask_for_more
 
-    Display.prototype.ask_for_all = function(page) {
+    Display.prototype.ask_for_all = (function Display__ask_for_all (page) {
         var that = this,
             obj = this.controller[page.type],
             options = page.view.options;
-        obj.fetch_all(page.method, function(data) {
+        obj.fetch_all(page.method, (function Display__on_one_of_all_page_fetched (data) {
             if (!that.is_page_for(page, obj, options)) { return; }
             page.view.complete(obj, data);
-        }, function() {
+        }), (function Display__on_all_pages_fetched () {
             if (!that.is_page_for(page, obj, options)) { return; }
             if (page.node.hasClass('current_page')) {
                 page.view.hide_load_buttons();
                 $.mobile.loading('hide');
             }
-        }, options, function() {
+        }), options, (function Display__on_ask_for_all_failed_and_canceled () {
             page.view.enable_load_buttons();
-        });
-    };
+        }));
+    }); // ask_for_all
 
-    Display.prototype.render_page = function(page, obj, options, force) {
+    Display.prototype.render_page = (function Display__render_page (page, obj, options, force) {
         if (!this.is_page_for(page, obj, options)) { return; }
         page.view.update(obj, force);
         if (page.node.hasClass('current_page')) {
             this['update_' + page.type + '_navbar'](obj);
             this.post_render_page(page);
         }
-    };
+    }); // render_page
 
-    Display.prototype.post_render_page = function(page) {
+    Display.prototype.post_render_page = (function Display__post_render_page (page) {
         $.mobile.loading('hide');
         page.node.addClass('page_loaded');
         page.nodes.refresh_control.removeClass('ui-disabled ui-btn-active');
-    };
+    }); // post_render_page
 
-    Display.prototype.render_widgets = function(node) {
+    Display.prototype.render_widgets = (function Display__render_widgets (node) {
         node.find(":jqmData(role=listview)").listview();
         node.find(":jqmData(role=collapsible-set)").collapsibleset();
         node.find(":jqmData(role=collapsible)").collapsible();
         node.find(":jqmData(role=button)").button();
         node.find(":jqmData(role=table)").table();
-    };
+    }); // render_widgets
 
-    Display.prototype.create_events_list_items = function(events) {
+    Display.prototype.create_events_list_items = (function Display__create_events_list_items (events) {
         var day_template = this.get_template('event-list-day'),
             event_template = this.get_template('event-list-item'),
             items = [],
@@ -458,9 +471,9 @@
         }
 
         return items;
-    };
+    }); // create_events_list_items
 
-    Display.prototype.get_error_text = function(error) {
+    Display.prototype.get_error_text = (function Display__get_error_text (error) {
         var error_text = '';
         if (error) {
             if (error.statusText) {
@@ -477,9 +490,9 @@
             error_text = 'undefined error';
         }
         return error_text;
-    };
+    }); // get_error_text
 
-    Display.prototype.confirm_new_fech = function(mode, text, error, callback_error) {
+    Display.prototype.confirm_new_fech = (function Display__confirm_new_fech (mode, text, error, callback_error) {
         $.mobile.loading('hide');
         var result = confirm('Unable to fetch ' + text + ' (' + this.get_error_text(error) + '), retry ?');
         if (result) {
@@ -498,9 +511,9 @@
             }
         }
         return result;
-    };
+    }); // confirm_new_fech
 
-    Display.prototype.get_template = function(name, consume) {
+    Display.prototype.get_template = (function Display__get_template (name, consume) {
         if (!this.templates[name]) {
             template = this.templates_container.find('[data-template-for=' + name + ']')[0];
             template.parentNode.removeChild(template);
@@ -512,10 +525,10 @@
             delete this.templates[name];
         }
         return template;
-    };
+    }); // get_template
 
 
-    Display.prototype.clear_listview = function(node, failover, refresh) {
+    Display.prototype.clear_listview = (function Display__clear_listview (node, failover, refresh) {
         node.children(':not(.ui-li-divider)').remove();
         if (failover) {
             node.append('<li class="failover">' + failover + '</li>');
@@ -523,7 +536,7 @@
         if (refresh) {
             node.listview('refresh');
         }
-    };
+    }); // clear_listview
 
 
     App.Display = Display;

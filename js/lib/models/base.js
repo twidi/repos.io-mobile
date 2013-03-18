@@ -10,7 +10,7 @@
             cache: {},
             default_params: {},
             fetchable_params: {},
-            get: function(id, controller) {
+            get: (function Model__class__get (id, controller) {
                 if (!this.cache[this.model_name]) {
                     this.cache[this.model_name] = {};
                 }
@@ -18,10 +18,10 @@
                     this.cache[this.model_name][id] = new this(id, controller);
                 }
                 return this.cache[this.model_name][id];
-            }
-        },
+            }) // get
+        }, // __classvars__
 
-        __init__: function(id, controller) {
+        __init__: (function Model__constructor (id, controller) {
             var parts = id.split('@');
             this.id = id;
             this.ref = parts[0];
@@ -38,9 +38,9 @@
                     this[field_name] = null;
                 }
             }
-        },
+        }), // __init__
 
-        get_list: function(type, options, force_data) {
+        get_list: (function Model__get_list (type, options, force_data) {
             var fetchable_params = this.filter_fetchable_params(type, options);
             if (this['sort_and_filter_' + type]) {
                 var sort_and_filter = this.list_page_status[type].__global__.all;
@@ -57,27 +57,27 @@
                 }
             }
             return force_data || this[type][$.param(fetchable_params)];
-        },
+        }), // get_list
 
-        filter_fetchable_params: function(type, params) {
+        filter_fetchable_params: (function Model__filter_fetchable_params (type, params) {
             params = params || {};
             if (this.$class.fetchable_params[type]) {
                 return _.pick(params, this.$class.fetchable_params[type]);
             } else {
                 return params;
             }
-        },
+        }), // filter_fetchable_params
 
-        filter_unfetchable_params: function(type, params) {
+        filter_unfetchable_params: (function Model__filter_unfetchable_params (type, params) {
             params = params || {};
             if (this.$class.fetchable_params[type]) {
                 return _.omit(params, this.$class.fetchable_params[type]);
             } else {
                 return {};
             }
-        },
+        }), // filter_unfetchable_params
 
-        fetch: function(type, success, failure, params, fail_if_404) {
+        fetch: (function Model__fetch (type, success, failure, params, fail_if_404) {
             var that = this;
             params = params || {};
             if (this.$class.default_params[type]) {
@@ -95,18 +95,18 @@
                     if (success) { success(data); }
                 }
             }, params);
-        },
+        }), // fetch
 
-        fetched: function(type, str_params) {
+        fetched: (function Model__fetched (type, str_params) {
             if (this.$class.fields[type] instanceof Array) {
                 if (this.list_page_status[type].__global__.all) { return true; }
                 return (typeof this[type][str_params] != 'undefined');
             } else {
                 return (this[type] !== null);
             }
-        },
+        }), // fetched
 
-        fetch_full: function(type, callback, params, force, callback_error) {
+        fetch_full: (function Model__fetch_full (type, callback, params, force, callback_error) {
             var that = this,
                 is_list = (that.$class.fields[type] instanceof Array),
                 str_params;
@@ -145,9 +145,9 @@
             } else {
                 callback();
             }
-        },
+        }), // fetch_full
 
-        update_list_page_status: function(type, params, page_number, last_length) {
+        update_list_page_status: (function Model__update_list_page_status (type, params, page_number, last_length) {
             var default_params = this.$class.default_params[type] || {},
                 str_params = $.param(params),
                 max_pages = default_params.max_pages || null,
@@ -172,9 +172,9 @@
                     this['manage_global_for_' + type]();
                 }
             }
-        },
+        }), // update_list_page_status
 
-        _fetch_more: function(type, params, success, failure) {
+        _fetch_more: (function Model___fetch_more (type, params, success, failure) {
             var that = this, str_params, final_params;
             params = this.filter_fetchable_params(type, params);
             str_params = $.param(params);
@@ -192,17 +192,17 @@
                 final_params
             );
 
-        },
+        }), // _fetch_more
 
-        fetch_more: function(type, callback, params, callback_error) {
+        fetch_more: (function Model__fetch_more (type, callback, params, callback_error) {
             var that = this;
             this.list_page_status[type].__global__ = {all: false};
             this._fetch_more(type, params, callback, function(err) {
                 that.controller.fetch_more_error(err, that, type, callback, params, callback_error);
             });
-        },
+        }), // fetch_more
 
-        fetch_all: function(type, page_callback, callback, params, callback_error) {
+        fetch_all: (function Model__fetch_all (type, page_callback, callback, params, callback_error) {
             var that = this, str_params;
             params = this.filter_fetchable_params(type, params);
             str_params = $.param(params);
@@ -224,9 +224,9 @@
                 that._fetch_more(type, params, one_fetch_success, one_fetch_error);
             };
             one_fetch();
-        },
+        }), // fetch_all
 
-        sort_and_filter_events: function(options, data) {
+        sort_and_filter_events: (function Model__sort_and_filter_events (options, data) {
             var display = options.mode === 'display',
                 type_method, choices;
             if (!options.type) {
@@ -235,8 +235,8 @@
             type_method = display ? _.filter : _.reject;
             choices = options.type.split(',');
             return type_method(data, function(event) { return (choices.indexOf(event.type) !== -1); });
-        }
+        }) // sort_and_filter_events
 
-    });
+    }); // Model
 
 })(Reposio);

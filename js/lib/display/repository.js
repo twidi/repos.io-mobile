@@ -8,7 +8,7 @@
         { id: 'stars', count: true }
     ];
 
-    App.Display.prototype.change_repository = function() {
+    App.Display.prototype.change_repository = (function Display__change_repository () {
         $('.repository_forks-count').hide();
         $('.repository_stars-count').hide();
 
@@ -21,14 +21,14 @@
             page.node.removeData('current-for');
         }
 
-    };
+    }); // change_repository
 
-    App.Display.prototype.repository_link = function(full_name, repo_name, provider_name) {
+    App.Display.prototype.repository_link = (function Display__repository_link (full_name, repo_name, provider_name) {
         full_name = full_name.replace('/', ':');
         return '<a class="mini-button" data-role="button" data-inline="true" data-mini="true" data-theme="b" href="#repository_home!repository=' + full_name + '@' + provider_name + '">' + repo_name + '</a>';
-    };
+    }); // repository_link
 
-    App.Display.prototype.create_repositories_list_items = function(repositories, provider) {
+    App.Display.prototype.create_repositories_list_items = (function Display__create_repositories_list_items (repositories, provider) {
         var template = this.get_template('repository-list-item'),
             items = [];
 
@@ -70,15 +70,15 @@
         }
 
         return items;
-    };
+    }); // create_repositories_list_items
 
-    App.Display.prototype.update_repository_navbar = function(repository) {
+    App.Display.prototype.update_repository_navbar = (function Display__update_repository_navbar (repository) {
         $('.go-button').find('.provider').html(repository.provider.name);
         $('.repository_forks-count').html(repository.details ? repository.details.forks_count : '?').show();
         $('.repository_stars-count').html(repository.details ? repository.details.watchers_count : '?').show();
-    };
+    }); // update_repository_navbar
 
-    App.Display.prototype.get_real_repository_page = function(page_name, repository) {
+    App.Display.prototype.get_real_repository_page = (function Display__get_real_repository_page (page_name, repository) {
         switch(page_name) {
             case 'home':
             case 'activity':
@@ -91,6 +91,6 @@
                 return 'https://github.com/' + repository.path + '/stargazers';
         }
         return null;
-    };
+    }); // get_real_repository_page
 
 })(Reposio);

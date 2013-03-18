@@ -1,10 +1,10 @@
 (function(App) {
 
-    var EventFormatter = function(provider) {
+    var EventFormatter = (function GithubEventFormatter__constructor (provider) {
         this.provider = provider;
-    };
+    }); // EventFormatter
 
-    EventFormatter.prototype.format = function(event, source) {
+    EventFormatter.prototype.format = (function GithubEventFormatter__format (event, source) {
         if (event.type && this[event.type]) {
             var result = this[event.type](event, source);
             if (!result) {
@@ -19,17 +19,17 @@
             };
         }
         return null;
-    };
+    }); // format
 
-    EventFormatter.prototype.format_actor  = function(actor, source, force_link) {
+    EventFormatter.prototype.format_actor  = (function GithubEventFormatter__format_actor (actor, source, force_link) {
         if (force_link || source.$class.model_name != 'account' || source.username != actor.login) {
             return this.provider.controller.display.account_link(actor.login, source.provider.name);
         } else {
             return '<strong>' + actor.login + '</strong>';
         }
-    };
+    }); // format_actor
 
-    EventFormatter.prototype.format_repo  = function(repository, actor, source, force_link, force_name) {
+    EventFormatter.prototype.format_repo  = (function GithubEventFormatter__format_repo (repository, actor, source, force_link, force_name) {
         var full_name = repository.full_name || repository.name,
             parts = full_name.split('/'), result;
         if (force_link || source.$class.model_name != 'repository' || source.path != full_name) {
@@ -42,9 +42,9 @@
             result = '<strong>' + parts[1] + '</strong>';
         }
         return result;
-    };
+    }); // format_repo
 
-    EventFormatter.prototype.base_format = function(event, source, middle_part, desc, target, external_link) {
+    EventFormatter.prototype.base_format = (function GithubEventFormatter__base_format (event, source, middle_part, desc, target, external_link) {
         var result = '';
         result += '<p class="ui-li-aside">' + this.provider.controller.display.format_date(event.created_at, 'show-time', null, 'time-only') + '</p>';
         if (!target && event.repository && (event.repository.name || event.repository.full_name)) {
@@ -61,32 +61,32 @@
             result += this.format_external_link(external_link);
         }
         return result;
-    };
+    }); // base_format
 
-    EventFormatter.prototype.markdown_event_more = function(text) {
+    EventFormatter.prototype.markdown_event_more = (function GithubEventFormatter__markdown_event_more (text) {
         if (!text) { return ''; }
         result = '<div class="ui-li ui-li-static ui-btn-up-d ui-first-child ui-last-child markdown">';
         result += marked(text, {sanitize: true, breaks: true, smartLists: true});
         result +='</div>';
         return result;
-    };
+    }); // markdown_event_more
 
-    EventFormatter.prototype.trigger_text = function(text, triggerable) {
+    EventFormatter.prototype.trigger_text = (function GithubEventFormatter__trigger_text (text, triggerable) {
         if (triggerable) {
             return '<a href="#" class="collapsible-trigger">' + text + '</a>';
         } else {
             return text;
         }
-    };
+    }); // trigger_text
 
-    EventFormatter.prototype.more = function(html) {
+    EventFormatter.prototype.more = (function GithubEventFormatter__more (html) {
         var more = '<div data-role="collapsible" data-content-theme="d" data-corners="false" data-mini="true" class="event-more"><h3>More</h3>';
         more += html;
         more += '</div>';
         return more;
-    };
+    }); // more
 
-    EventFormatter.prototype.description_fetcher = function(event, source) {
+    EventFormatter.prototype.description_fetcher = (function GithubEventFormatter__description_fetcher (event, source) {
         var desc, repository;
         if (event.repository.name && event.repository.name != source.path) {
             repository = App.Models.repository.get(event.repository.name + '@github', this.provider.controller),
@@ -100,9 +100,9 @@
             }
         }
         return desc;
-    };
+    }); // description_fetcher
 
-    EventFormatter.prototype.format_external_link = function(href) {
+    EventFormatter.prototype.format_external_link = (function GithubEventFormatter__format_external_link (href) {
         var html = '<a class="ui-li-link-alt ui-btn ui-btn-icon-notext ui-btn-up-c" data-theme="c" href="' + href + '" target="_blank">';
         html += '<span class="ui-btn ui-btn-icon-notext">';
         html += '<span class="ui-btn-inner">';
@@ -111,18 +111,18 @@
         html += '</span>';
         html += '</a>';
         return html;
-    };
+    }); // format_external_link
 
-    EventFormatter.prototype.CommitCommentEvent = function(event, source) {
+    EventFormatter.prototype.CommitCommentEvent = (function GithubEventFormatter__CommitCommentEvent (event, source) {
         var part = this.trigger_text('commented', event.comment.body) +  ' a commit on';
         return this.base_format(event, source, part, null, null, event.comment.html_url);
-    };
+    }); // CommitCommentEvent
 
-    EventFormatter.prototype.more_CommitCommentEvent = function(event, source) {
+    EventFormatter.prototype.more_CommitCommentEvent = (function GithubEventFormatter__more_CommitCommentEvent (event, source) {
         return this.more(this.markdown_event_more(event.comment.body));
-    };
+    }); // more_CommitCommentEvent
 
-    EventFormatter.prototype.CreateEvent = function(event, source) {
+    EventFormatter.prototype.CreateEvent = (function GithubEventFormatter__CreateEvent (event, source) {
         var part = 'created', desc, link;
         switch( event.ref_type) {
             case 'branch':
@@ -143,9 +143,9 @@
                 break;
         }
         return this.base_format(event, source, part, desc, null, link);
-    };
+    }); // CreateEvent
 
-    EventFormatter.prototype.DeleteEvent = function(event, source) {
+    EventFormatter.prototype.DeleteEvent = (function GithubEventFormatter__DeleteEvent (event, source) {
         var part = 'deleted', desc;
         switch(event.ref_type) {
             case 'branch':
@@ -158,32 +158,31 @@
         }
         return this.base_format(event, source, part, desc);
 
-    };
+    }); // DeleteEvent
 
-    EventFormatter.prototype.DownloadEvent = function(event, source) {
+    EventFormatter.prototype.DownloadEvent = (function GithubEventFormatter__DownloadEvent (event, source) {
+    }); // DownloadEvent
 
-    };
-
-    EventFormatter.prototype.FollowEvent = function(event, source) {
+    EventFormatter.prototype.FollowEvent = (function GithubEventFormatter__FollowEvent (event, source) {
         var target = this.format_actor(event.target, source);
         return this.base_format(event, source, 'started following', null, target);
-    };
+    }); // FollowEvent
 
-    EventFormatter.prototype.ForkEvent = function(event, source) {
+    EventFormatter.prototype.ForkEvent = (function GithubEventFormatter__ForkEvent (event, source) {
         var part = this.trigger_text('forked', event.forkee),
             desc = this.description_fetcher(event, source);
         return this.base_format(event, source, part, desc);
-    };
+    }); // ForkEvent
 
-    EventFormatter.prototype.more_ForkEvent = function(event, source) {
+    EventFormatter.prototype.more_ForkEvent = (function GithubEventFormatter__more_ForkEvent (event, source) {
         return this.more('<p class="ui-li ui-li-static ui-btn-up-d ui-first-child ui-last-child">Fork: ' + this.format_repo(event.forkee, event.actor, source, null, true) + '</p>');
-    };
+    }); // more_ForkEvent
 
-    EventFormatter.prototype.ForkApplyEvent = function(event, source) {
+    EventFormatter.prototype.ForkApplyEvent = (function GithubEventFormatter__ForkApplyEvent (event, source) {
         return this.base_format(event, source, 'applied the fork queue to');
-    };
+    }); // ForkApplyEvent
 
-    EventFormatter.prototype.GistEvent = function(event, source) {
+    EventFormatter.prototype.GistEvent = (function GithubEventFormatter__GistEvent (event, source) {
         var action = event.action, part, desc;
         if (!action.match(/d$/)) {
             if (!action.match(/e$/)) {
@@ -194,16 +193,16 @@
         part = action + ' a gist';
         if (event.gist.description) { desc = 'Description: <strong>' + event.gist.description + '</strong>'; }
         return this.base_format(event, source, part, desc, null, event.gist.html_url);
-    };
+    }); // GistEvent
 
-    EventFormatter.prototype.GollumEvent = function(event, source) {
+    EventFormatter.prototype.GollumEvent = (function GithubEventFormatter__GollumEvent (event, source) {
         var target = this.format_repo(event.repository, event.actor, source),
             part = this.trigger_text('edited', true) + ' the ' + target + ' wiki',
             link = 'https://github.com/' + event.repository.name + '/wiki';
         return this.base_format(event, source, part, null, ' ', link);
-    };
+    }); // GollumEvent
 
-    EventFormatter.prototype.more_GollumEvent = function(event, source) {
+    EventFormatter.prototype.more_GollumEvent = (function GithubEventFormatter__more_GollumEvent (event, source) {
         var more = '<ul data-role="listview" data-theme="d">';
         for (var i=0; i<event.pages.length; i++) {
             var page = event.pages[i];
@@ -213,9 +212,9 @@
         }
         more += '</ul>';
         return this.more(more);
-    };
+    }); // more_GollumEvent
 
-    EventFormatter.prototype.IssueCommentEvent = function(event, source) {
+    EventFormatter.prototype.IssueCommentEvent = (function GithubEventFormatter__IssueCommentEvent (event, source) {
         var part,
             desc = (event.is_pull_request ? 'Pull request' : 'Issue') + ': <strong>#' + event.issue.number + ' - ' + event.issue.title + '</strong>',
             link;
@@ -233,57 +232,57 @@
             link = event.issue.html_url + '#issuecomment-' + event.comment.id;
         }
         return this.base_format(event, source, part, desc, null, link);
-    };
+    }); // IssueCommentEvent
 
-    EventFormatter.prototype.more_IssueCommentEvent = function(event, source) {
+    EventFormatter.prototype.more_IssueCommentEvent = (function GithubEventFormatter__more_IssueCommentEvent (event, source) {
         return this.more(this.markdown_event_more(event.comment.body));
-    };
+    }); // more_IssueCommentEvent
 
-    EventFormatter.prototype.IssuesEvent = function(event, source) {
+    EventFormatter.prototype.IssuesEvent = (function GithubEventFormatter__IssuesEvent (event, source) {
         var part = event.action + ' an ' + this.trigger_text('issue', event.issue.body) + ' on',
             desc = 'Issue <strong>#' + event.issue.number + ' - ' + event.issue.title + '</strong>';
         return this.base_format(event, source, part, desc, null, event.issue.html_url);
-    };
+    }); // IssuesEvent
 
-    EventFormatter.prototype.more_IssuesEvent = function(event, source) {
+    EventFormatter.prototype.more_IssuesEvent = (function GithubEventFormatter__more_IssuesEvent (event, source) {
         return this.more(this.markdown_event_more(event.issue.body));
-    };
+    }); // more_IssuesEvent
 
-    EventFormatter.prototype.MemberEvent = function(event, source) {
+    EventFormatter.prototype.MemberEvent = (function GithubEventFormatter__MemberEvent (event, source) {
         var part = event.action + ' ';
         part += this.format_actor(event.member, source);
         part += ' as a member ' + (event.action == 'added' ? 'to' : 'from');
         return this.base_format(event, source, part);
-    };
+    }); // MemberEvent
 
-    EventFormatter.prototype.PublicEvent = function(event, source) {
+    EventFormatter.prototype.PublicEvent = (function GithubEventFormatter__PublicEvent (event, source) {
         return this.base_format(event, source, 'open sourced');
-    };
+    }); // PublicEvent
 
-    EventFormatter.prototype.PullRequestEvent = function(event, source) {
+    EventFormatter.prototype.PullRequestEvent = (function GithubEventFormatter__PullRequestEvent (event, source) {
         var part = event.action + ' a ' + this.trigger_text('pull request', event.pull_request.body) + ' on',
             desc = 'Pull request <strong>#' + event.pull_request.number + ' - ' + event.pull_request.title + '</strong>';
         return this.base_format(event, source, part, desc, null, event.pull_request.html_url);
-    };
+    }); // PullRequestEvent
 
-    EventFormatter.prototype.more_PullRequestEvent = function(event, source) {
+    EventFormatter.prototype.more_PullRequestEvent = (function GithubEventFormatter__more_PullRequestEvent (event, source) {
         return this.more(this.markdown_event_more(event.pull_request.body));
-    };
+    }); // more_PullRequestEvent
 
-    EventFormatter.prototype.PullRequestReviewCommentEvent = function(event, source) {
+    EventFormatter.prototype.PullRequestReviewCommentEvent = (function GithubEventFormatter__PullRequestReviewCommentEvent (event, source) {
         var part = this.trigger_text('commented', event.comment.body) + ' a pull request on',
             desc;
         if (event.pull_request.number) {
             desc = 'Pull request <strong>#' + event.pull_request.number + '</strong>';
         }
         return this.base_format(event, source, part, desc, null, event.comment.html_url);
-    };
+    }); // PullRequestReviewCommentEvent
 
-    EventFormatter.prototype.more_PullRequestReviewCommentEvent = function(event, source) {
+    EventFormatter.prototype.more_PullRequestReviewCommentEvent = (function GithubEventFormatter__more_PullRequestReviewCommentEvent (event, source) {
         return this.more(this.markdown_event_more(event.comment.body));
-    };
+    });
 
-    EventFormatter.prototype.PushEvent = function(event, source) {
+    EventFormatter.prototype.PushEvent = (function GithubEventFormatter__PushEvent (event, source) {
         var part = 'pushed ' + (event.size ? this.trigger_text(event.size + ' commit' + (event.size > 1 ? 's' : ''), true) : '') + ' to',
             desc, link;
             if (event.ref && event.ref.indexOf('refs/heads/') === 0) {
@@ -295,9 +294,9 @@
                 link = 'https://github.com/' + event.repository.name + '/compare/' + event.before + '...' + event.head;
             }
         return this.base_format(event, source, part, desc, null, link);
-    };
+    }); // PushEvent
 
-    EventFormatter.prototype.more_PushEvent = function(event, source) {
+    EventFormatter.prototype.more_PushEvent = (function GithubEventFormatter__more_PushEvent (event, source) {
         var more = '<ul data-role="listview" data-theme="d">';
 
         for (var i=0; i<event.commits.length;i++) {
@@ -318,21 +317,20 @@
         }
         more += '</ul>';
         return this.more(more);
-    };
+    }); // more_PushEvent
 
-    EventFormatter.prototype.TeamAddEvent = function(event, source) {
+    EventFormatter.prototype.TeamAddEvent = (function GithubEventFormatter__TeamAddEvent (event, source) {
+    }); // TeamAddEvent
 
-    };
-
-    EventFormatter.prototype.WatchEvent = function(event, source) {
+    EventFormatter.prototype.WatchEvent = (function GithubEventFormatter__WatchEvent (event, source) {
         var part = event.action + ' watching',
             desc = this.description_fetcher(event, source);
         return this.base_format(event, source, part, desc);
-    };
+    }); // WatchEvent
 
 
 
-    var Provider = function(controller) {
+    var Provider = (function Github__constructor (controller) {
         var authorization, conf = (providers_config ? providers_config.github || {} : {});
 
         this.name = 'github';
@@ -350,19 +348,19 @@
 
         this.controller = controller;
         this.formatter = new EventFormatter(this);
-    };
+    }); // Provider
 
-    Provider.prototype.get_user = function(username) {
+    Provider.prototype.get_user = (function Github__get_user (username) {
         return new Gh3.User(username);
-    };
+    }); // get_user
 
-    Provider.prototype.get_repo = function(path) {
+    Provider.prototype.get_repo = (function Github__get_repo (path) {
         var parts = path.split('/');
         return new Gh3.Repository(parts[1], this.get_user(parts[0]));
-    };
+    }); // get_repo
 
     Provider.prototype.map_type = {accounts: 'account', repositories: 'repository', events: 'event'};
-    Provider.prototype.decorate_collback = function(callback, name, type) {
+    Provider.prototype.decorate_collback = (function Github__decorate_collback (callback, name, type) {
         var that = this;
         return function(err, data) {
             var final_data;
@@ -384,9 +382,9 @@
             }
             callback(err, err ? null : final_data);
         };
-    };
+    }); // decorate_collback
 
-    Provider.prototype.map = function(data, mapping) {
+    Provider.prototype.map = (function Github__map (data, mapping) {
         var result = {}, key_in;
         if (data) {
             for (var i = 0; i < mapping._.length; i++) {
@@ -398,7 +396,7 @@
             }
         }
         return result;
-    };
+    }); // map
 
     Provider.prototype.account_mapping = {
         _: ['login', 'type', 'avatar_url', 'name', 'created_at', 'company', 'location', 'email', 'blog', 'public_repos', 'followers_count', 'following_count', 'contributions'],
@@ -406,20 +404,20 @@
         public_repos: 'repos_count'
     };
 
-    Provider.prototype.map_account = function(data) {
+    Provider.prototype.map_account = (function Github__map_account (data) {
         var result = {};
         if (data) {
             result = this.map(data, this.account_mapping);
         }
         return result;
-    };
+    }); // map_account
 
     Provider.prototype.repository_mapping = {
         _: ['name', 'full_name', 'description', 'pushed_at', 'created_at', 'updated_at', 'forks_count', 'fork', 'watchers_count', 'language'],
         fork: 'is_fork'
     };
 
-    Provider.prototype.map_repository = function(data) {
+    Provider.prototype.map_repository = (function Github__map_repository (data) {
         var result = {};
         if (data) {
             result = this.map(data, this.repository_mapping);
@@ -431,9 +429,9 @@
             }
         }
         return result;
-    };
+    }); // map_repository
 
-    Provider.prototype.map_event = function(data) {
+    Provider.prototype.map_event = (function Github__map_event (data) {
         var event = {}, payload;
         if (data) {
             payload = data.payload || {};
@@ -543,9 +541,9 @@
         }
 
         return event;
-    };
+    }); // map_event
 
-    Provider.prototype.get_account_details = function(username, callback, params) {
+    Provider.prototype.get_account_details = (function Github__get_account_details (username, callback, params) {
         var that = this;
         function map_callback(error, data) {
             if (!error && data) {
@@ -554,41 +552,41 @@
             return callback(error, data);
         }
         this.get_user(username).fetch(map_callback, params);
-    };
+    }); // get_account_details
 
-    Provider.prototype.get_account_repositories = function(username, callback, params) {
+    Provider.prototype.get_account_repositories = (function Github__get_account_repositories (username, callback, params) {
         this.get_user(username).repositories.fetch(this.decorate_collback(callback, 'repositories', 'repositories'), params);
-    };
+    }); // get_account_repositories
 
-    Provider.prototype.get_account_stars = function(username, callback, params) {
+    Provider.prototype.get_account_stars = (function Github__get_account_stars (username, callback, params) {
         this.get_user(username).starred.fetch(this.decorate_collback(callback, 'starred', 'repositories'), params);
-    };
+    }); // get_account_stars
 
-    Provider.prototype.get_account_own_events = function(username, callback, params) {
+    Provider.prototype.get_account_own_events = (function Github__get_account_own_events (username, callback, params) {
         this.get_user(username).events.fetch(this.decorate_collback(callback, 'events', 'events'), params);
-    };
+    }); // get_account_own_events
 
-    Provider.prototype.get_account_received_events = function(username, callback, params) {
+    Provider.prototype.get_account_received_events = (function Github__get_account_received_events (username, callback, params) {
         this.get_user(username).received_events.fetch(this.decorate_collback(callback, 'received_events', 'events'), params);
-    };
+    }); // get_account_received_events
 
-    Provider.prototype.get_account_followers = function(username, callback, params) {
+    Provider.prototype.get_account_followers = (function Github__get_account_followers (username, callback, params) {
         this.get_user(username).followers.fetch(this.decorate_collback(callback, 'followers', 'accounts'), params);
-    };
+    }); // get_account_followers
 
-    Provider.prototype.get_account_following = function(username, callback, params) {
+    Provider.prototype.get_account_following = (function Github__get_account_following (username, callback, params) {
         this.get_user(username).following.fetch(this.decorate_collback(callback, 'following', 'accounts'), params);
-    };
+    }); // get_account_following
 
-    Provider.prototype.get_account_org_members = function(username, callback, params) {
+    Provider.prototype.get_account_org_members = (function Github__get_account_org_members (username, callback, params) {
         this.get_user(username).members.fetch(this.decorate_collback(callback, 'members', 'accounts'), params);
-    };
+    }); // get_account_org_members
 
-    Provider.prototype.get_account_orgs = function(username, callback, params) {
+    Provider.prototype.get_account_orgs = (function Github__get_account_orgs (username, callback, params) {
         this.get_user(username).orgs.fetch(this.decorate_collback(callback, 'orgs', 'accounts'), params);
-    };
+    }); // get_account_orgs
 
-    Provider.prototype.get_repository_details = function(path, callback, params) {
+    Provider.prototype.get_repository_details = (function Github__get_repository_details (path, callback, params) {
         var that = this;
         function map_callback(error, data) {
             if (!error && data) {
@@ -597,27 +595,27 @@
             return callback(error, data);
         }
         this.get_repo(path).fetch(map_callback, params);
-    };
+    }); // get_repository_details
 
-    Provider.prototype.get_repository_readme = function(path, callback, params) {
+    Provider.prototype.get_repository_readme = (function Github__get_repository_readme (path, callback, params) {
         this.get_repo(path).fetchReadme(this.decorate_collback(callback, 'readme', 'field'), params);
-    };
+    }); // get_repository_readme
 
-    Provider.prototype.get_repository_activity = function(path, callback, params) {
+    Provider.prototype.get_repository_activity = (function Github__get_repository_activity (path, callback, params) {
         this.get_repo(path).events.fetch(this.decorate_collback(callback, 'events', 'events'), params);
-    };
+    }); // get_repository_activity
 
-    Provider.prototype.get_repository_forks = function(path, callback, params) {
+    Provider.prototype.get_repository_forks = (function Github__get_repository_forks (path, callback, params) {
         this.get_repo(path).forks.fetch(this.decorate_collback(callback, 'forks', 'repositories'), params);
-    };
+    }); // get_repository_forks
 
-    Provider.prototype.get_repository_stars = function(path, callback, params) {
+    Provider.prototype.get_repository_stars = (function Github__get_repository_stars (path, callback, params) {
         this.get_repo(path).stargazers.fetch(this.decorate_collback(callback, 'stargazers', 'accounts'), params);
-    };
+    }); // get_repository_stars
 
-    Provider.prototype.get_repository_contributors = function(path, callback, params) {
+    Provider.prototype.get_repository_contributors = (function Github__get_repository_contributors (path, callback, params) {
         this.get_repo(path).contributors.fetch(this.decorate_collback(callback, 'contributors', 'accounts'), params);
-    };
+    }); // get_repository_contributors
 
     if (!App.Providers) { App.Providers = {}; }
     App.Providers.github = Provider;

@@ -11,7 +11,7 @@
         { id: 'events', method: 'received_events' }
     ];
 
-    App.Display.prototype.change_account = function() {
+    App.Display.prototype.change_account = (function Display__change_account () {
         $('.account_repositories-count').hide();
         $('.account_followers-count').hide();
         $('.account_following-count').hide();
@@ -24,14 +24,13 @@
             page.nodes.header.html(this.controller.account.id + ' - ' + page.title);
             page.node.removeData('current-for');
         }
-    };
+    }); // change_account
 
-
-    App.Display.prototype.account_link = function(user_name, provider_name) {
+    App.Display.prototype.account_link = (function Display__account_link (user_name, provider_name) {
         return '<a class="mini-button" data-role="button" data-inline="true" data-mini="true" data-theme="a" href="#account_home!account=' + user_name + '@' + provider_name + '">' + user_name + '</a>';
-    };
+    }); // account_link
 
-    App.Display.prototype.create_accounts_list_items = function(accounts, provider) {
+    App.Display.prototype.create_accounts_list_items = (function Display__create_accounts_list_items (accounts, provider) {
         var template = this.get_template('account-list-item'),
             items = [];
         for (var i=0; i<accounts.length; i++) {
@@ -56,18 +55,18 @@
         }
 
         return items;
-    };
+    }); // create_accounts_list_items
 
-    App.Display.prototype.update_account_navbar = function(account) {
+    App.Display.prototype.update_account_navbar = (function Display__update_account_navbar (account) {
         var is_org = (account.details && account.details.type.toLowerCase() == 'organization');
         $('.go-button').find('.provider').html(account.provider.name);
         $('.account_members-link').closest('li').toggle(is_org);
         $('.account_repositories-count').html(account.details ? account.details.repos_count : '?').show();
         $('.account_followers-count').html(account.details ? account.details.followers_count : '?').show();
         $('.account_following-count').html(account.details ? account.details.following_count : '?').show();
-    };
+    }); // update_account_navbar
 
-    App.Display.prototype.get_real_account_page = function(page_name, account) {
+    App.Display.prototype.get_real_account_page = (function Display__get_real_account_page (page_name, account) {
         var is_org = (account.details && account.details.type.toLowerCase() == 'organization');
         switch(page_name) {
             case 'home':
@@ -85,6 +84,6 @@
                 return is_org ? 'https://github.com/' + account.username + '?tab=members' : null;
         }
         return null;
-    };
+    }); // get_real_account_page
 
 })(Reposio);

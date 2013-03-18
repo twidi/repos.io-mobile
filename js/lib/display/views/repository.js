@@ -7,7 +7,7 @@
             view_name: 'repository_home'
         },
 
-        cache_nodes: function() {
+        cache_nodes: (function View_repository_home__cache_nodes () {
             this.$super();
 
             var nodes = this.nodes_cache;
@@ -34,9 +34,9 @@
 
             nodes.readme_container = nodes.desc_readme.children('div.repo-readme-container');
             nodes.readme = nodes.readme_container.find('.repo-readme');
-        },
+        }), // cache_nodes
 
-        reset: function() {
+        reset: (function View_repository_home__reset () {
             this.$super();
 
             var nodes = this.nodes();
@@ -49,9 +49,9 @@
             nodes.desc_readme.hide();
             nodes.description.html('');
             nodes.readme.html('<em>Loading...</em>');
-        },
+        }), // reset
 
-        update: function(repository, force) {
+        update: (function View_repository_home__update (repository, force) {
             var nodes = this.nodes(),
                 that = this;
 
@@ -74,18 +74,18 @@
                 nodes.description_container.hide();
             }
 
-            var readme_success = function(data) {
+            var readme_success = (function Repository__readme_fetch_success (data) {
                 repository.readme = data;
                 if (!repository.readme && nodes.readme_container.hasClass('ui-collapsible-collapsed')) {
                     nodes.readme_container.fadeOut();
                 } else {
                     nodes.readme.html(repository.readme || '<em>No readme!</em>');
                 }
-            };
+            }); // readme_success
 
-            var readme_fail = function(err) {
+            var readme_fail = (function Repository__readme_fetch_error (err) {
                 nodes.readme.html('<em>Failed to load readme!</em>');
-            };
+            });
 
             if (repository.readme === null || force) {
                 repository.fetch('readme', readme_success, readme_fail);
@@ -97,8 +97,9 @@
 
             this.display.render_widgets(this.container);
 
-        }
-    });
+        }) // update
+
+    }); // View.repository_home
 
     App.View.views.repository_forks = App.View.views._repositories.$extend({
         __classvars__: {
@@ -111,7 +112,7 @@
                 sort: 'newest'
             }
         }
-    });
+    }); // View.repository_forks
 
     App.View.views.repository_activity = App.View.views._events.$extend({
         __classvars__: {
@@ -124,7 +125,7 @@
                 type: null
             }
         }
-    });
+    }); // View.repository_activity
 
     App.View.views.repository_contributors = App.View.views._accounts.$extend({
         __classvars__: {
@@ -132,13 +133,13 @@
             view_name: 'repository_contributors',
             data_field: 'contributors'
         },
-        get_items: function(repository, contributors) {
+        get_items: (function View_repository_contributors__get_items (repository, contributors) {
             for (var i=0; i<contributors.length; i++) {
                 contributors[i].html_prepend = '<p class="ui-li-aside count ui-li-desc">' + contributors[i].contributions + '</p>';
             }
             return this.$super(repository, contributors);
-        }
-    });
+        }) // get_items
+    }); // View.repository_contributors
 
     App.View.views.repository_stars = App.View.views._accounts.$extend({
         __classvars__: {
@@ -146,6 +147,6 @@
             view_name: 'repository_stars',
             data_field: 'stars'
         }
-    });
+    }); // View.repository_stars
 
 })(Reposio);

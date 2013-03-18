@@ -33,50 +33,49 @@
 
             sort_and_filter_helpers: {
                 repositories: {
-                    filter_type: function(repository) {return (repository.user.login == this.username); },
+                    filter_type: (function Account__repositories_filter_type (repository) {return (repository.user.login == this.username); }),
                     filter_type_method: {member: _.reject, owner: _.filter},
-                    filter_forks: function(repository) { return repository.is_fork; },
+                    filter_forks: (function Account__repositories_filter_forks_(repository) { return repository.is_fork; }),
                     filter_forks_method: {no: _.reject, yes: _.filter},
+                    filter_language: (function Account__repostories_filter_language (repository) { return (repository.language && repository.language == this); }),
                     sort_field: {created: 'created_at', pushed: 'pushed_at', updated: 'updated_at', full_name: 'full_name'}
                 },
                 stars: {
                     sort_field: {created: 'starred_order', updated: 'pushed_at'},
-                    filter_forks: function(repository) { return repository.is_fork; },
-                    filter_forks_method: {no: _.reject, yes: _.filter}
+                    filter_forks: (function Account__stars_filter_forks (repository) { return repository.is_fork; }),
+                    filter_forks_method: {no: _.reject, yes: _.filter},
+                    filter_language: (function Account__stars_filter_language (repository) { return (repository.language && repository.language == this); })
                 }
             }
-        },
+        }, // __classvars__
 
-        __init__: function(id, controller) {
+        __init__: (function Account__constructor (id, controller) {
             this.$super(id, controller);
             this.username = this.ref;
-        },
+        }), // __init__
 
-        manage_global_for_repositories: function() {
+        manage_global_for_repositories: (function Account__manage_global_for_repositories () {
             var global = this.list_page_status.repositories.__global__;
             if (global.params.type != 'all') {
                 global.all = false;
             }
-        },
+        }), // manage_global_for_repositories
 
-        sort_and_filter_repositories: function(options, force_data) {
+        sort_and_filter_repositories: (function Account__sort_and_filter_repositories (options, force_data) {
             var global = this.list_page_status.repositories.__global__,
                 helpers = this.$class.sort_and_filter_helpers.repositories,
-                data = force_data || this.repositories[global.str_params],
-                language;
+                data = force_data || this.repositories[global.str_params];
 
             if (options.type && options.type != 'all') {
                 data = helpers.filter_type_method[options.type](data, helpers.filter_type, this);
             }
 
             if (options.forks && options.forks != 'all') {
-                data = helpers.filter_forks_method[options.forks](data, helpers.filter_forks, this);
+                data = helpers.filter_forks_method[options.forks](data, helpers.filter_forks);
             }
 
             if (options.language) {
-                language = options.language;
-                if (language == 'CSharp') { language = 'C#';}
-                data = _.filter(data, function(repository) { return (repository.language && language == repository.language); });
+                data = _.filter(data, helpers.filter_language, options.language == 'CSharp' ? 'C#' : options.language);
             }
 
             if (force_data || options.sort != global.params.sort) {
@@ -94,16 +93,16 @@
             }
 
             return data;
-        }, // sort_and_filter_repositories
+        }), // sort_and_filter_repositories
 
-        manage_global_for_stars: function() {
+        manage_global_for_stars: (function Account__manage_global_for_stars () {
             var global = this.list_page_status.stars.__global__;
             if (global.params.sort != 'created') {
                 global.all = false;
             }
-        },
+        }), // manage_global_for_stars
 
-        sort_and_filter_stars: function(options, force_data) {
+        sort_and_filter_stars: (function Account__sort_and_filter_stars (options, force_data) {
             var global = this.list_page_status.stars.__global__,
                 helpers = this.$class.sort_and_filter_helpers.stars,
                 data = force_data || this.stars[global.str_params],
@@ -129,9 +128,7 @@
             }
 
             if (options.language) {
-                language = options.language;
-                if (language == 'CSharp') { language = 'C#';}
-                data = _.filter(data, function(repository) { return (repository.language && language == repository.language); });
+                data = _.filter(data, helpers.filter_language, options.language == 'CSharp' ? 'C#' : options.language);
             }
 
             if (options.forks && options.forks != 'all') {
@@ -151,20 +148,20 @@
             }
 
             return data;
-        }, // sort_and_filter_stars
+        }), // sort_and_filter_stars
 
-        sort_and_filter_own_events: function(options, force_data) {
+        sort_and_filter_own_events: (function Account__sort_and_filter_own_events (options, force_data) {
             var global = this.list_page_status.own_events.__global__,
                 data = force_data || this.own_events[global.str_params];
             return this.sort_and_filter_events(options, data);
-        },
+        }), // sort_and_filter_own_events
 
-        sort_and_filter_received_events: function(options, force_data) {
+        sort_and_filter_received_events: (function Account__sort_and_filter_received_events (options, force_data) {
             var global = this.list_page_status.received_events.__global__,
                 data = force_data || this.received_events[global.str_params];
             return this.sort_and_filter_events(options, data);
-        }
+        }) // sort_and_filter_received_events
 
-    });
+    }); // Account
 
 })(Reposio);

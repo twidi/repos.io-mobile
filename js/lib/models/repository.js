@@ -25,18 +25,18 @@
             sort_and_filter_helpers: {
                 forks: {
                     sort_field: {newest: 'created_at', oldest: 'created_at', watchers: 'watchers_count'},
-                    filter_never_updated: function(repository) {return repository.pushed_at <= repository.created_at; }
+                    filter_never_updated: (function Repository__forks_fiter_never_updated (repository) {return repository.pushed_at <= repository.created_at; })
                 }
             }
-        },
+        }, // __classvars__
 
-        __init__: function(id, controller) {
+        __init__: (function Repository__constructor (id, controller) {
             this.$super(id, controller);
             this.path = this.ref;
             this.href_id = this.id.replace('/', ':');
-        },
+        }), // __init__
 
-        sort_and_filter_forks: function(options, force_data) {
+        sort_and_filter_forks: (function Repository__sort_and_filter_forks (options, force_data) {
             var global = this.list_page_status.forks.__global__,
                 helpers = this.$class.sort_and_filter_helpers.forks,
                 data = force_data || this.forks[global.str_params];
@@ -51,14 +51,14 @@
             }
 
             return data;
-        },
+        }), // sort_and_filter_forks
 
-        sort_and_filter_activity: function(options, force_data) {
+        sort_and_filter_activity: (function Repository__sort_and_filter_activity (options, force_data) {
             var global = this.list_page_status.activity.__global__,
                 data = force_data || this.activity[global.str_params];
             return this.sort_and_filter_events(options, data);
-        }
+        }) // sort_and_filter_activity
 
-    });
+    }); // Repository
 
 })(Reposio);

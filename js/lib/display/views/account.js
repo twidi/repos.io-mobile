@@ -7,7 +7,7 @@
             view_name: 'account_home'
         },
 
-        cache_nodes: function() {
+        cache_nodes: (function View_account_home__cache_nodes () {
             this.$super();
 
             var nodes = this.nodes_cache;
@@ -41,9 +41,9 @@
             nodes.site = nodes.site_container.find('a');
 
             nodes.orgs_container = this.container.children('.account-orgs');
-        },
+        }), // cache_nodes
 
-        reset: function() {
+        reset: (function View_account_home__reset () {
             this.$super();
 
             var nodes = this.nodes();
@@ -57,9 +57,9 @@
 
             this.display.clear_listview(nodes.orgs_container, 'Loading...', true);
             nodes.orgs_container.show();
-        },
+        }), // reset
 
-        update: function(account, force) {
+        update: (function View_account_home__update (account, force) {
             var nodes = this.nodes(),
                 that = this,
                 is_org = (account.details.type == 'Organization');
@@ -96,7 +96,7 @@
 
 
             if (!is_org) {
-                var orgs_success = function(data) {
+                var orgs_success = (function Account__orgs_fetch_success (data) {
                     account.orgs = data;
                     if (account.orgs && account.orgs.length) {
                         that.display.clear_listview(nodes.orgs_container);
@@ -106,11 +106,11 @@
                         that.display.clear_listview(nodes.orgs_container, 'No organizations', true);
                         nodes.orgs_container.fadeOut();
                     }
-                };
+                }); // orgs_success
 
-                var orgs_fail = function(err) {
+                var orgs_fail = (function Account__orgs_fetch_error (err) {
                     that.display.clear_listview(nodes.orgs_container, 'Failed to load organizations', true);
-                };
+                });
 
                 if (account.orgs === null || force) {
                     account.fetch('orgs', orgs_success, orgs_fail);
@@ -120,9 +120,9 @@
             }
 
             that.container.children('ul[data-role=listview]').listview('refresh');
-        }
+        }) // update
 
-    });
+    }); // View.account_home
 
     App.View.views.account_repositories = App.View.views._repositories.$extend({
         __classvars__: {
@@ -138,7 +138,7 @@
                 type: 'all'
             }
         }
-    });
+    }); // View.account_repositories
 
     App.View.views.account_stars = App.View.views._repositories.$extend({
         __classvars__: {
@@ -153,7 +153,7 @@
                 sort: 'created'
             }
         }
-    });
+    }); // View.account_stars
 
     App.View.views.account_followers = App.View.views._accounts.$extend({
         __classvars__: {
@@ -161,7 +161,7 @@
             view_name: 'account_followers',
             data_field: 'followers'
         }
-    });
+    }); // View.account_followers
 
     App.View.views.account_following = App.View.views._accounts.$extend({
         __classvars__: {
@@ -169,7 +169,7 @@
             view_name: 'account_following',
             data_field: 'following'
         }
-    });
+    }); // View.account_following
 
     App.View.views.account_members = App.View.views._accounts.$extend({
         __classvars__: {
@@ -177,7 +177,7 @@
             view_name: 'account_members',
             data_field: 'org_members'
         }
-    });
+    }); // View.account_members
 
     App.View.views.account_activity = App.View.views._events.$extend({
         __classvars__: {
@@ -190,7 +190,7 @@
                 type: null
             }
         }
-    });
+    }); // View.account_activity
 
     App.View.views.account_events = App.View.views._events.$extend({
         __classvars__: {
@@ -203,6 +203,6 @@
                 type: null
             }
         }
-    });
+    }); // View.account_events
 
 })(Reposio);

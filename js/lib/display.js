@@ -95,7 +95,7 @@
 
                 if (extended_navbar) {
                     markup += '<div data-role="popup" id="menu_' + cur_page.id + '" data-theme="a" class="nav-menu">';
-                        markup += '<ul data-role="listview" data-inset="true" data-theme="a">';
+                        markup += '<ul data-inset="true" data-theme="a">';
 
                         for (var k=0; k<pages.length; k++) {
                             var ext_page = pages[k];
@@ -114,12 +114,6 @@
                 }
 
                 markup += '<div data-role="popup" id="main_menu_' + cur_page.id + '" data-theme="a" class="main-nav-menu">';
-                    markup += '<div data-role="controlgroup" data-theme="a" >';
-                        markup += '<a href="/" data-role="button" data-icon="home" data-rel="home" data-theme="a">Home</a>';
-                        markup += '<label><input type="checkbox" name="fullscreen" class="fullscreen-control" id="fullscreen-' + cur_page.id + '" data-theme="a"/>Full screen</label>';
-                        markup += '<a href="#" data-role="button" data-icon="refresh" class="refresh-control" data-theme="a">Refresh</a>';
-                        markup += '<a href="#" data-role="button" data-icon="arrow-r" class="go-button" data-theme="a" target="_blank">View on <span class="provider"></span></a>';
-                    markup += '</div>';
                 markup += '</div>';
 
             markup += '</div>';
@@ -143,8 +137,8 @@
                 header: page_node.children(':jqmData(role=header)').children('h3'),
                 content: page_node.children(":jqmData(role=content)"),
                 main_menu: main_menu,
-                refresh_control: main_menu.find('.refresh-control'),
-                go_button: main_menu.find('.go-button')
+                refresh_control: $(),
+                go_button: $()
             };
             final_page.node = final_page.nodes.page;
 
@@ -159,6 +153,14 @@
         } // for
 
     }); // construct_pages
+
+    Display.prototype.update_go_button = (function Display__update_go_button (page, url) {
+        var go_button = page.nodes.go_button;
+        if (go_button.length) {
+            go_button.toggleClass('ui-disabled', !url);
+            go_button.attr('href', url || '');
+        }
+    }); // update_go_button
 
     Display.prototype.init_events = (function Display__init_events () {
         var that = this;
@@ -182,14 +184,13 @@
             }
             try {
                 var page = that.pages[data.toPage.data('url')],
-                    go_button = page.nodes.go_button,
                     real_url = that['get_real_' + page.type + '_page'](page.name, that.controller[page.type]);
-                go_button.toggleClass('ui-disabled', !real_url);
-                go_button.attr('href', real_url || '');
+                page.nodes.main_menu.data('go-button-url', real_url);
+                that.update_go_button(page, real_url);
             } catch(ex) {}
         })); // pagechange
 
-        $('.nav-menu').on("popupafterclose", (function Display__on_popupafterclose () {
+        $('.nav-menu').on("popupafterclose", (function Display__on_navmenu_popupafterclose () {
             // restore previous active link in navbar when closing popup menu
             var menu = $(this),
                 link = menu.find('a.ui-btn-active'),
@@ -202,6 +203,24 @@
                 }
             }
         })); // popupafterclose
+
+        $('.nav-menu').on("popupbeforeposition", (function Display__on_navmenu_popupbeforeposition () {
+            var list = $(this).children('ul');
+            if (!list.hasClass('ui-listview')) { list.listview(); }
+        })); // nav-menu popupbeforeposition
+
+        $('.main-nav-menu').on("popupbeforeposition", (function Display__on_mainmenu_popupbeforeposition () {
+            var popup = $(this);
+            if (!popup.children().length) {
+                var template = that.get_template('main-nav-menu');
+                popup.append(template.cloneNode(true));
+                popup.trigger('create');
+                var page = that.pages[$.mobile.activePage.data('url')];
+                page.nodes.refresh_control = page.nodes.main_menu.find('.refresh-control');
+                page.nodes.go_button = page.nodes.main_menu.find('.go-button');
+                that.update_go_button(page, page.nodes.main_menu.data('go-button-url'));
+            }
+        })); // main-nav-menu popupbeforeposition
 
         $(document).on('click', '.list-events a.collapsible-trigger', (function Display__on_collapsible_trigger_click (e) {
             // open/close collapsible when clicking triggering links in list of events

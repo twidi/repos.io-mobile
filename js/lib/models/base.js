@@ -78,15 +78,15 @@
         }), // filter_unfetchable_params
 
         fetch: (function Model__fetch (type, success, failure, params, fail_if_404) {
-            var that = this;
+            var model = this;
             params = params || {};
             if (this.$class.default_params[type]) {
                 params = $.extend({}, this.$class.default_params[type], params);
                 delete params.max_pages;
             }
-            that.provider['get_' + that.$class.model_name + '_' + type](that.ref, function(err, data) {
+            model.provider['get_' + model.$class.model_name + '_' + type](model.ref, function(err, data) {
                 if (err && err.status == 404 && !fail_if_404) {
-                    data = that.$class.fields[type];
+                    data = model.$class.fields[type];
                     err = null;
                 }
                 if (err) {
@@ -107,37 +107,37 @@
         }), // fetched
 
         fetch_full: (function Model__fetch_full (type, callback, params, force, callback_error) {
-            var that = this,
-                is_list = (that.$class.fields[type] instanceof Array),
+            var model = this,
+                is_list = (model.$class.fields[type] instanceof Array),
                 str_params;
 
             params = this.filter_fetchable_params(type, params);
             str_params = $.param(params);
 
-            if (type != 'details' && !that.details) {
-                that.fetch_full('details', function() {
-                    that.fetch_full(type, callback, params, force);
+            if (type != 'details' && !model.details) {
+                model.fetch_full('details', function() {
+                    model.fetch_full(type, callback, params, force);
                 });
                 return;
             }
 
             if (force && this.list_page_status[type]) {
-                that.list_page_status[type].__global__ = {all: false};
+                model.list_page_status[type].__global__ = {all: false};
             }
 
-            if (force || !that.fetched(type, str_params)) {
-                that.fetch(type,
+            if (force || !model.fetched(type, str_params)) {
+                model.fetch(type,
                     function(data) {  // success
                         if (is_list) {
-                            that[type][str_params] = data;
-                            that.update_list_page_status(type, params, 1, data ? data.length || 0 : 0);
+                            model[type][str_params] = data;
+                            model.update_list_page_status(type, params, 1, data ? data.length || 0 : 0);
                         } else {
-                            that[type] = data;
+                            model[type] = data;
                         }
                         callback();
                     },
                     function(err) {  // failure
-                        that.controller.fetch_full_error(err, that, type, callback, params, force, callback_error);
+                        model.controller.fetch_full_error(err, model, type, callback, params, force, callback_error);
                     },
                     params,
                     'fail_if_404'
@@ -175,17 +175,17 @@
         }), // update_list_page_status
 
         _fetch_more: (function Model___fetch_more (type, params, success, failure) {
-            var that = this, str_params, final_params;
+            var model = this, str_params, final_params;
             params = this.filter_fetchable_params(type, params);
             str_params = $.param(params);
             final_params = $.extend({}, params, {
-                page: that.list_page_status[type][str_params].last_page + 1
+                page: model.list_page_status[type][str_params].last_page + 1
             });
 
-            that.fetch(type,
+            model.fetch(type,
                 function(data) { //success
-                    that[type][str_params] = that[type][str_params].concat(data);
-                    that.update_list_page_status(type, params, final_params.page, data ? data.length || 0 : 0);
+                    model[type][str_params] = model[type][str_params].concat(data);
+                    model.update_list_page_status(type, params, final_params.page, data ? data.length || 0 : 0);
                     success(data);
                 },
                 failure,
@@ -195,33 +195,33 @@
         }), // _fetch_more
 
         fetch_more: (function Model__fetch_more (type, callback, params, callback_error) {
-            var that = this;
+            var model = this;
             this.list_page_status[type].__global__ = {all: false};
             this._fetch_more(type, params, callback, function(err) {
-                that.controller.fetch_more_error(err, that, type, callback, params, callback_error);
+                model.controller.fetch_more_error(err, model, type, callback, params, callback_error);
             });
         }), // fetch_more
 
         fetch_all: (function Model__fetch_all (type, page_callback, callback, params, callback_error) {
-            var that = this, str_params;
+            var model = this, str_params;
             params = this.filter_fetchable_params(type, params);
             str_params = $.param(params);
 
-            that.list_page_status[type].__global__ = {all: false};
+            model.list_page_status[type].__global__ = {all: false};
 
             var one_fetch_success = function(data) {
                 page_callback(data);
-                if (that.list_page_status[type][str_params].maybe_more) {
+                if (model.list_page_status[type][str_params].maybe_more) {
                     one_fetch();
                 } else {
                     callback();
                 }
             };
             var one_fetch_error = function(err) {
-                that.controller.fetch_all_error(err, that, type, page_callback, callback, params, callback_error);
+                model.controller.fetch_all_error(err, model, type, page_callback, callback, params, callback_error);
             };
             var one_fetch = function() {
-                that._fetch_more(type, params, one_fetch_success, one_fetch_error);
+                model._fetch_more(type, params, one_fetch_success, one_fetch_error);
             };
             one_fetch();
         }), // fetch_all

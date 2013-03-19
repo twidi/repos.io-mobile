@@ -61,7 +61,7 @@
 
         update: (function View_account_home__update (account, force) {
             var nodes = this.nodes(),
-                that = this,
+                view = this,
                 is_org = (account.details.type == 'Organization');
 
             if (is_org) {
@@ -99,17 +99,17 @@
                 var orgs_success = (function Account__orgs_fetch_success (data) {
                     account.orgs = data;
                     if (account.orgs && account.orgs.length) {
-                        that.display.clear_listview(nodes.orgs_container);
-                        nodes.orgs_container.append(that.display.create_accounts_list_items(account.orgs, account.provider));
+                        view.display.clear_listview(nodes.orgs_container);
+                        nodes.orgs_container.append(view.display.create_accounts_list_items(account.orgs, account.provider));
                         nodes.orgs_container.listview('refresh');
                     } else {
-                        that.display.clear_listview(nodes.orgs_container, 'No organizations', true);
+                        view.display.clear_listview(nodes.orgs_container, 'No organizations', true);
                         nodes.orgs_container.fadeOut();
                     }
                 }); // orgs_success
 
                 var orgs_fail = (function Account__orgs_fetch_error (err) {
-                    that.display.clear_listview(nodes.orgs_container, 'Failed to load organizations', true);
+                    view.display.clear_listview(nodes.orgs_container, 'Failed to load organizations', true);
                 });
 
                 if (account.orgs === null || force) {
@@ -119,7 +119,7 @@
                 }
             }
 
-            that.container.children('ul[data-role=listview]').listview('refresh');
+            view.container.children('ul[data-role=listview]').listview('refresh');
         }) // update
 
     }); // View.account_home

@@ -52,8 +52,7 @@
         }), // reset
 
         update: (function View_repository_home__update (repository, force) {
-            var nodes = this.nodes(),
-                that = this;
+            var nodes = this.nodes();
 
             nodes.provider.html(repository.provider.name);
             nodes.name.html(repository.details.name);

@@ -163,7 +163,7 @@
     }); // update_go_button
 
     Display.prototype.init_events = (function Display__init_events () {
-        var that = this;
+        var display = this;
 
         $(document).on("pagebeforechange", (function Display__on_pagebeforechange (e, data) {
             if (typeof data.toPage !== "string") { return; }
@@ -174,19 +174,19 @@
             if (data.toPage == $.mobile.path.stripQueryParams(location.href.replace('!', '?'))) {
                 data.options.transition = 'none';  // we stay on the same view
             }
-            that.on_before_page_change(e, data);
+            display.on_before_page_change(e, data);
         })); // pagebeforechange
 
         $(document).on("pagechange", (function Display__on_pagechange (e, data) {
-            that.update_fullscreen_control();
+            display.update_fullscreen_control();
             if ($.mobile.activePage && $.mobile.activePage.hasClass('current_page') && !$.mobile.activePage.hasClass('page_loaded')) {
                 $.mobile.loading('show');
             }
             try {
-                var page = that.pages[data.toPage.data('url')],
-                    real_url = that['get_real_' + page.type + '_page'](page.name, that.controller[page.type]);
+                var page = display.pages[data.toPage.data('url')],
+                    real_url = display['get_real_' + page.type + '_page'](page.name, display.controller[page.type]);
                 page.nodes.main_menu.data('go-button-url', real_url);
-                that.update_go_button(page, real_url);
+                display.update_go_button(page, real_url);
             } catch(ex) {}
         })); // pagechange
 
@@ -212,13 +212,13 @@
         $('.main-nav-menu').on("popupbeforeposition", (function Display__on_mainmenu_popupbeforeposition () {
             var popup = $(this);
             if (!popup.children().length) {
-                var template = that.get_template('main-nav-menu');
+                var template = display.get_template('main-nav-menu');
                 popup.append(template.cloneNode(true));
                 popup.trigger('create');
-                var page = that.pages[$.mobile.activePage.data('url')];
+                var page = display.pages[$.mobile.activePage.data('url')];
                 page.nodes.refresh_control = page.nodes.main_menu.find('.refresh-control');
                 page.nodes.go_button = page.nodes.main_menu.find('.go-button');
-                that.update_go_button(page, page.nodes.main_menu.data('go-button-url'));
+                display.update_go_button(page, page.nodes.main_menu.data('go-button-url'));
             }
         })); // main-nav-menu popupbeforeposition
 
@@ -238,7 +238,7 @@
                     li.append(more);
                     collapsible =  li.children(':last');
                     collapsible.collapsible();
-                    that.render_widgets(collapsible);
+                    display.render_widgets(collapsible);
                     link.data('collapsible', collapsible);
                     _.delay(collapsible.trigger, 100, opened ? 'collapse' : 'expand');
                 }
@@ -257,7 +257,7 @@
 
             var link = $(this),
                 repository_id = link.data('repository'),
-                repository = App.Models.repository.get(repository_id, that.controller),
+                repository = App.Models.repository.get(repository_id, display.controller),
 
                 set_content = (function Display__set_event_repo_desc_all(html) {
                     $('p.ui-li-desc[data-fetching-repository="' + repository_id + '"]').each((function Display__set_event_repo_desc_one () {
@@ -286,7 +286,7 @@
                 }), // on_success
 
                 on_failure = (function Display__on_fetch_desc_error (error) {
-                    set_content('<em>Loading failed! (' + that.get_error_text(error) + ') </em><a href="#" class="fetch-desc-trigger" data-repository="' + repository.id + '">Retry ?</a>');
+                    set_content('<em>Loading failed! (' + display.get_error_text(error) + ') </em><a href="#" class="fetch-desc-trigger" data-repository="' + repository.id + '">Retry ?</a>');
                 }); // on_failure
 
             $('a.fetch-desc-trigger[data-repository="' + repository_id + '"]').each(set_loading);
@@ -314,10 +314,10 @@
         $(document).on('click', '.refresh-control', (function Display__refresh_click (e) {
             e.preventDefault();
             e.stopPropagation();
-            var page = that.pages[$.mobile.activePage.data('url')];
+            var page = display.pages[$.mobile.activePage.data('url')];
                 options = page.view.accept_options ? page.view.get_options_from_form() : null;
             $.mobile.loading('show');
-            that.ask_for_page(page.id, that.controller[page.type].id, options, 'force');
+            display.ask_for_page(page.id, display.controller[page.type].id, options, 'force');
             page.nodes.main_menu.popup('close');
         })); // refresh-control.click
 
@@ -326,7 +326,7 @@
                 $(this).parents('.main-nav-menu').popup('close');
                 screenfull.toggle();
             })); // fullscreen.click
-            screenfull.onchange = that.update_fullscreen_control;
+            screenfull.onchange = display.update_fullscreen_control;
         } else {
             var controls = $('.fullscreen-control');
             controls.parents('.ui-checkbox').add(controls.parents('label')).remove();
@@ -379,7 +379,7 @@
 
     Display.prototype.ask_for_page = (function Display__ask_for_page (page_id, obj_id, url_params, force) {
         obj_id = obj_id.replace(':', '/');
-        var that = this,
+        var display = this,
             page = this.pages[page_id],
             changed = this.controller.set_current_object(page.type, obj_id),
             obj = this.controller[page.type],
@@ -400,18 +400,18 @@
             }
             page.node.data('current-for', obj.id);
             obj.fetch_full(page.method, (function Display__on_page_fetched () {
-                that.render_page(page, obj, options, force);
+                display.render_page(page, obj, options, force);
             }), options, force);
         }
     }); // ask_for_page
 
     Display.prototype.ask_for_more = (function Display__ask_for_more (page) {
-        var that = this,
+        var display = this,
             obj = this.controller[page.type],
             options = page.view.options;
 
         obj.fetch_more(page.method, (function Dislpay__on_more_fetched (data) {
-            if (!that.is_page_for(page, obj, options)) { return; }
+            if (!display.is_page_for(page, obj, options)) { return; }
             page.view.complete(obj, data);
             page.view.update_load_buttons(obj);
             if (page.node.hasClass('current_page')) {
@@ -423,14 +423,14 @@
     }); // ask_for_more
 
     Display.prototype.ask_for_all = (function Display__ask_for_all (page) {
-        var that = this,
+        var display = this,
             obj = this.controller[page.type],
             options = page.view.options;
         obj.fetch_all(page.method, (function Display__on_one_of_all_page_fetched (data) {
-            if (!that.is_page_for(page, obj, options)) { return; }
+            if (!display.is_page_for(page, obj, options)) { return; }
             page.view.complete(obj, data);
         }), (function Display__on_all_pages_fetched () {
-            if (!that.is_page_for(page, obj, options)) { return; }
+            if (!display.is_page_for(page, obj, options)) { return; }
             if (page.node.hasClass('current_page')) {
                 page.view.hide_load_buttons();
                 $.mobile.loading('hide');

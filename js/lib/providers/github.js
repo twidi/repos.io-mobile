@@ -361,7 +361,7 @@
 
     Provider.prototype.map_type = {accounts: 'account', repositories: 'repository', events: 'event'};
     Provider.prototype.decorate_collback = (function Github__decorate_collback (callback, name, type) {
-        var that = this;
+        var provider = this;
         return function(err, data) {
             var final_data;
             if (!err) {
@@ -374,7 +374,7 @@
                     case 'events':
                         // call "map_account", "map_repository" or "map_event"
                         // for each entry in the list obtained by a call to "getAll"
-                        final_data = _.map(data[name].getAll(), that['map_' + that.map_type[type]], that);
+                        final_data = _.map(data[name].getAll(), provider['map_' + provider.map_type[type]], provider);
                         break;
                     default:
                         final_data = data[name].getAll();
@@ -544,10 +544,10 @@
     }); // map_event
 
     Provider.prototype.get_account_details = (function Github__get_account_details (username, callback, params) {
-        var that = this;
+        var provider = this;
         function map_callback(error, data) {
             if (!error && data) {
-                data = that.map_account(data);
+                data = provider.map_account(data);
             }
             return callback(error, data);
         }
@@ -587,10 +587,10 @@
     }); // get_account_orgs
 
     Provider.prototype.get_repository_details = (function Github__get_repository_details (path, callback, params) {
-        var that = this;
+        var provider = this;
         function map_callback(error, data) {
             if (!error && data) {
-                data = that.map_repository(data);
+                data = provider.map_repository(data);
             }
             return callback(error, data);
         }

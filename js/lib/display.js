@@ -150,7 +150,7 @@
             var final_page = pages[m],
                 page_node = $('#' + final_page.id),
                 main_menu = $('#main_menu_' + final_page.id),
-                template = this.get_template(final_page.id, true);
+                template = this.get_template(final_page.id, true, true);
 
             // cache some page nodes
             final_page.nodes = {
@@ -554,14 +554,19 @@
         return result;
     }); // confirm_new_fech
 
-    Display.prototype.get_template = (function Display__get_template (name, consume) {
+    Display.prototype.get_template = (function Display__get_template (name, consume, return_container) {
+        var template_container, template;
         if (!this.templates[name]) {
-            template = this.templates_container.find('[data-template-for=' + name + ']')[0];
-            template.parentNode.removeChild(template);
-            template.removeAttribute('data-template-for');
+            template_container = this.templates_container.find('[data-template-for=' + name + ']')[0];
+            template = document.createElement('div');
+            template.innerHTML = template_container.childNodes[0].nodeValue;
+            if (!return_container) {
+                template = template.removeChild(template.children[0]);
+            }
+            template_container.parentNode.removeChild(template_container);
             this.templates[name] = template;
         }
-        var template = this.templates[name];
+        template = this.templates[name];
         if (consume) {
             delete this.templates[name];
         }

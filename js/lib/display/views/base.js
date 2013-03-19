@@ -172,14 +172,16 @@
         }), // get_items
 
         options_form: (function View_list__options_form () {
-            var view = this;
+            var view = this,
+                form_selector = '#' + this.$class.view_name + '_options';
             if (!this._options_form) {
-                this._options_form = $('#' + this.$class.view_name + '_options');
-                if (!this._options_form.parent().hasClass('ui-collapsible-content')) {
+                this._options_form = $(form_selector);
+                if (!this._options_form.length) {
+                    var template = view.display.get_template(view.$class.view_name + '_options', true),
+                        $template = $(template);
+                    this._options_form = $template.find(form_selector);
                     setTimeout(function() {
                         // create forms from templates if not already done
-                        var template = view.display.get_template(view.$class.view_name + '_options', true);
-                        var $template = $(template);
                         $template.collapsible();
                         $.mobile.checkboxradio.prototype.enhanceWithin(view._options_form, true);
                         $.mobile.button.prototype.enhanceWithin(view._options_form, true);
@@ -224,7 +226,7 @@
                 common_part = this.$class.view_name + '_options_';
 
             // reset the form
-            this.options_form()[0].reset.click();
+            this.options_form().find('[type=reset]').click();
 
             // get default options
             options = $.extend({}, this.$class.default_options);

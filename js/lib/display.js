@@ -6,22 +6,44 @@
     }); // Display
 
     Display.prototype.init = (function Display__init () {
+        var display = this;
         this.templates_container = $('#templates');
 
         for (var obj_type in this.pages_list) {
             this.construct_pages(obj_type, this.pages_list[obj_type]);
         }
 
-        $('body > p.loading').remove();
-        $('html').removeClass('loading');
-
         $.mobile.initializePage();
+        display.init_events();
 
-        // not done automatically anymore ??
-        $('div[data-role=page]:not(.ui-page)').page();
+        var pages = $('div[data-role=page]:not(.ui-page)'),
+            loader = $('#progress-loader'),
+            pages_length = pages.length,
+            delay_init_pages = (function Display__delay_init_pages (pages, step) {
+                if (step < pages.length) {
+                    var done = Math.max(6, Math.min(Math.round(100 * (step + 1) / pages_length), 100));
+                    loader.css({width: done + '%'});
+                    setTimeout((function Display__init_next_page() {
+                        var page = pages.eq(step);
+                        // console.time('CREATE ' + page[0].id);
+                        page.page();
+                        // console.timeEnd('CREATE ' + page[0].id);
+                        delay_init_pages(pages, step+1);
+                    }), 10);
+                    if (step==2) {
+                        $('html').removeClass('loading');
+                    }
+                } else {
+                    $('#first-loader').remove();
+                }
 
-        this.init_events();
+            }); // delay_init_pages
+
+        delay_init_pages(pages, 0);
+
     }); // init
+
+    
 
     Display.prototype.format_date = (function Display__format_date(str_date, show_time, show_seconds, time_only) {
         if (!str_date) { return ''; }

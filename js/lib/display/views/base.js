@@ -259,7 +259,7 @@
                     var options = view.get_options_from_form(),
                         url_options = {},
                         hash = '#' + view.$class.view_name;
-                    hash += '!' + view.$class.model + '=' + view.display.controller[view.$class.model].id;
+                    hash += '!' + view.$class.model + '=' + view.display.controller[view.$class.model].id.replace('/', ':');
                     for (var key in options) {
                         url_options[key] = encodeURIComponent(options[key]);
                     }

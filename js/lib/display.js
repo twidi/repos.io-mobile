@@ -262,7 +262,9 @@
                     collapsible.collapsible();
                     display.render_widgets(collapsible);
                     link.data('collapsible', collapsible);
-                    _.delay(collapsible.trigger, 100, opened ? 'collapse' : 'expand');
+                    setTimeout(function() {
+                        collapsible.trigger(opened ? 'collapse' : 'expand');
+                    }, 100);
                 }
             } else {
                 collapsible = link.data('collapsible');

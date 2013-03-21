@@ -69,9 +69,7 @@
             nodes.last_push_container.show();
 
             nodes.description.html(repository.details.description || '<em>No description!</em>');
-            if (!repository.details.description) {
-                nodes.description_container.hide();
-            }
+            nodes.description_container.toggle(repository.details.description);
 
             var readme_success = (function Repository__readme_fetch_success (data) {
                 repository.readme = data;
@@ -93,6 +91,7 @@
             }
 
             nodes.desc_readme.show();
+            nodes.readme_container.show();
 
             this.display.render_widgets(this.container);
 

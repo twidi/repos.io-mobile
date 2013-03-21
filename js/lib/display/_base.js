@@ -179,6 +179,7 @@
     Display.prototype.update_go_button = (function Display__update_go_button (page, url) {
         var go_button = page.nodes.go_button;
         if (go_button.length) {
+            go_button.find('.provider').text(this.controller[page.type].provider.name);
             go_button.toggleClass('ui-disabled', !url);
             go_button.attr('href', url || '');
         }

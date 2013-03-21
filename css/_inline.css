@@ -1,0 +1,65 @@
+html.loading, html.loading body {
+    height: 99.9%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+
+}
+html.loading body > div {
+    display: none;
+}
+#first-loader {
+    border: 0 none;
+    display: block !important;
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 10000000;
+    background: #ddd;
+    background: rgba(0, 0, 0, 0.5);
+}
+html.loading #first-loader {
+    background: #f0f0f0;
+}
+#first-loader p {
+    background: #5E87B0; /* Old browsers */
+    background: -moz-linear-gradient(top, #6facd5 0%, #497bae 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#6facd5), color-stop(100%,#497bae)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top, #6facd5 0%,#497bae 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top, #6facd5 0%,#497bae 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top, #6facd5 0%,#497bae 100%); /* IE10+ */
+    background: linear-gradient(to bottom, #6facd5 0%,#497bae 100%); /* W3C */
+    color: white;
+    font-family: sans-serif;
+    font-size: larger;
+    font-weight: bold;
+    height: 3em;
+    line-height: 3em;
+    margin: -3em 0 0;
+    padding: 1em 0;
+    position: fixed;
+    text-align: center;
+    top: 33%;
+    width: 100%;
+    -moz-text-shadow: 0 1px 1px #3E6790;
+    -webkit-text-shadow: 0 1px 1px #3E6790;
+    -o-text-shadow: 0 1px 1px #3E6790;
+    -ms-text-shadow: 0 1px 1px #3E6790;
+    text-shadow: 0 1px 1px #3E6790;
+}
+#progress-loader {
+    display: block;
+    height: 5px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    width: 5%; 
+    background: white;
+}
+#templates {
+    display: none;
+}
+html.loading.ui-mobile-rendering > * { visibility: visible !important; }

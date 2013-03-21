@@ -68,8 +68,8 @@
             nodes.last_push.html(repository.details.pushed_at ? this.display.format_date(repository.details.pushed_at, true) : 'never !');
             nodes.last_push_container.show();
 
-            nodes.description.html(repository.details.description || '<em>No description!</em>');
-            nodes.description_container.toggle(repository.details.description);
+            nodes.description.text(repository.details.description || '<em>No description!</em>');
+            nodes.description_container.toggle(!!repository.details.description);
 
             var readme_success = (function Repository__readme_fetch_success (data) {
                 repository.readme = data;

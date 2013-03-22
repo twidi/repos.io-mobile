@@ -94,7 +94,7 @@
             if (!repository.details) {
                 desc += '<a href="#" class="fetch-desc-trigger" data-repository="' + repository.id + '">click to fetch</a>';
             } else if (repository.details.description) {
-                desc += '<strong>' + repository.details.description + '</strong>';
+                desc += '<strong>' + this.provider.controller.display.escape_html(repository.details.description) + '</strong>';
             } else {
                 desc += '<em>no description</em>';
             }

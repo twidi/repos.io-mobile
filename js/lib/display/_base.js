@@ -56,6 +56,11 @@
         }
     }); // format_date
 
+    Display.prototype.escape_html = (function Display__escape_html(html) {
+        if (!html) { return ''; }
+        return html.indexOf('<') === -1 ? html : $('<div/>').text(html).html();
+    }); // escape_html
+
     Display.prototype.nodes = {};
     Display.prototype.templates = {};
     Display.prototype.pages_list = {};  // to define pages in display/*.js
@@ -303,7 +308,7 @@
                     var html;
                     repository.details = data;
                     if (repository.details.description) {
-                        html = '<strong>' + repository.details.description + ' </strong>';
+                        html = '<strong>' + display.escape_html(repository.details.description) + ' </strong>';
                     } else {
                         html = '<em>no description</em>';
                     }

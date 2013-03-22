@@ -236,7 +236,7 @@
                 // update options from url
                 for (key in url_options) {
                     if (typeof(options[key]) !== 'undefined') {
-                        options[key] = decodeURIComponent(url_options[key]);
+                        options[key] = decodeURIComponent(decodeURIComponent(url_options[key]));
                     }
                 }
             }

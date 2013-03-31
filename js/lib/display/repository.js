@@ -17,7 +17,7 @@
             for (var j=0; j<page.nodes.links.length; j++) {
                 page.nodes.links[j].href = '#' + page.id + '!repository=' + this.controller.repository.id.replace('/', ':');
             }
-            page.nodes.header.html(this.controller.repository.id + ' - ' + page.title);
+            page.nodes.header.html(this.controller.repository.path + ' - ' + page.title);
             page.node.removeData('current-for');
         }
 

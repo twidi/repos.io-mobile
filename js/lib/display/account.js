@@ -21,7 +21,7 @@
             for (var j=0; j<page.nodes.links.length; j++) {
                 page.nodes.links[j].href = '#' + page.id + '!account=' + this.controller.account.id;
             }
-            page.nodes.header.html(this.controller.account.id + ' - ' + page.title);
+            page.nodes.header.html(this.controller.account.username + ' - ' + page.title);
             page.node.removeData('current-for');
         }
     }); // change_account

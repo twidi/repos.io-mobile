@@ -8,13 +8,16 @@ function cssmin {
     yui-compressor --type css $1 > $2
 }
 
+version=`date +'%Y/%m/%d-%H%m%S'`
+mkdir -p css/v/$version
+mkdir -p js/v/$version
+
 # compress js/lib/* to js/lib.min.js
 export LANG=C; cat js/lib/*.js js/lib/*/*.js js/lib/*/*/*.js > js/lib.js
-jsmin js/lib.js js/lib.min.js
+jsmin js/lib.js js/v/$version/lib.min.js
 rm js/lib.js
 
 # compress and concat some libs
-rm -f js/resources/libraries.min.js
 for js_base_file in jQuery.unserializeForm jqm.page.params underscore gh3 classy screenfull marked
 do
     normal_file=js/resources/$js_base_file.js
@@ -24,12 +27,12 @@ do
         rm $min_file
         jsmin $normal_file $min_file
     fi
-    cat $min_file >> js/resources/libraries.min.js
+    cat $min_file >> js/v/$version/libraries.min.js
 done
 
 # concat css
 cssmin css/resources/jqm-icon-pack-2.0-original.css css/resources/jqm-icon-pack-2.0-original.min.css
-cssmin css/app.css css/app.min.css
+cssmin css/app.css css/v/$version/app.min.css
 
 # min html parts
 for i in 02 04 06 07 08
@@ -67,3 +70,7 @@ do
 done
 
 rm -f parts/*.min.html parts/03.* parts/05.*
+
+sed -i -e "s|__VERSION__|$version|g" index.html debug.html
+
+echo "OK for version '$version'"

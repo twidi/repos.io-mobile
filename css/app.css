@@ -539,6 +539,8 @@ div.ui-input-text input.ui-input-text, div.ui-input-text textarea.ui-input-text,
     margin: 0;
 }
 .object-home-main > .provider {
+    display: none;
+/*
     background: none repeat scroll 0 0 white;
     color: #db4b35;
     font-weight: bold;
@@ -553,6 +555,7 @@ div.ui-input-text input.ui-input-text, div.ui-input-text textarea.ui-input-text,
          -o-transform: rotate(30deg) translate(12px, -1px);
             transform: rotate(30deg) translate(12px, -1px);
     width: 100px;
+*/
 }
 
 /* the account home page */

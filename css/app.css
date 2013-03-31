@@ -728,7 +728,11 @@ div.ui-input-text input.ui-input-text, div.ui-input-text textarea.ui-input-text,
     position: static;
     z-index: 0;
 }
-
+/* more room for the title */
+.ui-header .ui-title, .ui-footer .ui-title {
+    margin-left: 30px;
+    margin-right: 30px;
+}
 
 /* menu */
 .ui-popup-container > .main-nav-menu {

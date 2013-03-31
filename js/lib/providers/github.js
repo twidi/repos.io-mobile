@@ -21,51 +21,45 @@
         return null;
     }); // format
 
-    EventFormatter.prototype.format_actor  = (function GithubEventFormatter__format_actor (actor, source, force_link) {
-        if (force_link || source.$class.model_name != 'account' || source.username != actor.login) {
-            return this.provider.controller.display.account_link(actor.login, source.provider.name);
-        } else {
-            return '<strong>' + actor.login + '</strong>';
-        }
+    EventFormatter.prototype.format_actor  = (function GithubEventFormatter__format_actor (actor, source, main) {
+        return '<a class="account-link' + (main ? ' main-link' : '') + '" href="#account_home!account=' + actor.login + '@' + source.provider.name + '">' + actor.login + '</a>';
     }); // format_actor
 
-    EventFormatter.prototype.format_repo  = (function GithubEventFormatter__format_repo (repository, actor, source, force_link, force_name) {
+    EventFormatter.prototype.format_repo  = (function GithubEventFormatter__format_repo (repository, actor, source, main, force_name) {
         var full_name = repository.full_name || repository.name,
             parts = full_name.split('/'), result;
-        if (force_link || source.$class.model_name != 'repository' || source.path != full_name) {
-                result = this.provider.controller.display.repository_link(full_name, parts[1], source.provider.name);
-            if (force_name || actor.login != parts[0] && (source.$class.model_name != 'account' || source.username != parts[0])) {
-                result += '<span> by <strong>' + parts[0] + '</strong></span>'; //this.format_actor({login: parts[0]}, source);
-                result = '<span class="repo-links">' + result + '</span>';
-            }
-        } else {
-            result = '<strong>' + parts[1] + '</strong>';
+
+        result = '<a class="repo-link' + (main ? ' main-link' : '') + '" href="#repository_home!repository=' + full_name.replace('/', ':') + '@' + source.provider.name + '">' + parts[1] + '</a>';
+        if (force_name || actor.login != parts[0] && (source.$class.model_name != 'account' || source.username != parts[0])) {
+            result += ' by ' + this.format_actor({login: parts[0]}, source);
         }
+
         return result;
     }); // format_repo
 
     EventFormatter.prototype.base_format = (function GithubEventFormatter__base_format (event, source, middle_part, desc, target, external_link) {
-        var result = '';
-        result += '<p class="ui-li-aside">' + this.provider.controller.display.format_date(event.created_at, 'show-time', null, 'time-only') + '</p>';
+        var result, content;
+        result = '<p class="ui-li-aside">' + this.provider.controller.display.format_date(event.created_at, 'show-time', null, 'time-only') + '</p>';
         if (!target && event.repository && (event.repository.name || event.repository.full_name)) {
-            target = this.format_repo(event.repository, event.actor, source);
+            target = this.format_repo(event.repository, event.actor, source, 'main');
         }
-        result += this.format_actor(event.actor, source) + ' ' + middle_part;
+        content = this.format_actor(event.actor, source, 'main') + ' ' + middle_part;
         if (target) {
-            result += ' ' + target;
+            content += ' ' + target;
+        }
+        result += '<div class="event-main">' + content + '</div>';
+        if (external_link) {
+            result += this.format_external_link(external_link);
         }
         if (desc) {
             result += '<p class="ui-li-desc">' + desc + '</p>';
-        }
-        if (external_link) {
-            result += this.format_external_link(external_link);
         }
         return result;
     }); // base_format
 
     EventFormatter.prototype.markdown_event_more = (function GithubEventFormatter__markdown_event_more (text) {
         if (!text) { return ''; }
-        result = '<div class="ui-li ui-li-static ui-btn-up-d ui-first-child ui-last-child markdown">';
+        result = '<div class="markdown">';
         result += marked(text, {sanitize: true, breaks: true, smartLists: true});
         result +='</div>';
         return result;
@@ -175,7 +169,7 @@
     }); // ForkEvent
 
     EventFormatter.prototype.more_ForkEvent = (function GithubEventFormatter__more_ForkEvent (event, source) {
-        return this.more('<p class="ui-li ui-li-static ui-btn-up-d ui-first-child ui-last-child">Fork: ' + this.format_repo(event.forkee, event.actor, source, null, true) + '</p>');
+        return this.more('<p>Fork: ' + this.format_repo(event.forkee, event.actor, source, null, true) + '</p>');
     }); // more_ForkEvent
 
     EventFormatter.prototype.ForkApplyEvent = (function GithubEventFormatter__ForkApplyEvent (event, source) {

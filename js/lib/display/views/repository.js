@@ -12,10 +12,10 @@
 
             var nodes = this.nodes_cache;
 
-            var main = this.container.children('.repo-main').children('li');
+            var main = this.container.children('.repo-main');
             nodes.provider = main.children('p.provider');
 
-            var repo = main.children('div.repo-path');
+            var repo = main.children('.repo-path');
             nodes.name = repo.children('strong.repo-name');
             nodes.owner_container = repo.children('span.repo-owner-container');
             nodes.owner = nodes.owner_container.children('span.repo-owner');
@@ -61,7 +61,7 @@
 
             if (repository.details.is_fork) {
                 nodes.fork_name.html(this.display.repository_link(repository.details.parent.full_name, repository.details.parent.name, repository.provider.name));
-                nodes.fork_owner.html(repository.details.parent.user.login);
+                nodes.fork_owner.html(this.display.account_link(repository.details.parent.user.login, repository.provider.name));
                 nodes.fork_container.show();
             }
 

@@ -12,7 +12,7 @@
 
             var nodes = this.nodes_cache;
 
-            var main = this.container.children('.account-main').children();
+            var main = this.container.find('.account-main');
             nodes.avatar = main.children('img');
             nodes.provider = main.children('p.provider');
             nodes.name = main.children('p.account-name');
@@ -21,7 +21,7 @@
             nodes.username = username_container.children('strong');
             nodes.organization = username_container.children('span');
 
-            nodes.infos = this.container.children('.account-details');
+            nodes.infos = this.container.find('.account-details');
             nodes.infos_loading = nodes.infos.children('.failover');
             nodes.infos_items = nodes.infos.children('.ui-li-has-icon');
 
@@ -40,7 +40,7 @@
             nodes.site_container = nodes.infos.children('li.account-site');
             nodes.site = nodes.site_container.find('a');
 
-            nodes.orgs_container = this.container.children('.account-orgs');
+            nodes.orgs_container = this.container.find('.account-orgs');
         }), // cache_nodes
 
         reset: (function View_account_home__reset () {
@@ -119,7 +119,7 @@
                 }
             }
 
-            view.container.children('ul[data-role=listview]').listview('refresh');
+            view.container.find('ul[data-role=listview]').listview('refresh');
         }) // update
 
     }); // View.account_home

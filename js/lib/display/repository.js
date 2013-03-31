@@ -25,7 +25,7 @@
 
     App.Display.prototype.repository_link = (function Display__repository_link (full_name, repo_name, provider_name) {
         full_name = full_name.replace('/', ':');
-        return '<a class="mini-button" data-role="button" data-inline="true" data-mini="true" data-theme="b" href="#repository_home!repository=' + full_name + '@' + provider_name + '">' + repo_name + '</a>';
+        return '<a class="repo-link" href="#repository_home!repository=' + full_name + '@' + provider_name + '">' + repo_name + '</a>';
     }); // repository_link
 
     App.Display.prototype.create_repositories_list_items = (function Display__create_repositories_list_items (repositories, provider) {

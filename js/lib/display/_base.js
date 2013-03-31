@@ -97,7 +97,7 @@
 
                 markup += '<div data-role="header" data-id="' + type + '_pages" data-position="fixed" data-theme="a">';
                     markup += '<h3></h3>';
-                    markup += '<a href="#main_menu_' + cur_page.id + '" data-icon="gear" data-iconpos="notext" data-rel="popup" class="ui-btn-right">Options</a>';
+                    markup += '<a href="#main_menu_' + cur_page.id + '" id="main_menu_' + cur_page.id + '_opener" data-icon="gear" data-iconpos="notext" data-rel="popup" class="ui-btn-right">Options</a>';
                     markup += '<div data-role="navbar">';
                         markup += '<ul' + (extended_navbar ? ' class="extended"' : '') + '>';
                         for (var j=0; j<navbar_pages.length; j++) {
@@ -238,7 +238,8 @@
         })); // nav-menu popupbeforeposition
 
         $('.main-nav-menu').on("popupbeforeposition", (function Display__on_mainmenu_popupbeforeposition () {
-            var popup = $(this);
+            var popup = $(this), opener = $('#' + this.id + '_opener');
+            opener.addClass('popup-opened');
             if (!popup.children().length) {
                 var template = display.get_template('main-nav-menu');
                 popup.append(template.cloneNode(true));
@@ -250,16 +251,20 @@
             }
         })); // main-nav-menu popupbeforeposition
 
-        $(document).on('click', '.list-events a.collapsible-trigger', (function Display__on_collapsible_trigger_click (e) {
+        $('.main-nav-menu').on("popupafterclose", (function Display__on_mainmenu_popupafterclose () {
+            var opener = $('#' + this.id + '_opener');
+            opener.removeClass('popup-opened');
+        })); // main-nav-menu popupafterclose
+
+        $(document).on('click', '.events-list a.collapsible-trigger', (function Display__on_collapsible_trigger_click (e) {
             // open/close collapsible when clicking triggering links in list of events
             e.preventDefault();
             e.stopPropagation();
             var link = $(this),
-                opened = link.hasClass('opened'),
-                collapsible, ev_data, more, li;
+                li = link.parents('li'),
+                opened, collapsible, ev_data, more;
             if (!link.hasClass('filled')) {
                 link.addClass('filled');
-                li = link.parents('li');
                 ev_data = li[0].event_data;
                 if (ev_data.provider['more_' + ev_data.event.type]) {
                     more = ev_data.provider['more_' + ev_data.event.type](ev_data.event, ev_data.source);
@@ -269,18 +274,19 @@
                     display.render_widgets(collapsible);
                     link.data('collapsible', collapsible);
                     setTimeout(function() {
-                        collapsible.trigger(opened ? 'collapse' : 'expand');
+                        collapsible.trigger('expand');
                     }, 100);
                 }
             } else {
+                opened = li.hasClass('more-opened');
                 collapsible = link.data('collapsible');
                 if (collapsible) { collapsible.trigger(opened ? 'collapse' : 'expand'); }
             }
-            link.toggleClass('opened', !opened);
+            li.toggleClass('more-opened', !opened);
             return false;
         })); // collapsible-trigger.click
 
-        $(document).on('click', '.list-events a.fetch-desc-trigger', (function Display__on_fetch_desc_trigger_click (e) {
+        $(document).on('click', '.events-list a.fetch-desc-trigger', (function Display__on_fetch_desc_trigger_click (e) {
             // fetch a repository to update its description when asked for
             e.preventDefault();
             e.stopPropagation();

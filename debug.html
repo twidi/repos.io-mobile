@@ -33,13 +33,7 @@ html.loading #first-loader {
     background: #f0f0f0;
 }
 #first-loader p {
-    background: #5E87B0; /* Old browsers */
-    background: -moz-linear-gradient(top, #6facd5 0%, #497bae 100%); /* FF3.6+ */
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#6facd5), color-stop(100%,#497bae)); /* Chrome,Safari4+ */
-    background: -webkit-linear-gradient(top, #6facd5 0%,#497bae 100%); /* Chrome10+,Safari5.1+ */
-    background: -o-linear-gradient(top, #6facd5 0%,#497bae 100%); /* Opera 11.10+ */
-    background: -ms-linear-gradient(top, #6facd5 0%,#497bae 100%); /* IE10+ */
-    background: linear-gradient(to bottom, #6facd5 0%,#497bae 100%); /* W3C */
+    background: #db4b35;
     color: white;
     font-family: sans-serif;
     font-size: larger;
@@ -52,20 +46,14 @@ html.loading #first-loader {
     text-align: center;
     top: 33%;
     width: 100%;
-    -moz-text-shadow: 0 1px 1px #3E6790;
-    -webkit-text-shadow: 0 1px 1px #3E6790;
-    -o-text-shadow: 0 1px 1px #3E6790;
-    -ms-text-shadow: 0 1px 1px #3E6790;
-    text-shadow: 0 1px 1px #3E6790;
 }
 #progress-loader {
     display: block;
-    height: 5px;
+    height: 4px;
     position: absolute;
     bottom: 0;
     left: 0;
-    height: 3px;
-    width: 5%; 
+    width: 5%;
     background: white;
 }
 #templates {
@@ -74,7 +62,6 @@ html.loading #first-loader {
 html.loading.ui-mobile-rendering > * { visibility: visible !important; }
 </style>
     <link rel="stylesheet" href="css/resources/jquery.mobile.structure-1.3.0.min.css" />
-    <link rel="stylesheet" href="css/jqm-theme.css" />
     <link rel="stylesheet" href="css/resources/jqm-icon-pack-2.0-original.min.css" />
     <link rel="stylesheet" href="css/app.min.css" />
     <script src="js/providers-config.js" type="text/javascript"></script>
@@ -136,7 +123,7 @@ html.loading.ui-mobile-rendering > * { visibility: visible !important; }
 
 <!-- Home -->
 <div data-role="page" id="home">
-    <div data-theme="a" data-role="header">
+    <div data-theme="a" data-role="header" data-position="fixed">
         <h3>Repos.io</h3>
         <a href="#main_menu_home" data-icon="gear" data-iconpos="notext" data-rel="popup" class="ui-btn-right">Options</a>
     </div>
@@ -148,7 +135,7 @@ html.loading.ui-mobile-rendering > * { visibility: visible !important; }
                 </a>
             </li>
         </ul>
-        <a data-role="button" href="#accounts" data-icon="arrow-r" data-iconpos="right" data-theme="b" >
+        <a data-role="button" href="#accounts" data-icon="arrow-r" data-iconpos="right" data-theme="b" data-inline="true">
             Manage accounts
         </a>
     </div>
@@ -163,7 +150,7 @@ html.loading.ui-mobile-rendering > * { visibility: visible !important; }
 
 <!-- Manage accounts -->
 <div data-role="page" id="accounts">
-    <div data-theme="a" data-role="header">
+    <div data-theme="a" data-role="header" data-position="fixed">
         <h3>Accounts</h3>
         <a href="#main_menu_accounts" data-icon="gear" data-iconpos="notext" data-rel="popup" class="ui-btn-right">Options</a>
     </div>
@@ -178,7 +165,7 @@ html.loading.ui-mobile-rendering > * { visibility: visible !important; }
                 </a>
             </li>
         </ul>
-        <a data-role="button" href="#account-new" data-icon="plus" data-iconpos="left" data-theme="b" data-rel="popup" data-position-to="window" data-transition="pop">
+        <a data-role="button" href="#account-new" data-icon="plus" data-iconpos="left" data-theme="b" data-rel="popup" data-position-to="window" data-transition="pop" data-inline="true">
             Add account
         </a>
     </div>
@@ -196,9 +183,9 @@ html.loading.ui-mobile-rendering > * { visibility: visible !important; }
         </div>
         <div data-role="content" data-theme="a">
             <p>Your account <strong>twidi@github</strong> will be fully removed from this app.</p>
-            <fieldset class="ui-grid-a">
-                <div class="ui-block-a"><a href="index.html" data-role="button" data-rel="back" data-theme="b" data-icon="check" data-mini="true">Remove</a></div>
-                <div class="ui-block-b"><a href="index.html" data-role="button" data-rel="back" data-mini="true" data-icon="delete">Cancel</a></div>  
+            <fieldset class="buttons">
+                <a href="index.html" data-role="button" data-rel="back" data-theme="b" data-icon="check" data-mini="true" data-inline="true">Remove</a>
+                <a href="index.html" data-role="button" data-rel="back" data-mini="true" data-icon="delete" data-inline="true">Cancel</a>
             </fieldset>
         </div>
     </div>
@@ -209,25 +196,23 @@ html.loading.ui-mobile-rendering > * { visibility: visible !important; }
             <h1>Add account</h1>
         </div>
         <div data-role="content" data-theme="a">
-                <fieldset data-role="controlgroup" data-type="vertical">
-                    <input id="radio1" name="" value="github" type="radio" data->
-                    <label for="radio1">
-                        Github
-                    </label>
-                    <input id="radio2" name="" value="bitbucket" type="radio">
-                    <label for="radio2">
-                        Bitbucket
-                    </label>
-                </fieldset>
-                <fieldset data-role="controlgroup" class="ui-hide-label">
-                    <label for="textinput1">
-                        Username:
-                    </label>
-                    <input name="" id="textinput1" placeholder="Username" value="" type="text">
-                </fieldset>
-            <fieldset class="ui-grid-a">
-                <div class="ui-block-a"><input data-icon="check" data-iconpos="left" value="Add" type="submit" data-rel="back" data-theme="b" data-mini="true"></div>
-                <div class="ui-block-b"><a href="index.html" data-role="button" data-rel="back" data-mini="true" data-icon="delete" data-mini="true">Cancel</a></div>  
+            <fieldset data-role="controlgroup" data-type="vertical">
+                <input id="radio1" name="" value="github" type="radio" data->
+                <label for="radio1">
+                    Github
+                </label>
+                <input id="radio2" name="" value="bitbucket" type="radio">
+                <label for="radio2">
+                    Bitbucket
+                </label>
+            </fieldset><fieldset data-role="controlgroup" class="ui-hide-label">
+                <label for="textinput1">
+                    Username:
+                </label>
+                <input name="" id="textinput1" placeholder="Username" value="" type="text">
+            </fieldset><fieldset class="buttons">
+                <input data-icon="check" data-iconpos="left" value="Add" type="submit" data-rel="back" data-theme="b" data-mini="true" data-inline="true">
+                <a href="index.html" data-role="button" data-rel="back" data-mini="true" data-icon="delete" data-mini="true" data-inline="true">Cancel</a>
             </fieldset>
         </div>
     </div>
@@ -236,43 +221,40 @@ html.loading.ui-mobile-rendering > * { visibility: visible !important; }
 
 
 <div id="templates">
-    <div data-template-for="account_home"><!-- 
-        <ul data-role="listview" data-theme="e" class="account-main">
-            <li>
+    <div data-template-for="account_home"><!--
+        <div>
+            <div class="account-main object-home-main">
                 <img src="img/default-avatar.png" />
-                <h3><strong>loading...</strong><span> (organization)</span></h3>
+                <h3><strong class="account-link">loading...</strong><span> (org.)</span></h3>
                 <p class="account-name"></p>
                 <p class="ui-li-aside ui-btn-up-c ui-btn-corner-all provider">...</p>
-            </li>
-        </ul>
-        <ul data-role="listview" data-theme="d" class="account-details">
-            <li data-role="list-divider" data-theme="d">Informations</li>
-            <li class="failover">Loading...</li>
-            <li class="ui-li-has-icon account-company"><span class="ui-li-icon ui-icon ui-icon-gear ui-icon-shadow"></span><span></span></li>
-            <li class="ui-li-has-icon account-location"><span class="ui-li-icon ui-icon ui-icon-mappin ui-icon-shadow"></span><span></span></li>
-            <li class="ui-li-has-icon account-email"><span class="ui-li-icon ui-icon ui-icon-email ui-icon-shadow"></span><span></span></li>
-            <li class="ui-li-has-icon account-created_at"><span class="ui-li-icon ui-icon ui-icon-calendar ui-icon-shadow"></span><span></span></li>
-            <li class="ui-li-has-icon account-site"><span class="ui-li-icon ui-icon ui-icon-link ui-icon-shadow"></span><a href="/">...</a></li>
-        </ul>
+            </div>
+            <ul data-role="listview" data-theme="d" class="account-details">
+                <li class="failover">Loading...</li>
+                <li class="ui-li-has-icon account-company"><span class="ui-li-icon ui-icon ui-icon-gear ui-icon-shadow"></span><span></span></li>
+                <li class="ui-li-has-icon account-location"><span class="ui-li-icon ui-icon ui-icon-mappin ui-icon-shadow"></span><span></span></li>
+                <li class="ui-li-has-icon account-email"><span class="ui-li-icon ui-icon ui-icon-email ui-icon-shadow"></span><span></span></li>
+                <li class="ui-li-has-icon account-created_at"><span class="ui-li-icon ui-icon ui-icon-calendar ui-icon-shadow"></span><span></span></li>
+                <li class="ui-li-has-icon account-site"><span class="ui-li-icon ui-icon ui-icon-link ui-icon-shadow"></span><a href="/">...</a></li>
+            </ul>
+        </div>
         <ul data-role="listview" class="account-orgs accounts-list">
             <li data-role="list-divider" data-theme="d">Organisations</li>
             <li class="failover">Loading...</li>
         </ul>
      --></div>
 
-    <div data-template-for="account_repositories"><!-- 
-        <ul data-role='listview' class='repos-list ui-listview'>
+    <div data-template-for="account_repositories"><!--
+        <ul data-role='listview' class='ui-listview repos-list'>
         </ul>
-        <div data-role="navbar" class="load-buttons" data-iconpos="left" id="account_repositories_load_buttons">
-            <ul>
-                <li><a data-role="button" href='#' class="list-more-button ui-disabled" data-corners="false" >Load more</a></li>
-                <li><a data-role="button" href='#' class="list-all-button ui-disabled" data-corners="false" >Load all</a></li>
-            </ul>
+        <div class="ui-grid-a load-buttons" id="account_repositories_load_buttons">
+            <div class="ui-block-a"><a data-role="button" href='#' data-icon="plus" data-inline="true" data-mini="true" class="list-more-button ui-disabled" data-corners="false" >Load more</a></div>
+            <div class="ui-block-b"><a data-role="button" href='#' data-icon="grid" data-inline="true" data-mini="true" class="list-all-button ui-disabled" data-corners="false" >Load all</a></div>
         </div>
      --></div>
 
-    <div data-template-for="account_repositories_options"><!-- 
-        <div data-role="collapsible" data-corners="false" data-theme="e" data-content-theme="c" data-inset="false" data-mini="true" class="view-options"> 
+    <div data-template-for="account_repositories_options"><!--
+        <div data-role="collapsible" data-corners="false" data-theme="e" data-content-theme="c" data-mini="true" data-inset="false" class="view-options">
             <h3>Options and filters</h3>
             <form id="account_repositories_options" data-ajax="false">
                 <div class="fieldsets">
@@ -282,28 +264,24 @@ html.loading.ui-mobile-rendering > * { visibility: visible !important; }
                         <label><input type="radio" name="account_repositories_options_type" id="account_repositories_options_type_all" value="all" checked="checked" />All</label>
                         <label><input type="radio" name="account_repositories_options_type" id="account_repositories_options_type_owner" value="owner" />Owner</label>
                         <label><input type="radio" name="account_repositories_options_type" id="account_repositories_options_type_member" value="member" />Member</label>
-                    </fieldset>
-                    <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label ui-with-radio-legend ui-with-lot-of-radios"> 
+                    </fieldset><fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label ui-with-radio-legend ui-with-lot-of-radios">
                         <legend>Sort: </legend>
                         <label><input type="radio" name="account_repositories_options_sort" id="account_repositories_options_sort__label" value="__label__" disabled="disabled" data-theme="a" />Sort: </label>
                         <label><input type="radio" name="account_repositories_options_sort" id="account_repositories_options_sort_created" value="created" />Created</label>
                         <label><input type="radio" name="account_repositories_options_sort" id="account_repositories_options_sort_updated" value="updated" />Updated</label>
                         <label><input type="radio" name="account_repositories_options_sort" id="account_repositories_options_sort_pushed" value="pushed" checked="checked" />Pushed</label>
                         <label><input type="radio" name="account_repositories_options_sort" id="account_repositories_options_sort_name" value="full_name" />Name</label>
-                    </fieldset>
-                    <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label ui-with-radio-legend">
+                    </fieldset><fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label ui-with-radio-legend">
                         <legend>Direction: </legend>
                         <label><input type="radio" name="account_repositories_options_direction" id="account_repositories_options_direction__label" value="__label__" disabled="disabled" data-theme="a" />Direction: </label>
                         <label><input type="radio" name="account_repositories_options_direction" id="account_repositories_options_direction_asc" value="asc" />Asc</label>
                         <label><input type="radio" name="account_repositories_options_direction" id="account_repositories_options_direction_desc" value="desc" checked="checked" />Desc</label>
-                    </fieldset>
-                    <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label">
+                    </fieldset><fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label">
                         <legend>Forks: </legend>
                         <label><input type="radio" name="account_repositories_options_forks" id="account_repositories_options_forks_all" value="all" checked="checked" />All</label>
                         <label><input type="radio" name="account_repositories_options_forks" id="account_repositories_options_forks_no" value="no" />No forks</label>
                         <label><input type="radio" name="account_repositories_options_forks" id="account_repositories_options_forks_yes" value="yes" />Only forks</label>
-                    </fieldset>
-                    <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label">
+                    </fieldset><fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label">
                         <label for="account_repositories_options_language" class="ui-select">language:</label>
                         <select name="account_repositories_options_language" id="account_repositories_options_language" data-mini="true">
                             <option value="" selected="selected">All languages</option>
@@ -343,41 +321,36 @@ html.loading.ui-mobile-rendering > * { visibility: visible !important; }
         </div>
      --></div>
 
-    <div data-template-for="account_stars"><!-- 
-        <ul data-role='listview' class='repos-list ui-listview'>
+    <div data-template-for="account_stars"><!--
+        <ul data-role='listview' class='ui-listview repos-list'>
         </ul>
-        <div data-role="navbar" class="load-buttons" data-iconpos="left" id="account_stars_load_buttons">
-            <ul>
-                <li><a data-role="button" href='#' class="list-more-button ui-disabled" data-corners="false" >Load more</a></li>
-                <li><a data-role="button" href='#' class="list-all-button ui-disabled" data-corners="false" >Load all</a></li>
-            </ul>
+        <div class="ui-grid-a load-buttons" id="account_stars_load_buttons">
+            <div class="ui-block-a"><a data-role="button" href='#' data-icon="plus" data-inline="true" data-mini="true" class="list-more-button ui-disabled" data-corners="false" >Load more</a></div>
+            <div class="ui-block-b"><a data-role="button" href='#' data-icon="grid" data-inline="true" data-mini="true" class="list-all-button ui-disabled" data-corners="false" >Load all</a></div>
         </div>
      --></div>
 
-    <div data-template-for="account_stars_options"><!-- 
-        <div data-role="collapsible" data-corners="false" data-theme="e" data-content-theme="c" data-inset="false" data-mini="true" class="view-options"> 
+    <div data-template-for="account_stars_options"><!--
+        <div data-role="collapsible" data-corners="false" data-theme="e" data-content-theme="c" data-mini="true" data-inset="false" class="view-options">
             <h3>Options and filters</h3>
             <form id="account_stars_options" data-ajax="false">
                 <div class="fieldsets">
-                    <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label ui-with-radio-legend"> 
+                    <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label ui-with-radio-legend">
                         <legend>Sort: </legend>
                         <label><input type="radio" name="account_stars_options_sort" id="account_stars_options_sort__label" value="__label__" disabled="disabled" data-theme="a" />Sort: </label>
                         <label><input type="radio" name="account_stars_options_sort" id="account_stars_options_sort_created" value="created" checked="checked" />Starred</label>
                         <label><input type="radio" name="account_stars_options_sort" id="account_stars_options_sort_updated" value="updated" />Pushed</label>
-                    </fieldset>
-                    <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label ui-with-radio-legend">
+                    </fieldset><fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label ui-with-radio-legend">
                         <legend>Direction: </legend>
                         <label><input type="radio" name="account_stars_options_direction" id="account_stars_options_direction__label" value="__label__" disabled="disabled" data-theme="a" />Direction: </label>
                         <label><input type="radio" name="account_stars_options_direction" id="account_stars_options_direction_asc" value="asc" />Asc</label>
                         <label><input type="radio" name="account_stars_options_direction" id="account_stars_options_direction_desc" value="desc" checked="checked" />Desc</label>
-                    </fieldset>
-                    <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label">
+                    </fieldset><fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label">
                         <legend>Forks: </legend>
                         <label><input type="radio" name="account_stars_options_forks" id="account_stars_options_forks_all" value="all" checked="checked" />All</label>
                         <label><input type="radio" name="account_stars_options_forks" id="account_stars_options_forks_no" value="no" />No forks</label>
                         <label><input type="radio" name="account_stars_options_forks" id="account_stars_options_forks_yes" value="yes" />Only forks</label>
-                    </fieldset>
-                    <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label">
+                    </fieldset><fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label">
                         <label for="account_stars_options_language" class="ui-select">Language:</label>
                         <select name="account_stars_options_language" id="account_stars_options_language" data-mini="true">
                             <option value="" selected="selected">All languages</option>
@@ -417,46 +390,40 @@ html.loading.ui-mobile-rendering > * { visibility: visible !important; }
         </div>
      --></div>
 
-    <div data-template-for="account_followers"><!-- 
-        <ul data-role='listview' class='accounts-list ui-listview'>
+    <div data-template-for="account_followers"><!--
+        <ul data-role='listview' class='ui-listview accounts-list'>
         </ul>
-        <div data-role="navbar" class="load-buttons" data-iconpos="left" id="account_followers_load_buttons">
-            <ul>
-                <li><a data-role="button" href='#' class="list-more-button ui-disabled" data-corners="false" >Load more</a></li>
-                <li><a data-role="button" href='#' class="list-all-button ui-disabled" data-corners="false" >Load all</a></li>
-            </ul>
+        <div class="ui-grid-a load-buttons" id="account_followers_load_buttons">
+            <div class="ui-block-a"><a data-role="button" href='#' data-icon="plus" data-inline="true" data-mini="true" class="list-more-button ui-disabled" data-corners="false" >Load more</a></div>
+            <div class="ui-block-b"><a data-role="button" href='#' data-icon="grid" data-inline="true" data-mini="true" class="list-all-button ui-disabled" data-corners="false" >Load all</a></div>
         </div>
      --></div>
 
-    <div data-template-for="account_following"><!-- 
-        <ul data-role='listview' class='accounts-list ui-listview'>
+    <div data-template-for="account_following"><!--
+        <ul data-role='listview' class='ui-listview accounts-list'>
         </ul>
-        <div data-role="navbar" class="load-buttons" data-iconpos="left" id="account_following_load_buttons">
-            <ul>
-                <li><a data-role="button" href='#' class="list-more-button ui-disabled" data-corners="false" >Load more</a></li>
-                <li><a data-role="button" href='#' class="list-all-button ui-disabled" data-corners="false" >Load all</a></li>
-            </ul>
+        <div class="ui-grid-a load-buttons" id="account_following_load_buttons">
+            <div class="ui-block-a"><a data-role="button" href='#' data-icon="plus" data-inline="true" data-mini="true" class="list-more-button ui-disabled" data-corners="false" >Load more</a></div>
+            <div class="ui-block-b"><a data-role="button" href='#' data-icon="grid" data-inline="true" data-mini="true" class="list-all-button ui-disabled" data-corners="false" >Load all</a></div>
         </div>
      --></div>
 
-    <div data-template-for="account_members"><!-- 
-        <ul data-role='listview' class='accounts-list ui-listview'>
+    <div data-template-for="account_members"><!--
+        <ul data-role='listview' class='ui-listview accounts-list'>
         </ul>
      --></div>
 
-    <div data-template-for="account_activity"><!-- 
-        <ul class="ui-listview list-events" data-mobile-listview='{"options":{}}'>
+    <div data-template-for="account_activity"><!--
+        <ul class="ui-listview events-list" data-mobile-listview='{"options":{}}'>
         </ul>
-        <div data-role="navbar" class="load-buttons" data-iconpos="left" id="account_activity_load_buttons">
-            <ul>
-                <li><a data-role="button" href='#' class="list-more-button ui-disabled" data-corners="false" >Load more</a></li>
-                <li><a data-role="button" href='#' class="list-all-button ui-disabled" data-corners="false" >Load all</a></li>
-            </ul>
+        <div class="ui-grid-a load-buttons" id="account_activity_load_buttons">
+            <div class="ui-block-a"><a data-role="button" href='#' data-icon="plus" data-inline="true" data-mini="true" class="list-more-button ui-disabled" data-corners="false" >Load more</a></div>
+            <div class="ui-block-b"><a data-role="button" href='#' data-icon="grid" data-inline="true" data-mini="true" class="list-all-button ui-disabled" data-corners="false" >Load all</a></div>
         </div>
      --></div>
 
-    <div data-template-for="account_activity_options"><!-- 
-        <div data-role="collapsible" data-corners="false" data-theme="e" data-content-theme="c" data-inset="false" data-mini="true" class="view-options"> 
+    <div data-template-for="account_activity_options"><!--
+        <div data-role="collapsible" data-corners="false" data-theme="e" data-content-theme="c" data-mini="true" data-inset="false" class="view-options">
             <h3>Options and filters</h3>
             <form id="account_activity_options" data-ajax="false">
                 <div class="fieldsets">
@@ -464,8 +431,7 @@ html.loading.ui-mobile-rendering > * { visibility: visible !important; }
                         <legend>Mode: </legend>
                         <label><input type="radio" name="account_activity_options_mode" id="account_activity_options_mode_display" value="display" checked="checked" />Display</label>
                         <label><input type="radio" name="account_activity_options_mode" id="account_activity_options_mode_hide" value="hide" />Hide</label>
-                    </fieldset>
-                    <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label">
+                    </fieldset><fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label">
                         <label for="account_activity_options_type" class="ui-select">Type of events:</label>
                         <select name="account_activity_options_type" id="account_activity_options_type"data-mini="true">
                             <optgroup label="Presets">
@@ -502,19 +468,17 @@ html.loading.ui-mobile-rendering > * { visibility: visible !important; }
         </div>
      --></div>
 
-    <div data-template-for="account_events"><!-- 
-        <ul class="ui-listview list-events" data-mobile-listview='{"options":{}}'>
+    <div data-template-for="account_events"><!--
+        <ul class="ui-listview events-list" data-mobile-listview='{"options":{}}'>
         </ul>
-        <div data-role="navbar" class="load-buttons" data-iconpos="left" id="account_events_load_buttons">
-            <ul>
-                <li><a data-role="button" href='#' class="list-more-button ui-disabled" data-corners="false" >Load more</a></li>
-                <li><a data-role="button" href='#' class="list-all-button ui-disabled" data-corners="false" >Load all</a></li>
-            </ul>
+        <div class="ui-grid-a load-buttons" id="account_events_load_buttons">
+            <div class="ui-block-a"><a data-role="button" href='#' data-icon="plus" data-inline="true" data-mini="true" class="list-more-button ui-disabled" data-corners="false" >Load more</a></div>
+            <div class="ui-block-b"><a data-role="button" href='#' data-icon="grid" data-inline="true" data-mini="true" class="list-all-button ui-disabled" data-corners="false" >Load all</a></div>
         </div>
      --></div>
 
-    <div data-template-for="account_events_options"><!-- 
-        <div data-role="collapsible" data-corners="false" data-theme="e" data-content-theme="c" data-inset="false" data-mini="true" class="view-options"> 
+    <div data-template-for="account_events_options"><!--
+        <div data-role="collapsible" data-corners="false" data-theme="e" data-content-theme="c" data-mini="true" data-inset="false" class="view-options">
             <h3>Options and filters</h3>
             <form id="account_events_options" data-ajax="false">
                 <div class="fieldsets">
@@ -522,8 +486,7 @@ html.loading.ui-mobile-rendering > * { visibility: visible !important; }
                         <legend>Mode: </legend>
                         <label><input type="radio" name="account_events_options_mode" id="account_events_options_mode_display" value="display" checked="checked" />Display</label>
                         <label><input type="radio" name="account_events_options_mode" id="account_events_options_mode_hide" value="hide" />Hide</label>
-                    </fieldset>
-                    <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label">
+                    </fieldset><fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label">
                         <label for="account_events_options_type" class="ui-select">Type of events:</label>
                         <select name="account_events_options_type" id="account_events_options_type" data-mini="true">
                             <optgroup label="Presets">
@@ -560,27 +523,25 @@ html.loading.ui-mobile-rendering > * { visibility: visible !important; }
         </div>
      --></div>
 
-    <div data-template-for="repository_home"><!-- 
-        <ul data-role="listview" data-theme="e" class="repo-main">
-            <li>
-                <div class="repo-path">
-                    <strong class="repo-name">loading...</strong>
-                    <span class="repo-owner-container">
-                        by
-                        <span class="repo-owner">...</span>
-                    </span>
-                </div>
-                <div class="repo-fork">
-                    Fork of 
-                    <span class="repo-links">
-                        <span class="repo-fork-name"></span>
-                        <span> by <strong class="repo-fork-owner"></strong></span>
-                    </span>
-                </div>
-                <p class="repo-last-push">Last push: <span></span></p>
-                <p class="ui-li-aside ui-btn-up-c ui-btn-corner-all provider">...</p>
-            </li>
-        </ul>
+    <div data-template-for="repository_home"><!--
+        <div class="repo-main object-home-main">
+            <h3 class="repo-path">
+                <strong class="repo-name repo-link">loading...</strong>
+                <span class="repo-owner-container">
+                    by
+                    <span class="repo-owner">...</span>
+                </span>
+            </h3>
+            <div class="repo-fork">
+                Fork of
+                <span class="repo-links">
+                    <span class="repo-fork-name"></span>
+                    <span> by <strong class="repo-fork-owner"></strong></span>
+                </span>
+            </div>
+            <p class="repo-last-push">Last push: <span></span></p>
+            <p class="ui-li-aside ui-btn-up-c ui-btn-corner-all provider">...</p>
+        </div>
 
         <div data-role="collapsible-set" data-corners="false" data-theme="c" data-content-theme="d" data-inset="false" data-mini="true">
             <div data-role="collapsible" data-collapsed="false" class="repo-desc-container">
@@ -594,30 +555,27 @@ html.loading.ui-mobile-rendering > * { visibility: visible !important; }
         </div>
      --></div>
 
-    <div data-template-for="repository_forks"><!-- 
-        <ul data-role='listview' class='repos-list ui-listview'>
+    <div data-template-for="repository_forks"><!--
+        <ul data-role='listview' class='ui-listview repos-list'>
         </ul>
-        <div data-role="navbar" class="load-buttons" data-iconpos="left" id="repository_forks_load_buttons">
-            <ul>
-                <li><a data-role="button" href='#' class="list-more-button ui-disabled" data-corners="false" >Load more</a></li>
-                <li><a data-role="button" href='#' class="list-all-button ui-disabled" data-corners="false" >Load all</a></li>
-            </ul>
+        <div class="ui-grid-a load-buttons" id="repository_forks_load_buttons">
+            <div class="ui-block-a"><a data-role="button" href='#' data-icon="plus" data-inline="true" data-mini="true" class="list-more-button ui-disabled" data-corners="false" >Load more</a></div>
+            <div class="ui-block-b"><a data-role="button" href='#' data-icon="grid" data-inline="true" data-mini="true" class="list-all-button ui-disabled" data-corners="false" >Load all</a></div>
         </div>
      --></div>
 
-    <div data-template-for="repository_forks_options"><!-- 
-        <div data-role="collapsible" data-corners="false" data-theme="e" data-content-theme="c" data-inset="false" data-mini="true" class="view-options"> 
+    <div data-template-for="repository_forks_options"><!--
+        <div data-role="collapsible" data-corners="false" data-theme="e" data-content-theme="c" data-mini="true" data-inset="false" class="view-options">
             <h3>Options and filters</h3>
             <form id="repository_forks_options" data-ajax="false">
                 <div class="fieldsets">
-                    <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label ui-with-radio-legend"> 
+                    <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label ui-with-radio-legend">
                         <legend>Sort: </legend>
                         <label><input type="radio" name="repository_forks_options_sort" id="repository_forks_options_sort__label" value="__label__" disabled="disabled" data-theme="a" />Sort: </label>
                         <label><input type="radio" name="repository_forks_options_sort" id="repository_forks_options_sort_newest" value="newest" checked="checked" />Newest</label>
                         <label><input type="radio" name="repository_forks_options_sort" id="repository_forks_options_sort_oldest" value="oldest" />Oldest</label>
                         <label><input type="radio" name="repository_forks_options_sort" id="repository_forks_options_sort_watchers" value="watchers" />Watchers</label>
-                    </fieldset>
-                    <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label ui-with-radio-legend"> 
+                    </fieldset><fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label ui-with-radio-legend">
                         <legend>Never updated: </legend>
                         <label><input type="radio" name="repository_forks_options_never_updated" id="repository_forks_options_never_updated__label" value="__label__" disabled="disabled" data-theme="a" />Never updated: </label>
                         <label><input type="radio" name="repository_forks_options_never_updated" id="repository_forks_options_never_updated_show" value="show" checked="checked" />Show</label>
@@ -633,18 +591,16 @@ html.loading.ui-mobile-rendering > * { visibility: visible !important; }
      --></div>
 
     <div data-template-for="repository_activity"><!--
-        <ul class="ui-listview list-events" data-mobile-listview='{"options":{}}'>
+        <ul class="ui-listview events-list" data-mobile-listview='{"options":{}}'>
         </ul>
-        <div data-role="navbar" class="load-buttons" data-iconpos="left" id="repository_activity_load_buttons">
-            <ul>
-                <li><a data-role="button" href='#' class="list-more-button ui-disabled" data-corners="false" >Load more</a></li>
-                <li><a data-role="button" href='#' class="list-all-button ui-disabled" data-corners="false" >Load all</a></li>
-            </ul>
+        <div class="ui-grid-a load-buttons" id="repository_activity_load_buttons">
+            <div class="ui-block-a"><a data-role="button" href='#' data-icon="plus" data-inline="true" data-mini="true" class="list-more-button ui-disabled" data-corners="false" >Load more</a></div>
+            <div class="ui-block-b"><a data-role="button" href='#' data-icon="grid" data-inline="true" data-mini="true" class="list-all-button ui-disabled" data-corners="false" >Load all</a></div>
         </div>
      --></div>
 
-    <div data-template-for="repository_activity_options"><!-- 
-        <div data-role="collapsible" data-corners="false" data-theme="e" data-content-theme="c" data-inset="false" data-mini="true" class="view-options"> 
+    <div data-template-for="repository_activity_options"><!--
+        <div data-role="collapsible" data-corners="false" data-theme="e" data-content-theme="c" data-mini="true" data-inset="false" class="view-options">
             <h3>Options and filters</h3>
             <form id="repository_activity_options" data-ajax="false">
                 <div class="fieldsets">
@@ -652,8 +608,7 @@ html.loading.ui-mobile-rendering > * { visibility: visible !important; }
                         <legend>Mode: </legend>
                         <label><input type="radio" name="repository_activity_options_mode" id="repository_activity_options_mode_display" value="display" checked="checked" />Display</label>
                         <label><input type="radio" name="repository_activity_options_mode" id="repository_activity_options_mode_hide" value="hide" />Hide</label>
-                    </fieldset>
-                    <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label">
+                    </fieldset><fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label">
                         <label for="repository_activity_options_type" class="ui-select">Type of events:</label>
                         <select name="repository_activity_options_type" id="repository_activity_options_type" data-mini="true">
                             <optgroup label="Presets">
@@ -690,24 +645,22 @@ html.loading.ui-mobile-rendering > * { visibility: visible !important; }
         </div>
      --></div>
 
-    <div data-template-for="repository_contributors"><!-- 
-        <ul data-role='listview' class='accounts-list ui-listview'>
+    <div data-template-for="repository_contributors"><!--
+        <ul data-role='listview' class='ui-listview accounts-list'>
         </ul>
      --></div>
 
-    <div data-template-for="repository_stars"><!-- 
-        <ul data-role='listview' class='accounts-list ui-listview'>
+    <div data-template-for="repository_stars"><!--
+        <ul data-role='listview' class='ui-listview accounts-list'>
         </ul>
-        <div data-role="navbar" class="load-buttons" data-iconpos="left" id="repository_stars_load_buttons">
-            <ul>
-                <li><a href='#' class="list-more-button ui-disabled" >Load more</a></li>
-                <li><a href='#' class="list-all-button ui-disabled" >Load all</a></li>
-            </ul>
+        <div class="ui-grid-a load-buttons" id="repository_stars_load_buttons">
+            <div class="ui-block-a"><a data-role="button" href='#' data-icon="plus" data-inline="true" data-mini="true" class="list-more-button ui-disabled" data-corners="false" >Load more</a></div>
+            <div class="ui-block-b"><a data-role="button" href='#' data-icon="grid" data-inline="true" data-mini="true" class="list-all-button ui-disabled" data-corners="false" >Load all</a></div>
         </div>
      --></div>
 
-    <ul data-template-for="repository-list-item"><!-- 
-        <li data-theme="c" class="ui-btn ui-btn-icon-right ui-li-has-arrow ui-li ui-btn-up-c repo"><div class="ui-btn-inner ui-li"><div class="ui-btn-text">
+    <ul data-template-for="repository-list-item"><!--
+        <li class="ui-btn ui-btn-icon-right ui-li-has-arrow ui-li ui-btn-up-c repo"><div class="ui-btn-inner ui-li"><div class="ui-btn-text">
             <a href="#repository_home" class="ui-link-inherit">
                 <p class="ui-li-aside ui-btn-up-e ui-btn-corner-all repo-is-fork ui-li-desc">fork</p>
                 <h4 class="ui-li-heading">loading...</h4>
@@ -717,8 +670,8 @@ html.loading.ui-mobile-rendering > * { visibility: visible !important; }
             </div><span class="ui-icon ui-icon-arrow-r ui-icon-shadow">&nbsp;</span></div></li>
         </li>
      --></ul>
-    <ul data-template-for="account-list-item"><!-- 
-        <li data-theme="c" class="ui-btn ui-btn-icon-right ui-li-has-arrow ui-li ui-li-has-thumb ui-btn-up-c account"><div class="ui-btn-inner ui-li"><div class="ui-btn-text">
+    <ul data-template-for="account-list-item"><!--
+        <li class="ui-btn ui-btn-icon-right ui-li-has-arrow ui-li ui-li-has-thumb ui-btn-up-c account"><div class="ui-btn-inner ui-li"><div class="ui-btn-text">
             <a href="#account_home" class="ui-link-inherit">
                 <img src="img/default-avatar.png" class="ui-li-thumb">
                 <span class="account-username">loading...</span>
@@ -726,8 +679,8 @@ html.loading.ui-mobile-rendering > * { visibility: visible !important; }
             </div><span class="ui-icon ui-icon-arrow-r ui-icon-shadow">&nbsp;</span></div>
         </li>
      --></ul>
-    <ul data-template-for="event-list-day"><!-- <li class="ui-li ui-li-divider ui-bar-d"></li> --></ul>
-    <ul data-template-for="event-list-item"><!-- <li class="ui-li ui-li-static ui-li-has-alt ui-btn-up-c"></li> --></ul>
+    <ul data-template-for="event-list-day"><!-- <li class="ui-li ui-li-divider"></li> --></ul>
+    <ul data-template-for="event-list-item"><!-- <li class="ui-li ui-li-static ui-li-has-alt event"></li> --></ul>
 
     <div data-template-for="main-nav-menu"><!--
         <div data-role="controlgroup" data-theme="a">

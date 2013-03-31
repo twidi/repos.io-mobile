@@ -27,7 +27,7 @@
     }); // change_account
 
     App.Display.prototype.account_link = (function Display__account_link (user_name, provider_name) {
-        return '<a class="mini-button" data-role="button" data-inline="true" data-mini="true" data-theme="a" href="#account_home!account=' + user_name + '@' + provider_name + '">' + user_name + '</a>';
+        return '<a class="account-link" href="#account_home!account=' + user_name + '@' + provider_name + '">' + user_name + '</a>';
     }); // account_link
 
     App.Display.prototype.create_accounts_list_items = (function Display__create_accounts_list_items (accounts, provider) {

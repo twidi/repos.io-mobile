@@ -757,6 +757,7 @@ div.ui-input-text input.ui-input-text, div.ui-input-text textarea.ui-input-text,
 }
 .ui-popup-container > .main-nav-menu .ui-btn-inner {
     padding-left: 40px;
+    min-width: 13ex;
 }
 .ui-popup-container > .main-nav-menu .ui-btn .ui-icon {
     background-color: #ab3927;

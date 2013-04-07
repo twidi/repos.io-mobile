@@ -34,6 +34,13 @@
             this.$super(id, controller);
             this.path = this.ref;
             this.href_id = this.id.replace('/', ':');
+            var parts = this.path.split('/');
+            this.details = {
+                name: parts[1],
+                user: {
+                    login: parts[0]
+                }
+            };
         }), // __init__
 
         sort_and_filter_forks: (function Repository__sort_and_filter_forks (options, force_data) {

@@ -28,6 +28,7 @@
             this.provider = controller.providers[parts[1]];
             this.controller = controller;
             this.list_page_status = {};
+            this.details_fetched = false;
 
             // create fields
             for (var field_name in this.__classvars__.fields) {
@@ -101,6 +102,8 @@
             if (this.$class.fields[type] instanceof Array) {
                 if (this.list_page_status[type].__global__.all) { return true; }
                 return (typeof this[type][str_params] != 'undefined');
+            } else if (type == 'details') {
+                return this.details_fetched;
             } else {
                 return (this[type] !== null);
             }
@@ -114,7 +117,7 @@
             params = this.filter_fetchable_params(type, params);
             str_params = $.param(params);
 
-            if (type != 'details' && !model.details) {
+            if (type != 'details' && !model.fetched('details', '')) {
                 model.fetch_full('details', function() {
                     model.fetch_full(type, callback, params, force);
                 });
@@ -128,6 +131,9 @@
             if (force || !model.fetched(type, str_params)) {
                 model.fetch(type,
                     function(data) {  // success
+                        if (type == 'details') {
+                            model.details_fetched = true;
+                        }
                         if (is_list) {
                             model[type][str_params] = data;
                             model.update_list_page_status(type, params, 1, data ? data.length || 0 : 0);

@@ -43,42 +43,35 @@
             nodes.orgs_container = this.container.find('.account-orgs');
         }), // cache_nodes
 
-        reset: (function View_account_home__reset () {
+        reset: (function View_account_home__reset (account) {
             this.$super();
 
-            var nodes = this.nodes();
-
-            nodes.username.html('loading...');
-            nodes.name.html('');
-            nodes.organization.hide();
-            nodes.avatar.attr('src', 'img/default-avatar.png');
-            nodes.infos_items.hide();
-            nodes.infos_loading.show();
-
-            this.display.clear_listview(nodes.orgs_container, 'Loading...', true);
-            nodes.orgs_container.show();
-        }), // reset
-
-        update: (function View_account_home__update (account, force) {
             var nodes = this.nodes(),
-                view = this,
-                is_org = (account.details.type == 'Organization');
+                has_details = !!(account && account.details);
 
-            if (is_org) {
-                nodes.orgs_container.hide();
+            nodes.username.html(account.username || 'loading...');
+            nodes.name.html((has_details && account.details.name) || '');
+            nodes.avatar.attr('src', (has_details && account.details.avatar_url) || 'img/default-avatar.png');
+
+            if (has_details) {
+                this._update_org(account, nodes);
+                //nodes.infos_items.show();
+                this._update_details(account, nodes);
+            } else {
+                nodes.organization.hide();
+                nodes.orgs_container.show();
+                nodes.infos_items.hide();
+                nodes.infos_loading.show();
             }
 
-            nodes.username.html(account.username);
-            nodes.organization.toggle(is_org);
-            nodes.provider.html(account.provider.name);
-            nodes.avatar.attr('src', account.details.avatar_url);
+            if (!has_details || !account.orgs || !account.orgs.length) {
+                this.display.clear_listview(nodes.orgs_container, 'Loading...', true);
+            }
+        }), // reset
 
-            nodes.name.html(account.details.name || '');
-            nodes.name.toggle(!!account.details.name);
-
+        _update_details: (function View_acount_home__update_details (account, nodes) {
             nodes.created_at.html(this.display.format_date(account.details.created_at));
             nodes.created_at_container.show();
-            nodes.infos_loading.hide();
 
             nodes.company.html(account.details.company || '');
             nodes.company_container.toggle(!!account.details.company);
@@ -94,6 +87,30 @@
             nodes.site_container.toggle(!!account.details.site);
             nodes.site.attr('href', account.details.site || '/');
 
+        }), // _update_details
+
+        _update_org: (function View_account_home__update_org (account, nodes) {
+            var is_org = (account.details.type == 'Organization');
+            nodes.orgs_container.toggle(!is_org);
+            nodes.organization.toggle(is_org);
+            return is_org;
+        }), // _update_org
+
+        update: (function View_account_home__update (account, force) {
+            var nodes = this.nodes(),
+                view = this;
+
+            var is_org = this._update_org(account, nodes);
+
+            nodes.username.html(account.username);
+            nodes.provider.html(account.provider.name);
+            nodes.avatar.attr('src', account.details.avatar_url);
+
+            nodes.name.html(account.details.name || '');
+            nodes.name.toggle(!!account.details.name);
+
+            this._update_details(account, nodes);
+            nodes.infos_loading.hide();
 
             if (!is_org) {
                 var orgs_success = (function Account__orgs_fetch_success (data) {
@@ -117,7 +134,7 @@
                 } else {
                     orgs_success(account.orgs);
                 }
-            }
+            } // if !is_org
 
             view.container.find('ul[data-role=listview]').listview('refresh');
         }) // update

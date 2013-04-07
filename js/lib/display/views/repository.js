@@ -28,7 +28,7 @@
             nodes.last_push_container = main.children('p.repo-last-push');
             nodes.last_push = nodes.last_push_container.children('span');
 
-            nodes.desc_readme = this.container.children('div');
+            nodes.desc_readme = this.container.children('div.ui-collapsible-set');
             nodes.description_container = nodes.desc_readme.children('div.repo-desc-container');
             nodes.description = nodes.description_container.find('.repo-desc');
 
@@ -36,36 +36,72 @@
             nodes.readme = nodes.readme_container.find('.repo-readme');
         }), // cache_nodes
 
-        reset: (function View_repository_home__reset () {
+        reset: (function View_repository_home__reset (repository) {
             this.$super();
 
-            var nodes = this.nodes();
+            var nodes = this.nodes(),
+                has_details = !!(repository && repository.details);
 
-            nodes.name.html('loading...');
-            nodes.owner_container.hide();
-            nodes.owner.html('...');
-            nodes.fork_container.hide();
-            nodes.last_push_container.hide();
-            nodes.desc_readme.hide();
-            nodes.description.html('');
-            nodes.readme.html('<em>Loading...</em>');
+            nodes.name.html((has_details && repository.details.name) || 'loading...');
+
+            if (has_details && repository.details.user) {
+                this._update_owner(repository, nodes);
+                nodes.owner_container.show();
+            } else {
+                nodes.owner_container.hide();
+            }
+            if (has_details && repository.details.is_fork && repository.details.parent) {
+                this._update_fork(repository, nodes);
+                nodes.fork_container.show();
+            } else {
+                nodes.fork_container.hide();
+            }
+            if (has_details && repository.details.pushed_at) {
+                this._update_last_push(repository, nodes);
+                nodes.last_push_container.show();
+            } else {
+                nodes.last_push_container.hide();
+            }
+
+            if (has_details && (repository.details.description || repository.readme)) {
+                nodes.desc_readme.show();
+            } else {
+                nodes.desc_readme.hide();
+            }
+            nodes.description.text((has_details && repository.details.description) || '');
+            nodes.readme.html((has_details && repository.readme) || '<em>Loading...</em>');
+
+            this.display.render_widgets(this.container);
+
         }), // reset
+
+        _update_owner: (function View_repository_home__update_owner (repository, nodes) {
+            nodes.owner.html(this.display.account_link(repository.details.user.login, repository.provider.name));
+        }), // _update_owner
+
+        _update_fork: (function View_repository_home__update_fork (repository, nodes) {
+            nodes.fork_name.html(this.display.repository_link(repository.details.parent.full_name, repository.details.parent.name, repository.provider.name));
+            nodes.fork_owner.html(this.display.account_link(repository.details.parent.user.login, repository.provider.name));
+        }), // _update_fork
+
+        _update_last_push: (function View_repository_home__update_last_push (repository, nodes) {
+            nodes.last_push.html(repository.details.pushed_at ? this.display.format_date(repository.details.pushed_at, true) : 'never !');
+        }), // _update_last_push
 
         update: (function View_repository_home__update (repository, force) {
             var nodes = this.nodes();
 
             nodes.provider.html(repository.provider.name);
             nodes.name.html(repository.details.name);
-            nodes.owner.html(this.display.account_link(repository.details.user.login, repository.provider.name));
+            this._update_owner(repository, nodes);
             nodes.owner_container.show();
 
             if (repository.details.is_fork) {
-                nodes.fork_name.html(this.display.repository_link(repository.details.parent.full_name, repository.details.parent.name, repository.provider.name));
-                nodes.fork_owner.html(this.display.account_link(repository.details.parent.user.login, repository.provider.name));
+                this._update_fork(repository, nodes);
                 nodes.fork_container.show();
             }
 
-            nodes.last_push.html(repository.details.pushed_at ? this.display.format_date(repository.details.pushed_at, true) : 'never !');
+            this._update_last_push(repository, nodes);
             nodes.last_push_container.show();
 
             nodes.description.text(repository.details.description || '<em>No description!</em>');

@@ -39,7 +39,7 @@
             return this.nodes_cache;
         }), // nodes
 
-        reset: (function View__reset () {
+        reset: (function View__reset (obj) {
             if (!this.page.node.data('mobile-page')) {
                 this.page.node.page();
             }
@@ -68,7 +68,7 @@
             this.nodes_cache.load_all_button = this.nodes_cache.load_buttons.find('a.list-all-button');
         }), // cache_nodes
 
-        reset: (function View_list__reset () {
+        reset: (function View_list__reset (obj) {
             this.$super();
             var nodes = this.nodes();
             this.empty_list_node();

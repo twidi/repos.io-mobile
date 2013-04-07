@@ -352,9 +352,11 @@
             e.stopPropagation();
             var page = display.pages[$.mobile.activePage.data('url')];
                 options = page.view.accept_options ? page.view.get_options_from_form() : null;
-            $.mobile.loading('show');
-            display.ask_for_page(page.id, display.controller[page.type].id, options, 'force');
             page.nodes.main_menu.popup('close');
+            setTimeout((function Display__refresh_page() {
+                $.mobile.loading('show');
+                display.ask_for_page(page.id, display.controller[page.type].id, options, 'force');
+            }), 200);
         })); // refresh-control.click
 
         if (screenfull.enabled) {
@@ -430,7 +432,7 @@
             this.post_render_page(page);
         } else {
             page.nodes.refresh_control.addClass('ui-disabled');
-            page.view.reset();
+            page.view.reset(obj);
             if (page.view.accept_options) {
                 page.node.data('current-options', $.param(options));
             }

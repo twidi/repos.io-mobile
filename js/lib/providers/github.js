@@ -85,7 +85,7 @@
         if (event.repository.name && event.repository.name != source.path) {
             repository = App.Models.repository.get(event.repository.name + '@github', this.provider.controller),
             desc = 'Description: ';
-            if (!repository.details) {
+            if (!repository.details_fetched) {
                 desc += '<a href="#" class="fetch-desc-trigger" data-repository="' + repository.id + '">click to fetch</a>';
             } else if (repository.details.description) {
                 desc += '<strong>' + this.provider.controller.display.escape_html(repository.details.description) + '</strong>';

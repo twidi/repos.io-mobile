@@ -312,7 +312,7 @@
 
                 on_success = (function Display__on_fetch_desc_success (data) {
                     var html;
-                    repository.details = data;
+                    repository.update_data('details', data);
                     if (repository.details.description) {
                         html = '<strong>' + display.escape_html(repository.details.description) + ' </strong>';
                     } else {
@@ -327,7 +327,7 @@
 
             $('a.fetch-desc-trigger[data-repository="' + repository_id + '"]').each(set_loading);
 
-            if (repository.details) {
+            if (repository.details_fetched) {
                 on_success();
             } else {
                 repository.fetch( // type, success, failure, params, fail_if_404

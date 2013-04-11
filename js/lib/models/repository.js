@@ -27,7 +27,14 @@
                     sort_field: {newest: 'created_at', oldest: 'created_at', watchers: 'watchers_count'},
                     filter_never_updated: (function Repository__forks_fiter_never_updated (repository) {return repository.pushed_at <= repository.created_at; })
                 }
-            }
+            },
+            save_many: (function Repository__save_many (repositories, provider, controller) {
+                var repository;
+                for (var i = 0; i < repositories.length; i++) {
+                    repository = App.Models.repository.get(repositories[i].full_name + '@' + provider.name, controller);
+                    repository.update_data('details', repositories[i]);
+                }
+            }) // save_many
         }, // __classvars__
 
         __init__: (function Repository__constructor (id, controller) {
@@ -42,6 +49,25 @@
                 }
             };
         }), // __init__
+
+        update_data: (function Repository__update_data (type, data, str_params) {
+            this.$super(type, data, str_params);
+            switch (type) {
+                case 'details':
+                    var owner = App.Models.account.get(this.details.user.login + '@' + this.provider.name, this.controller);
+                    if (data.user) {
+                        owner.update_data('details', data.user);
+                    }
+                    break;
+                case 'forks':
+                    App.Models.repository.save_many(data, this.provider, this.controller);
+                    break;
+                case 'stars':
+                case 'contributors':
+                    App.Models.account.save_many(data, this.provider, this.controller);
+                    break;
+            }
+        }), // update_data
 
         sort_and_filter_forks: (function Repository__sort_and_filter_forks (options, force_data) {
             var global = this.list_page_status.forks.__global__,

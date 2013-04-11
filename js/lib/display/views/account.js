@@ -51,12 +51,17 @@
 
             nodes.username.html(account.username || 'loading...');
             nodes.name.html((has_details && account.details.name) || '');
-            nodes.avatar.attr('src', (has_details && account.details.avatar_url) || 'img/default-avatar.png');
+            nodes.avatar.attr('src', 'img/default-avatar.png');
+            if (has_details && account.details.avatar_url) {
+                nodes.avatar.attr('src', account.details.avatar_url);
+            }
 
             if (has_details) {
                 this._update_org(account, nodes);
-                //nodes.infos_items.show();
                 this._update_details(account, nodes);
+                if (!account.details.created_at) {
+                    nodes.infos_loading.show();
+                }
             } else {
                 nodes.organization.hide();
                 nodes.orgs_container.show();
@@ -70,8 +75,8 @@
         }), // reset
 
         _update_details: (function View_acount_home__update_details (account, nodes) {
-            nodes.created_at.html(this.display.format_date(account.details.created_at));
-            nodes.created_at_container.show();
+            nodes.created_at.html(account.details.created_at ? this.display.format_date(account.details.created_at) : '');
+            nodes.created_at_container.toggle(!!account.details.created_at);
 
             nodes.company.html(account.details.company || '');
             nodes.company_container.toggle(!!account.details.company);
@@ -90,7 +95,7 @@
         }), // _update_details
 
         _update_org: (function View_account_home__update_org (account, nodes) {
-            var is_org = (account.details.type == 'Organization');
+            var is_org = account.is_organization();
             nodes.orgs_container.toggle(!is_org);
             nodes.organization.toggle(is_org);
             return is_org;
@@ -114,10 +119,10 @@
 
             if (!is_org) {
                 var orgs_success = (function Account__orgs_fetch_success (data) {
-                    account.orgs = data;
-                    if (account.orgs && account.orgs.length) {
+                    account.update_data('orgs', data);
+                    if (account.orgs[''] && account.orgs[''].length) {
                         view.display.clear_listview(nodes.orgs_container);
-                        nodes.orgs_container.append(view.display.create_accounts_list_items(account.orgs, account.provider));
+                        nodes.orgs_container.append(view.display.create_accounts_list_items(account.orgs[''], account.provider));
                         nodes.orgs_container.listview('refresh');
                     } else {
                         view.display.clear_listview(nodes.orgs_container, 'No organizations', true);
@@ -129,10 +134,10 @@
                     view.display.clear_listview(nodes.orgs_container, 'Failed to load organizations', true);
                 });
 
-                if (account.orgs === null || force) {
+                if (typeof account.orgs[''] === 'undefined' || force) {
                     account.fetch('orgs', orgs_success, orgs_fail);
                 } else {
-                    orgs_success(account.orgs);
+                    orgs_success(account.orgs['']);
                 }
             } // if !is_org
 

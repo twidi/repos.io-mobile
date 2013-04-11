@@ -108,7 +108,7 @@
             nodes.description_container.toggle(!!repository.details.description);
 
             var readme_success = (function Repository__readme_fetch_success (data) {
-                repository.readme = data;
+                repository.update_data('readme', data);
                 if (!repository.readme && nodes.readme_container.hasClass('ui-collapsible-collapsed')) {
                     nodes.readme_container.fadeOut();
                 } else {

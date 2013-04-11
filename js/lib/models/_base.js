@@ -41,6 +41,27 @@
             }
         }), // __init__
 
+        is_type_list: (function Model__is_type_list (type) {
+            return (this.$class.fields[type] instanceof Array);
+        }), // is_type_list
+
+        is_type_string: (function Model__is_type_string (type) {
+            return (this.$class.fields[type] === '');
+        }), // is_type_string
+
+        update_data: (function Model__update_data (type, data, str_params) {
+            if (this.is_type_list(type)) {
+                this[type][str_params || ''] = data;
+            } else if (this.is_type_string(type)) {
+                this[type] = data;
+            } else {
+                if (this[type] === null) {
+                    this[type] = {};
+                }
+                this[type] = $.extend(this[type], data);
+            }
+        }), // update_data
+
         get_list: (function Model__get_list (type, options, force_data) {
             var fetchable_params = this.filter_fetchable_params(type, options);
             if (this['sort_and_filter_' + type]) {
@@ -99,7 +120,7 @@
         }), // fetch
 
         fetched: (function Model__fetched (type, str_params) {
-            if (this.$class.fields[type] instanceof Array) {
+            if (this.is_type_list(type)) {
                 if (this.list_page_status[type].__global__.all) { return true; }
                 return (typeof this[type][str_params] != 'undefined');
             } else if (type == 'details') {
@@ -111,7 +132,6 @@
 
         fetch_full: (function Model__fetch_full (type, callback, params, force, callback_error) {
             var model = this,
-                is_list = (model.$class.fields[type] instanceof Array),
                 str_params;
 
             params = this.filter_fetchable_params(type, params);
@@ -134,11 +154,9 @@
                         if (type == 'details') {
                             model.details_fetched = true;
                         }
-                        if (is_list) {
-                            model[type][str_params] = data;
+                        model.update_data(type, data, str_params);
+                        if (model.is_type_list(type)) {
                             model.update_list_page_status(type, params, 1, data ? data.length || 0 : 0);
-                        } else {
-                            model[type] = data;
                         }
                         callback();
                     },

@@ -13,7 +13,7 @@
                 followers: [],
                 following: [],
                 org_members: [],
-                orgs: null
+                orgs: []
             },
             default_params: {
                 repositories: {per_page: 50},
@@ -46,13 +46,41 @@
                     filter_forks_method: {no: _.reject, yes: _.filter},
                     filter_language: (function Account__stars_filter_language (repository) { return (repository.language && repository.language == this); })
                 }
-            }
+            },
+            save_many: (function Account__save_many (accounts, provider, controller) {
+                var account;
+                for (var i = 0; i < accounts.length; i++) {
+                    account = App.Models.account.get(accounts[i].login + '@' + provider.name, controller);
+                    account.update_data('details', accounts[i]);
+                }
+            }) // save_many
         }, // __classvars__
 
         __init__: (function Account__constructor (id, controller) {
             this.$super(id, controller);
             this.username = this.ref;
         }), // __init__
+
+        update_data: (function Account__update_data (type, data, str_params) {
+            this.$super(type, data, str_params);
+            switch (type) {
+                case 'repositories':
+                case 'stars':
+                    App.Models.repository.save_many(data, this.provider, this.controller);
+                    break;
+                case 'followers':
+                case 'following':
+                case 'org_members':
+                    App.Models.account.save_many(data, this.provider, this.controller);
+                    break;
+                case 'orgs':
+                    App.Models.account.save_many(_.map(data, function(org) {
+                        org.type = 'Organization';
+                        return org;
+                    }), this.provider, this.controller);
+                    break;
+            }
+        }), // update_data
 
         manage_global_for_repositories: (function Account__manage_global_for_repositories () {
             var global = this.list_page_status.repositories.__global__;
@@ -160,7 +188,11 @@
             var global = this.list_page_status.received_events.__global__,
                 data = force_data || this.received_events[global.str_params];
             return this.sort_and_filter_events(options, data);
-        }) // sort_and_filter_received_events
+        }), // sort_and_filter_received_events
+
+        is_organization: (function Acccount__is_organization () {
+            return (this.details && this.details.type && this.details.type == 'Organization');
+        }) // is_organization
 
     }); // Account
 

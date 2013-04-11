@@ -58,7 +58,7 @@
     }); // create_accounts_list_items
 
     App.Display.prototype.update_account_navbar = (function Display__update_account_navbar (account) {
-        var is_org = (account.details && account.details.type.toLowerCase() == 'organization');
+        var is_org = account.is_organization();
         $('.go-button').find('.provider').html(account.provider.name);
         $('.account_members-link').closest('li').toggle(is_org);
         $('.account_repositories-count').html(account.details ? account.details.repos_count : '?').show();
@@ -67,7 +67,7 @@
     }); // update_account_navbar
 
     App.Display.prototype.get_real_account_page = (function Display__get_real_account_page (page_name, account) {
-        var is_org = (account.details && account.details.type.toLowerCase() == 'organization');
+        var is_org = account.is_organization();
         switch(page_name) {
             case 'home':
                 return 'https://github.com/' + account.username;

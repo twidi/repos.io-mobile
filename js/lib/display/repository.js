@@ -49,7 +49,9 @@
             a.href = href;
             path_holder.innerHTML = path;
 
-            avatar_holder.src = repository.user && repository.user.avatar_url || 'img/default-avatar.png';
+            if (repository.user && repository.user.avatar_url) {
+                avatar_holder.setAttribute('data-original', repository.user.avatar_url);
+            }
 
             if (repository.description) {
                 desc_holder.innerHTML = repository.description;

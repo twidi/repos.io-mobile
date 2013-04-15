@@ -24,7 +24,7 @@
     EventFormatter.prototype.format_actor  = (function GithubEventFormatter__format_actor (actor, source, main) {
         var result = '<a class="account-link' + (main ? ' main-link' : '') + '" href="#account_home!account=' + actor.login + '@' + source.provider.name + '">';
         if (actor.avatar_url) {
-            result += '<img class="avatar-small" src="' + actor.avatar_url + '" />';
+            result += '<img class="avatar-small" src="img/default-avatar.png" data-original="' + actor.avatar_url + '" />';
         }
         result += actor.login;
         result += '</a>';

@@ -51,7 +51,7 @@
 
             a.href = href;
             username_holder.innerHTML = account.login;
-            img.src = account.avatar_url;
+            img.setAttribute('data-original', account.avatar_url);
 
             if (account.html_prepend) {
                 $(a).prepend(account.html_prepend);

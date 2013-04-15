@@ -124,6 +124,7 @@
                         view.display.clear_listview(nodes.orgs_container);
                         nodes.orgs_container.append(view.display.create_accounts_list_items(account.orgs[''], account.provider));
                         nodes.orgs_container.listview('refresh');
+                        view.display.load_visible_images();
                     } else {
                         view.display.clear_listview(nodes.orgs_container, 'No organizations', true);
                         nodes.orgs_container.fadeOut();

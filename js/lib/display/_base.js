@@ -359,6 +359,9 @@
             }), 200);
         })); // refresh-control.click
 
+        $(window).on('scroll', display.load_visible_images);
+        $(window).on('resize', display.load_visible_images);
+
         if (screenfull.enabled) {
             $(document).on('change', '.fullscreen-control', (function Display__fullscreen_click (e) {
                 $(this).parents('.main-nav-menu').popup('close');
@@ -371,6 +374,15 @@
         }
 
     }); // init_events
+
+    Display.prototype.load_visible_images = (function Display__load_visible_images () {
+        var img, unloaded_imgs = $('img[data-original]:in-viewport:visible');
+        for (var i = 0; i < unloaded_imgs.length; i++) {
+            img = unloaded_imgs[i];
+            img.src = img.getAttribute('data-original');
+            img.removeAttribute('data-original');
+        }
+    }); // load_visible_images
 
     Display.prototype.update_fullscreen_control = (function Display__update_fullscreen_control () {
         $('.fullscreen-control')

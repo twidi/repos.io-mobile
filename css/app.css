@@ -37,8 +37,8 @@ body {
     color: #5c6e01;
 }
 .avatar-small {
-    max-height: 1.2em;
-    max-width: 1.2em;
+    height: 1.2em;
+    width: 1.2em;
     margin-right: 0.5ex;
     vertical-align: middle;
     border: none;

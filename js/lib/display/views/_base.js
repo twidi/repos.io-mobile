@@ -157,6 +157,7 @@
         show_load_buttons: (function View_list__show_load_buttons () { this.toggle_load_buttons_visible(true); }),
 
         refresh_widgets: (function View_list__refresh_widgets () {
+            this.display.load_visible_images();
         }), // refresh_widgets
 
         get_data: (function View_list__get_data (obj) {
@@ -320,6 +321,7 @@
 
         refresh_widgets: (function View_events__refresh_widgets () {
             this.display.render_widgets(this.nodes().list);
+            this.display.load_visible_images();
         }) // refresh_widgets
     }); // View._events
 

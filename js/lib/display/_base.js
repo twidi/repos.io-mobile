@@ -359,7 +359,7 @@
             }), 200);
         })); // refresh-control.click
 
-        $(window).on('scroll', display.load_visible_images);
+        $(window).on('scrollstop', display.load_visible_images);
         $(window).on('resize', display.load_visible_images);
 
         if (screenfull.enabled) {

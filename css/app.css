@@ -36,7 +36,24 @@ body {
 .repo-link {
     color: #5c6e01;
 }
-
+.avatar-small {
+    max-height: 1.2em;
+    max-width: 1.2em;
+    margin-right: 0.5ex;
+    vertical-align: middle;
+    border: none;
+    position: relative;
+    top: -2px;
+    -webkit-border-radius: 3px;
+       -moz-border-radius: 3px;
+        -ms-border-radius: 3px;
+         -o-border-radius: 3px;
+            border-radius: 3px;
+}
+.avatar-small-after {
+    margin-right: 0;
+    margin-left: 0.5ex;
+}
 .ui-btn.ui-disabled {
     color: rgba(0, 0, 0, 0.2) !important;
     cursor: not-allowed;

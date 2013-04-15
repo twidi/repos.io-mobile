@@ -39,13 +39,17 @@
                 li = template.cloneNode(true),
                 a = li.getElementsByTagName('a')[0],
                 a_children = a.children,
-                path_holder = a_children[1],
+                h_children = a_children[1].children,
+                avatar_holder = h_children[0],
+                path_holder = h_children[1],
                 desc_holder = a_children[2],
                 push_holder = a_children[3],
                 classes = [];
 
             a.href = href;
             path_holder.innerHTML = path;
+
+            avatar_holder.src = repository.user && repository.user.avatar_url || 'img/default-avatar.png';
 
             if (repository.description) {
                 desc_holder.innerHTML = repository.description;

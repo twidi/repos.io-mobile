@@ -26,8 +26,14 @@
         }
     }); // change_account
 
-    App.Display.prototype.account_link = (function Display__account_link (user_name, provider_name) {
-        return '<a class="account-link" href="#account_home!account=' + user_name + '@' + provider_name + '">' + user_name + '</a>';
+    App.Display.prototype.account_link = (function Display__account_link (user_name, provider_name, avatar_url) {
+        var result = '<a class="account-link" href="#account_home!account=' + user_name + '@' + provider_name + '">';
+        result += user_name;
+        if (avatar_url) {
+            result += '<img class="avatar-small avatar-small-after" src="' + avatar_url + '" />';
+        }
+        result += '</a>';
+        return result;
     }); // account_link
 
     App.Display.prototype.create_accounts_list_items = (function Display__create_accounts_list_items (accounts, provider) {

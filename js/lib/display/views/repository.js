@@ -76,12 +76,12 @@
         }), // reset
 
         _update_owner: (function View_repository_home__update_owner (repository, nodes) {
-            nodes.owner.html(this.display.account_link(repository.details.user.login, repository.provider.name));
+            nodes.owner.html(this.display.account_link(repository.details.user.login, repository.provider.name, repository.details.user.avatar_url));
         }), // _update_owner
 
         _update_fork: (function View_repository_home__update_fork (repository, nodes) {
             nodes.fork_name.html(this.display.repository_link(repository.details.parent.full_name, repository.details.parent.name, repository.provider.name));
-            nodes.fork_owner.html(this.display.account_link(repository.details.parent.user.login, repository.provider.name));
+            nodes.fork_owner.html(this.display.account_link(repository.details.parent.user.login, repository.provider.name, repository.details.parent.user.avatar_url));
         }), // _update_fork
 
         _update_last_push: (function View_repository_home__update_last_push (repository, nodes) {

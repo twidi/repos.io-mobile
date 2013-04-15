@@ -66,6 +66,9 @@
                 case 'contributors':
                     App.Models.account.save_many(data, this.provider, this.controller);
                     break;
+                case 'activity':
+                    App.Models.base.save_many_from_events(data, this.provider, this.controller);
+                    break;
             }
         }), // update_data
 

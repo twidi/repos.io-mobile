@@ -79,6 +79,10 @@
                         return org;
                     }), this.provider, this.controller);
                     break;
+                case 'own_events':
+                case 'received_events':
+                    App.Models.base.save_many_from_events(data, this.provider, this.controller);
+                    break;
             }
         }), // update_data
 

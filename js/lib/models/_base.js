@@ -18,7 +18,30 @@
                     this.cache[this.model_name][id] = new this(id, controller);
                 }
                 return this.cache[this.model_name][id];
-            }) // get
+            }), // get
+            save_many_from_events: (function Account__save_many (events, provider, controller) {
+                var event, account, repository, name;
+                for (var i = 0; i < events.length; i++) {
+                    event = events[i];
+                    // create a user object only if avatar, useless if not
+                    if (event.actor && event.actor.login && event.actor.avatar_url) {
+                        account = App.Models.account.get(event.actor.login + '@' + provider.name, controller);
+                        account.update_data('details', event.actor);
+                    }
+                    // create a repository only if at least desc and or last push date, useless if not
+                    if (event.repository && event.repository.full_name && (event.repository.description || event.repository.pushed_at)) {
+                        if (event.repository.full_name.indexOf('/') != -1) {
+                            repository = App.Models.repository.get(event.repository.full_name + '@' + provider.name, controller);
+                            repository.update_data('details', event.repository);
+                        }
+                    }
+                    // in case of a fork, the forkee maybe a repository
+                    if (event.type == 'ForkEvent' && event.forkee) {
+                        repository = App.Models.repository.get(event.forkee.full_name + '@' + provider.name, controller);
+                        repository.update_data('details', event.forkee);
+                    }
+                }
+            }) // save_many
         }, // __classvars__
 
         __init__: (function Model__constructor (id, controller) {

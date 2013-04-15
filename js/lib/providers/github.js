@@ -26,10 +26,9 @@
     }); // format_actor
 
     EventFormatter.prototype.format_repo  = (function GithubEventFormatter__format_repo (repository, actor, source, main, force_name) {
-        var full_name = repository.full_name || repository.name,
-            parts = full_name.split('/'), result;
+        var parts = repository.full_name.split('/'), result;
 
-        result = '<a class="repo-link' + (main ? ' main-link' : '') + '" href="#repository_home!repository=' + full_name.replace('/', ':') + '@' + source.provider.name + '">' + parts[1] + '</a>';
+        result = '<a class="repo-link' + (main ? ' main-link' : '') + '" href="#repository_home!repository=' + repository.full_name.replace('/', ':') + '@' + source.provider.name + '">' + parts[1] + '</a>';
         if (force_name || actor.login != parts[0] && (source.$class.model_name != 'account' || source.username != parts[0])) {
             result += ' by ' + this.format_actor({login: parts[0]}, source);
         }
@@ -40,7 +39,7 @@
     EventFormatter.prototype.base_format = (function GithubEventFormatter__base_format (event, source, middle_part, desc, target, external_link) {
         var result, content;
         result = '<p class="ui-li-aside">' + this.provider.controller.display.format_date(event.created_at, 'show-time', null, 'time-only') + '</p>';
-        if (!target && event.repository && (event.repository.name || event.repository.full_name)) {
+        if (!target && event.repository && event.repository.full_name) {
             target = this.format_repo(event.repository, event.actor, source, 'main');
         }
         content = this.format_actor(event.actor, source, 'main') + ' ' + middle_part;
@@ -80,17 +79,21 @@
         return more;
     }); // more
 
-    EventFormatter.prototype.description_fetcher = (function GithubEventFormatter__description_fetcher (event, source) {
+    EventFormatter.prototype.description_fetcher = (function GithubEventFormatter__description_fetcher (event, source, repo) {
         var desc, repository;
-        if (event.repository.name && event.repository.name != source.path) {
-            repository = App.Models.repository.get(event.repository.name + '@github', this.provider.controller),
+        if (!repo) { repo = event.repository; }
+        if (repo.full_name && (!source.path || repo.full_name != source.path)) {
+            repository = App.Models.repository.get(repo.full_name + '@github', this.provider.controller);
+            if (typeof(repo.description) != 'undefined') {
+                repository.update_data('details', repo);
+            }
             desc = 'Description: ';
-            if (!repository.details_fetched) {
-                desc += '<a href="#" class="fetch-desc-trigger" data-repository="' + repository.id + '">click to fetch</a>';
-            } else if (repository.details.description) {
+            if (repository.details && repository.details.description) {
                 desc += '<strong>' + this.provider.controller.display.escape_html(repository.details.description) + '</strong>';
-            } else {
+            } else if (repository.details_fetched) {
                 desc += '<em>no description</em>';
+            } else {
+                desc += '<a href="#" class="fetch-desc-trigger" data-repository="' + repository.id + '">click to fetch</a>';
             }
         }
         return desc;
@@ -122,18 +125,18 @@
             case 'branch':
                 part += ' a branch on';
                 desc = 'Branch: <strong>' + event.ref + '</strong>';
-                link = 'https://github.com/' + event.repository.name + '/tree/' + event.ref;
+                link = 'https://github.com/' + event.repository.full_name + '/tree/' + event.ref;
                 break;
             case 'repository':
                 if (event.description) {
                     desc = 'Description: <strong>' + event.description + '</strong>';
                 }
-                link = 'https://github.com/' + event.repository.name;
+                link = 'https://github.com/' + event.repository.full_name;
                 break;
             case 'tag':
                 part += ' a tag on';
                 desc = 'Tag: <strong>' + event.ref + '</strong>';
-                link = 'https://github.com/' + event.repository.name + '/tree/' + event.ref;
+                link = 'https://github.com/' + event.repository.full_name + '/tree/' + event.ref;
                 break;
         }
         return this.base_format(event, source, part, desc, null, link);
@@ -164,7 +167,7 @@
 
     EventFormatter.prototype.ForkEvent = (function GithubEventFormatter__ForkEvent (event, source) {
         var part = this.trigger_text('forked', event.forkee),
-            desc = this.description_fetcher(event, source);
+            desc = this.description_fetcher(event, source, event.forkee);
         return this.base_format(event, source, part, desc);
     }); // ForkEvent
 
@@ -192,7 +195,7 @@
     EventFormatter.prototype.GollumEvent = (function GithubEventFormatter__GollumEvent (event, source) {
         var target = this.format_repo(event.repository, event.actor, source),
             part = this.trigger_text('edited', true) + ' the ' + target + ' wiki',
-            link = 'https://github.com/' + event.repository.name + '/wiki';
+            link = 'https://github.com/' + event.repository.full_name + '/wiki';
         return this.base_format(event, source, part, null, ' ', link);
     }); // GollumEvent
 
@@ -283,9 +286,9 @@
                 desc = 'Branch: <strong>' + event.ref.replace('refs/heads/', '') + '</strong>';
             }
             if (event.size == 1) {
-                link = 'https://github.com/' + event.repository.name + '/commit/' + event.commits[0].sha;
+                link = 'https://github.com/' + event.repository.full_name + '/commit/' + event.commits[0].sha;
             } else if (event.before && event.head) {
-                link = 'https://github.com/' + event.repository.name + '/compare/' + event.before + '...' + event.head;
+                link = 'https://github.com/' + event.repository.full_name + '/compare/' + event.before + '...' + event.head;
             }
         return this.base_format(event, source, part, desc, null, link);
     }); // PushEvent
@@ -444,7 +447,9 @@
                     break;
                 case 'ForkEvent':
                     // in old events, forkee was the github id of the repository, so we don't have any name
-                    if (payload.forkee && isNaN(payload.forkee)) { event.forkee = this.map(payload.forkee, {_:['name', 'full_name']}); }
+                    if (payload.forkee && isNaN(payload.forkee)) {
+                        event.forkee = this.map_repository(payload.forkee);
+                    }
                     break;
                 case 'GistEvent':
                     event = this.map(payload, {_:['action']});
@@ -529,8 +534,19 @@
 
             event.type = data.type;
             event.created_at = data.created_at;
-            event.actor = this.map(data.actor, {_:['login']});
+            event.actor = this.map(data.actor, {_:['login', 'avatar_url']});
             event.repository = this.map(data.repository || data.repo, {_:['name', 'full_name']});
+            if (event.repository && (event.repository.full_name || event.repository.name)) {
+                // the full_name (path) must be stored in full_name, not name
+                if (!event.repository.full_name && event.repository.name) {
+                    event.repository.full_name = event.repository.name;
+                    event.repository.name = null;
+                }
+                // when creating a repo, the description is in the event, not the repo itself
+                if (event.type == 'CreateEvent' && event.ref_type == 'repository' && event.description) {
+                    event.repository.description = event.description;
+                }
+            }
 
         }
 

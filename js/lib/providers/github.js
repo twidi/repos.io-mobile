@@ -22,7 +22,13 @@
     }); // format
 
     EventFormatter.prototype.format_actor  = (function GithubEventFormatter__format_actor (actor, source, main) {
-        return '<a class="account-link' + (main ? ' main-link' : '') + '" href="#account_home!account=' + actor.login + '@' + source.provider.name + '">' + actor.login + '</a>';
+        var result = '<a class="account-link' + (main ? ' main-link' : '') + '" href="#account_home!account=' + actor.login + '@' + source.provider.name + '">';
+        if (actor.avatar_url) {
+            result += '<img class="avatar-small" src="' + actor.avatar_url + '" />';
+        }
+        result += actor.login;
+        result += '</a>';
+        return result;
     }); // format_actor
 
     EventFormatter.prototype.format_repo  = (function GithubEventFormatter__format_repo (repository, actor, source, main, force_name) {

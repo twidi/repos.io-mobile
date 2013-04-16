@@ -17,6 +17,7 @@
         display.init_events();
 
         var pages = $('div[data-role=page]:not(.ui-page)'),
+            start_screen = $('#start-screen'),
             loader = $('#progress-loader'),
             pages_length = pages.length,
             delay_init_pages = (function Display__delay_init_pages (pages, step) {
@@ -34,7 +35,10 @@
                         $('html').removeClass('loading');
                     }
                 } else {
-                    $('#start-screen').remove();
+                    loader.parent().html('Enjoy !');
+                    start_screen.fadeOut('fast', function() {
+                        start_screen.remove();
+                    });
                 }
 
             }); // delay_init_pages

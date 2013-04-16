@@ -34,7 +34,7 @@
                         $('html').removeClass('loading');
                     }
                 } else {
-                    $('#first-loader').remove();
+                    $('#start-screen').remove();
                 }
 
             }); // delay_init_pages

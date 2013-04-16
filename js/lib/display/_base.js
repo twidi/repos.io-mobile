@@ -26,18 +26,20 @@
                     loader.css({width: done + '%'});
                     setTimeout((function Display__init_next_page() {
                         var page = pages.eq(step);
-                        // console.time('CREATE ' + page[0].id);
                         page.page();
-                        // console.timeEnd('CREATE ' + page[0].id);
                         delay_init_pages(pages, step+1);
                     }), 10);
                     if (step==2) {
                         $('html').removeClass('loading');
                     }
                 } else {
+                    var already_seen = cookie.get('start_screen') == 'seen';
                     loader.parent().html('Enjoy !');
-                    start_screen.fadeOut('fast', function() {
+                    start_screen.fadeOut(already_seen ? 'fast' : 1200, function() {
                         start_screen.remove();
+                    });
+                    cookie.set('start_screen', 'seen', {
+                        expires: 365
                     });
                 }
 

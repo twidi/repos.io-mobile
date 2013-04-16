@@ -8,7 +8,7 @@ function cssmin {
     yui-compressor --type css $1 > $2
 }
 
-version=`date +'%Y/%m/%d-%H%m%S'`
+version=`date +'%Y/%m/%d-%H%M%S'`
 mkdir -p css/v/$version
 mkdir -p js/v/$version
 

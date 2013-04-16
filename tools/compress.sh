@@ -18,7 +18,7 @@ jsmin js/lib.js js/v/$version/lib.min.js
 rm js/lib.js
 
 # compress and concat some libs
-for js_base_file in jQuery.unserializeForm jqm.page.params underscore gh3 classy screenfull marked jquery.around-the-fold jquery.scrollstop
+for js_base_file in jQuery.unserializeForm jqm.page.params underscore gh3 classy screenfull marked jquery.around-the-fold jquery.scrollstop cookie
 do
     normal_file=js/resources/$js_base_file.js
     min_file=js/resources/$js_base_file.min.js

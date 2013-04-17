@@ -46,9 +46,9 @@
 
     Controller.prototype.make_page_hash = (function Controller__make_page_hash (obj, page, options) {
         var hash = '#' + page.id + '!' + obj.$class.model_name + '=' + obj.ref.replace('/', '!') + '@' + obj.provider.name;
-        if (options) {
-            hash += '&' + $.param(options);
-        }
+        // if (options) {
+        //     hash += '&' + $.param(options);
+        // }
         return hash;
     }); // make_page_hash
 

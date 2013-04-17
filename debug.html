@@ -136,15 +136,16 @@ html.loading.ui-mobile-rendering > * { visibility: visible !important; }
         <a href="#main_menu_home" data-icon="gear" data-iconpos="notext" data-rel="popup" class="ui-btn-right">Options</a>
     </div>
     <div data-role="content">
-        <ul data-role="listview" data-divider-theme="b" data-inset="true">
-            <li data-theme="c">
+        <ul data-role="listview" data-inset="true">
+            <li data-role="list-divider" data-theme="d">Local favorites</li>
+            <li>
                 <a href="#account_home!account=twidi@github">
                     twidi@github
                 </a>
             </li>
         </ul>
-        <a data-role="button" href="#accounts" data-icon="arrow-r" data-iconpos="right" data-theme="b" data-inline="true">
-            Manage accounts
+        <a data-role="button" href="#favorites" data-icon="arrow-r" data-iconpos="right" data-inline="true">
+            Manage favorites
         </a>
     </div>
     <div data-role="popup" id="main_menu_home" data-theme="a" class="main-nav-menu">
@@ -156,75 +157,45 @@ html.loading.ui-mobile-rendering > * { visibility: visible !important; }
 </div>
 
 
-<!-- Manage accounts -->
-<div data-role="page" id="accounts">
+<!-- Manage local favories -->
+<div data-role="page" id="favorites">
     <div data-theme="a" data-role="header" data-position="fixed">
-        <h3>Accounts</h3>
-        <a href="#main_menu_accounts" data-icon="gear" data-iconpos="notext" data-rel="popup" class="ui-btn-right">Options</a>
+        <h3>Local favorites</h3>
+        <a href="#main_menu_favorites" data-icon="gear" data-iconpos="notext" data-rel="popup" class="ui-btn-right">Options</a>
     </div>
     <div data-role="content">
-        <ul data-role="listview" data-inset="true" data-split-icon="minus" data-split-theme="a">
-            <li data-theme="c">
+        <ul data-role="listview" data-inset="true" data-split-icon="minus">
+            <li>
                 <a href="#account_home!account=twidi@github">
                     twidi@github
                 </a>
-                <a href="#account-remove" data-rel="popup" data-position-to="window" data-transition="pop">
-                    Remove account
+                <a href="#favorite-remove" data-rel="popup" data-position-to="window" data-transition="pop">
+                    Remove favorite
                 </a>
             </li>
         </ul>
-        <a data-role="button" href="#account-new" data-icon="plus" data-iconpos="left" data-theme="b" data-rel="popup" data-position-to="window" data-transition="pop" data-inline="true">
-            Add account
-        </a>
+        <p>To add a favorite, click 'Local favorite' on the main top left menu on any account/repository page</p>
     </div>
-    <div data-role="popup" id="main_menu_accounts" data-theme="a" class="main-nav-menu">
+    <div data-role="popup" id="main_menu_favorites" data-theme="a" class="main-nav-menu">
         <div data-role="controlgroup" data-theme="a">
-            <label><input type="checkbox" name="fullscreen" class="fullscreen-control" id="fullscreen-accounts" data-theme="a"/>Full screen</label>
+            <label><input type="checkbox" name="fullscreen" class="fullscreen-control" id="fullscreen-favorites" data-theme="a"/>Full screen</label>
             <a href="#repository_home!repository=twidi:repos.io-mobile@github" data-role="button" data-icon="arrow-r" data-theme="a">About</a>
         </div>
     </div>
 
-    <!-- Remove account -->
-    <div data-role="popup" id="account-remove" data-theme="a" data-overlay-theme="a">
+    <!-- Remove favorite -->
+    <div data-role="popup" id="favorite-remove" data-theme="a" data-overlay-theme="a">
         <div class="ui-bar ui-bar-a">
-            <h1>Remove account?</h1>
+            <h1>Remove local favorite?</h1>
         </div>
         <div data-role="content" data-theme="a">
-            <p>Your account <strong>twidi@github</strong> will be fully removed from this app.</p>
+            <p>The local favorite <strong>twidi@github</strong> will be removed from this app.</p>
             <fieldset class="buttons">
                 <a href="index.html" data-role="button" data-rel="back" data-theme="b" data-icon="check" data-mini="true" data-inline="true">Remove</a>
                 <a href="index.html" data-role="button" data-rel="back" data-mini="true" data-icon="delete" data-inline="true">Cancel</a>
             </fieldset>
         </div>
     </div>
-
-    <!-- Add account -->
-    <div data-role="popup" id="account-new" data-theme="a" data-overlay-theme="a">
-        <div class="ui-bar ui-bar-a">
-            <h1>Add account</h1>
-        </div>
-        <div data-role="content" data-theme="a">
-            <fieldset data-role="controlgroup" data-type="vertical">
-                <input id="radio1" name="" value="github" type="radio" data->
-                <label for="radio1">
-                    Github
-                </label>
-                <input id="radio2" name="" value="bitbucket" type="radio">
-                <label for="radio2">
-                    Bitbucket
-                </label>
-            </fieldset><fieldset data-role="controlgroup" class="ui-hide-label">
-                <label for="textinput1">
-                    Username:
-                </label>
-                <input name="" id="textinput1" placeholder="Username" value="" type="text">
-            </fieldset><fieldset class="buttons">
-                <input data-icon="check" data-iconpos="left" value="Add" type="submit" data-rel="back" data-theme="b" data-mini="true" data-inline="true">
-                <a href="index.html" data-role="button" data-rel="back" data-mini="true" data-icon="delete" data-mini="true" data-inline="true">Cancel</a>
-            </fieldset>
-        </div>
-    </div>
-
 </div>
 
 

@@ -21,6 +21,11 @@ body {
     background: #edeae1;
 }
 
+.ui-content > p {
+    margin-left: 2%;
+    margin-right: 2%;
+}
+
 .ui-icon {
     background-color: #db4b35;
 }
@@ -812,4 +817,12 @@ div[id^=main_menu_][id$=-popup].ui-popup-container.ui-popup-active {
     margin: 0 auto;
     width: auto;
     width: -moz-fit-content;
+}
+
+
+/* Favorites page */
+#favorites .ui-content > p {
+    text-align: center;
+    font-style: italic;
+    text-shadow: 1px 1px 1px white;
 }

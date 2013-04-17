@@ -44,6 +44,46 @@
         }
     }); // fetch_all_error
 
+    Controller.prototype.make_page_hash = (function Controller__make_page_hash (obj, page, options) {
+        var hash = '#' + page.id + '!' + obj.$class.model_name + '=' + obj.ref.replace('/', '!') + '@' + obj.provider.name;
+        if (options) {
+            hash += '&' + $.param(options);
+        }
+        return hash;
+    }); // make_page_hash
+
+    Controller.prototype.toggle_favorite = (function Controller__add_favorite (obj, page, options) {
+        var hash = this.make_page_hash(obj, page, options),
+            favorites = $.jStorage.get('favorites', []),
+            len = favorites.length,
+            favorite;
+        favorites = _.reject(favorites, function(fav) { return fav.hash == hash; } );
+        if (len == favorites.length) {
+            // same length = not removed = add favorite
+            favorite = {
+                hash: hash,
+                model: obj.$class.model_name,
+                ref: obj.ref,
+                title: page.title,
+                options: options
+            };
+            switch (obj.$class.model_name) {
+                case 'account':
+                    if (obj.details && obj.details.avatar_url) {
+                        favorite.avatar_url = obj.details.avatar_url;
+                    }
+                    break;
+                case 'repository':
+                    if (obj.details.user && obj.details.user.avatar_url) {
+                        favorite.avatar_url = obj.details.user.avatar_url;
+                    }
+                    break;
+            }
+            favorites.push(favorite);
+        }
+        $.jStorage.set('favorites', favorites);
+    }); // add_favorite
+
     App.Controller = Controller;
 
 })(Reposio);

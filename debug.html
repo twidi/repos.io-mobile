@@ -113,6 +113,7 @@ html.loading.ui-mobile-rendering > * { visibility: visible !important; }
     <script src="js/resources/jquery.scrollstop.min.js" type="text/javascript"></script>
     <script src="js/resources/jquery.around-the-fold.min.js" type="text/javascript"></script>
     <script src="js/resources/cookie.min.js" type="text/javascript"></script>
+    <script src="js/resources/jstorage.js" type="text/javascript"></script>
     <script src="js/lib/app.js" type="text/javascript"></script>
     <script src="js/lib/providers/github.js" type="text/javascript"></script>
     <script src="js/lib/models/_base.js" type="text/javascript"></script>
@@ -691,10 +692,11 @@ html.loading.ui-mobile-rendering > * { visibility: visible !important; }
 
     <div data-template-for="main-nav-menu"><!--
         <div data-role="controlgroup" data-theme="a">
-            <a href="/" data-role="button" data-icon="home" data-rel="home" data-theme="a">Home</a>
-            <label><input type="checkbox" name="fullscreen" class="fullscreen-control" id="fullscreen-' + cur_page.id + '" data-theme="a"/>Full screen</label>
-            <a href="#" data-role="button" data-icon="refresh" class="refresh-control" data-theme="a">Refresh</a>
-            <a href="#" data-role="button" data-icon="arrow-r" class="go-button" data-theme="a" target="_blank">View on <span class="provider"></span></a>
+            <a href="/" data-role="button" data-icon="home" data-rel="home">Home</a>
+            <label><input type="checkbox" name="fullscreen" class="fullscreen-control" id="fullscreen-' + cur_page.id + '" />Full screen</label>
+            <a href="#" data-role="button" data-icon="refresh" class="refresh-control">Refresh</a>
+            <label><input type="checkbox" name="toggle-favorite" class="favorite-control" id="toggle-favorite-' + cur_page.id + '" />Local favorite</label>
+            <a href="#" data-role="button" data-icon="arrow-r" class="go-button" target="_blank">View on <span class="provider"></span></a>
         </div>
     --></div>
 </div>

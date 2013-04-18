@@ -805,7 +805,6 @@ div[id^=main_menu_][id$=-popup].ui-popup-container.ui-popup-active {
     left: auto !important;
     bottom: auto !important;
 }
-
 .main-nav-menu .last-common-menu {
     /*border-bottom: 2px solid #ab3927;    */
 }
@@ -832,7 +831,8 @@ div[id^=main_menu_][id$=-popup].ui-popup-container.ui-popup-active {
 
 
 /* Favorites page */
-#favorites .ui-content > p {
+#favorites .ui-content > p, 
+#home .ui-content > p {
     text-align: center;
     font-style: italic;
     text-shadow: 1px 1px 1px white;

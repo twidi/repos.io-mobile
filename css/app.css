@@ -806,6 +806,17 @@ div[id^=main_menu_][id$=-popup].ui-popup-container.ui-popup-active {
     bottom: auto !important;
 }
 
+.main-nav-menu .last-common-menu {
+    /*border-bottom: 2px solid #ab3927;    */
+}
+.main-nav-menu .ui-controlgroup-controls > .divider {
+    color: rgba(255, 255, 255, 0.8);
+    background: #ab3927;
+    padding-left: 10px;
+    font-style: italic;
+    padding-bottom: 2px;
+    padding-top: 2px;
+}
 
 /* more buttons */
 .load-buttons .ui-btn {

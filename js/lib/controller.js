@@ -94,6 +94,7 @@
         }
         $.jStorage.set('favorites', favorites);
         $.jStorage.set('favorites-managed', true);
+        this.display.need_favorites_redraw = true;
     }); // add_favorite
 
     App.Controller = Controller;

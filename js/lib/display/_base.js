@@ -7,6 +7,7 @@
 
     Display.prototype.init = (function Display__init () {
         var display = this;
+        this.need_favorites_redraw = true;
         this.templates_container = $('#templates');
 
         for (var obj_type in this.pages_list) {
@@ -707,11 +708,13 @@
     }); // get_favorites_items
 
     Display.prototype.refresh_home_favorites = (function Display__refresh_home_favorites () {
+        if (!this.need_favorites_redraw) { return; }
         var display = this,
             items = this.get_favorites_items();
         this.clear_listview(this.nodes.home.favorites);
         this.nodes.home.favorites.append(items);
         setTimeout(function() { display.load_visible_images(); }, 500);
+        this.need_favorites_redraw = false;
     }); // refresh_home_favorites
 
 })(Reposio);

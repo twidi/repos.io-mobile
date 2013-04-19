@@ -362,11 +362,14 @@ div.markdown li {
 
 /* lists of repositories */
 
-.ui-content > .repos-list > li {
+.ui-content > .repos-list > li,
+.ui-content > .mixed-list > li.repo {
     overflow: hidden;
     position: relative;
+    margin-bottom: 15px;
 }
-.ui-content > .repos-list > li .repo-is-fork {
+.ui-content > .repos-list > li .repo-is-fork,
+.ui-content > .mixed-list > li.repo .repo-is-fork {
     background: #db4b35;
     color: white;
     text-align: center;
@@ -389,36 +392,45 @@ div.markdown li {
          -o-transform: rotate(-30deg);
             transform: rotate(-30deg);
 }
-.ui-content > .repos-list > li .repo-desc {
+.ui-content > .repos-list > li .repo-desc,
+.ui-content > .mixed-list > li.repo .repo-desc {
     white-space: normal;
 }
-.ui-content > .repos-list > li .repo-last-push {
+.ui-content > .repos-list > li .repo-last-push,
+.ui-content > .mixed-list > li.repo .repo-last-push {
     font-style: italic;
     margin-top: 0.5em;
     color: #777;
 }
-.ui-content > .repos-list > .no-fork p.repo-is-fork {
+.ui-content > .repos-list > .no-fork p.repo-is-fork,
+.ui-content > .mixed-list > .repo.no-fork p.repo-is-fork {
     display: none;
 }
-.ui-content > .repos-list > .no-desc p.repo-desc {
+.ui-content > .repos-list > .no-desc p.repo-desc,
+.ui-content > .mixed-list > .repo.no-desc p.repo-desc {
     display: none;
 }
-.ui-content > .repos-list > .no-data p.repo-last-push {
+.ui-content > .repos-list > .no-date p.repo-last-push,
+.ui-content > .mixed-list > .repo.no-date p.repo-last-push {
     display: none;
 }
 
 
 /* lists of accounts */
 
-.ui-content > .accounts-list > li {
+.ui-content > .accounts-list > li,
+.ui-content > .mixed-list > li.account {
     font-weight: bold;
-    margin-bottom: 5px;
+    margin-bottom: 15px;
 }
 .ui-content > .accounts-list > .ui-btn,
-.ui-content > .accounts-list > .ui-li-static {
+.ui-content > .accounts-list > .ui-li-static,
+.ui-content > .mixed-list > .account.ui-btn,
+.ui-content > .mixed-list > .account.ui-li-static {
     height: 40px;
 }
-.ui-content > .accounts-list > li a.ui-link-inherit {
+.ui-content > .accounts-list > li a.ui-link-inherit,
+.ui-content > .mixed-list > li.account a.ui-link-inherit {
     -webkit-box-sizing: border-box;
        -moz-box-sizing: border-box;
         -ms-box-sizing: border-box;
@@ -430,7 +442,8 @@ div.markdown li {
     padding-left: 60px;
     padding-top: 10px;
 }
-.ui-content > .accounts-list > li .ui-li-thumb {
+.ui-content > .accounts-list > li .ui-li-thumb,
+.ui-content > .mixed-list > li.account .ui-li-thumb {
     -webkit-border-radius: 3px 0 0 3px;
        -moz-border-radius: 3px 0 0 3px;
         -ms-border-radius: 3px 0 0 3px;
@@ -830,10 +843,14 @@ div[id^=main_menu_][id$=-popup].ui-popup-container.ui-popup-active {
 }
 
 
-/* Favorites page */
-#favorites .ui-content > p, 
+/* Favorites */
+#favorites .ui-content > p,
 #home .ui-content > p {
     text-align: center;
     font-style: italic;
     text-shadow: 1px 1px 1px white;
+}
+
+#home .ui-content .ui-li-divider {
+    margin-bottom: 10px;
 }

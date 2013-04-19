@@ -13,6 +13,12 @@
             this.construct_pages(obj_type, this.pages_list[obj_type]);
         }
 
+        this.nodes = {
+            home: {
+                'favorites': $('#home-favorites')
+            }
+        };
+
         $.mobile.initializePage();
         display.init_events();
 
@@ -442,6 +448,10 @@
             e.preventDefault();
         }
 
+        if (url.hash == '#home') {
+            this.refresh_home_favorites();
+        }
+
     }); // on_before_page_change
 
     Display.prototype.is_page_for = (function Display__is_page_for (page, obj, options) {
@@ -640,5 +650,68 @@
 
 
     App.Display = Display;
+
+    Display.prototype.get_favorites_items = (function Display__list_favorites () {
+        var favorites = $.jStorage.get('favorites', []),
+            items = [], i, favorite, obj, provider;
+        if (!favorites.length) {
+            favorites = [{
+                hash: '#account_home!account=twidi@github',
+                model: 'account',
+                ref: 'twidi',
+                avatar_url: 'https://secure.gravatar.com/avatar/4929cd99d0f54b7fa03081f9ab8bb0d4',
+                provider: 'github'
+            }, {
+                hash: '#repository_home!repository=twidi:repos.io-mobile@github',
+                model: 'repository',
+                ref: 'twidi/repos.io-mobile',
+                avatar_url: 'https://secure.gravatar.com/avatar/4929cd99d0f54b7fa03081f9ab8bb0d4',
+                description: 'A mobile application for Github',
+                provider: 'github'
+            }];
+            if (!$.jStorage.get('favorites-managed')) {
+                $.jStorage.set('favorites', favorites);
+            }
+        }
+        for (i = 0; i < favorites.length; i++) {
+            favorite = favorites[i];
+            provider = {name: favorite.provider};
+            switch (favorite.model) {
+                case 'account':
+                    obj = { login: favorite.ref };
+                    if (favorite.title) {
+                        obj.login += ' - ' + favorite.title;
+                    }
+                    if (favorite.avatar_url) {
+                        obj.avatar_url = favorite.avatar_url;
+                    }
+                    items.push(this.create_account_list_item(obj, provider, favorite.href));
+                    break;
+                case 'repository':
+                    obj = {
+                        full_name: favorite.ref,
+                        is_fork: favorite.is_fork,
+                        description: favorite.description
+                    };
+                    if (favorite.title) {
+                        obj.full_name += ' - ' + favorite.title;
+                    }
+                    if (favorite.avatar_url) {
+                        obj.user = { avatar_url: favorite.avatar_url };
+                    }
+                    items.push(this.create_repository_list_item(obj, provider, favorite.href));
+                    break;
+            }
+        }
+        return items;
+    }); // get_favorites_items
+
+    Display.prototype.refresh_home_favorites = (function Display__refresh_home_favorites () {
+        var display = this,
+            items = this.get_favorites_items();
+        this.clear_listview(this.nodes.home.favorites);
+        this.nodes.home.favorites.append(items);
+        setTimeout(function() { display.load_visible_images(); }, 500);
+    }); // refresh_home_favorites
 
 })(Reposio);

@@ -28,53 +28,54 @@
         return '<a class="repo-link" href="#repository_home!repository=' + ref + '@' + provider_name + '">' + name + '</a>';
     }); // repository_link
 
-    App.Display.prototype.create_repositories_list_items = (function Display__create_repositories_list_items (repositories, provider) {
+    App.Display.prototype.create_repository_list_item = (function Display__create_repositorie_list_item (repository, provider, href) {
         var template = this.get_template('repository-list-item'),
-            items = [];
+            path = repository.full_name || repository.name,
+            li = template.cloneNode(true),
+            a = li.getElementsByTagName('a')[0],
+            a_children = a.children,
+            h_children = a_children[1].children,
+            avatar_holder = h_children[0],
+            path_holder = h_children[1],
+            desc_holder = a_children[2],
+            push_holder = a_children[3],
+            classes = [];
 
-        for (var i=0; i<repositories.length; i++) {
-            var repository = repositories[i],
-                path = repository.full_name || repository.name,
-                href = '#repository_home!repository=' + path.replace('/', ':') + '@' + provider.name,
-                li = template.cloneNode(true),
-                a = li.getElementsByTagName('a')[0],
-                a_children = a.children,
-                h_children = a_children[1].children,
-                avatar_holder = h_children[0],
-                path_holder = h_children[1],
-                desc_holder = a_children[2],
-                push_holder = a_children[3],
-                classes = [];
+        a.href = href || '#repository_home!repository=' + path.replace('/', ':') + '@' + provider.name,
+        path_holder.innerHTML = path;
 
-            a.href = href;
-            path_holder.innerHTML = path;
-
-            if (repository.user && repository.user.avatar_url) {
-                avatar_holder.setAttribute('data-original', repository.user.avatar_url);
-            }
-
-            if (repository.description) {
-                desc_holder.innerHTML = repository.description;
-            } else {
-                classes.push('no-desc');
-            }
-
-            if (!repository.is_fork) {
-                classes.push('no-fork');
-            }
-
-            if (repository.pushed_at) {
-                push_holder.getElementsByTagName('span')[0].innerHTML = this.format_date(repository.pushed_at, true);
-            } else {
-                classes.push('no-date');
-            }
-
-            if (classes.length) {
-                li.className +=  ' ' + classes.join(' ');
-            }
-            items.push(li);
+        if (repository.user && repository.user.avatar_url) {
+            avatar_holder.setAttribute('data-original', repository.user.avatar_url);
         }
 
+        if (repository.description) {
+            desc_holder.innerHTML = repository.description;
+        } else {
+            classes.push('no-desc');
+        }
+
+        if (!repository.is_fork) {
+            classes.push('no-fork');
+        }
+
+        if (repository.pushed_at) {
+            push_holder.getElementsByTagName('span')[0].innerHTML = this.format_date(repository.pushed_at, true);
+        } else {
+            classes.push('no-date');
+        }
+
+        if (classes.length) {
+            li.className +=  ' ' + classes.join(' ');
+        }
+
+        return li;
+    }); // create_repository_list_item
+
+    App.Display.prototype.create_repositories_list_items = (function Display__create_repositories_list_items (repositories, provider) {
+        var items = [];
+        for (var i=0; i<repositories.length; i++) {
+            items.push(this.create_repository_list_item(repositories[i], provider));
+        }
         return items;
     }); // create_repositories_list_items
 

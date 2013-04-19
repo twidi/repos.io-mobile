@@ -36,30 +36,31 @@
         return result;
     }); // account_link
 
-    App.Display.prototype.create_accounts_list_items = (function Display__create_accounts_list_items (accounts, provider) {
+    App.Display.prototype.create_account_list_item = (function Display__create_account_list_item (account, provider, href) {
         var template = this.get_template('account-list-item'),
-            items = [];
-        for (var i=0; i<accounts.length; i++) {
-            var account = accounts[i],
-                href = '#account_home!account=' + account.login + '@' + provider.name,
-                li = template.cloneNode(true),
-                a = li.getElementsByTagName('a')[0],
-                a_children = a.children,
-                img = a_children[0],
-                username_holder = a_children[1],
-                classes = [];
+            li = template.cloneNode(true),
+            a = li.getElementsByTagName('a')[0],
+            a_children = a.children,
+            img = a_children[0],
+            username_holder = a_children[1],
+            classes = [];
 
-            a.href = href;
-            username_holder.innerHTML = account.login;
-            img.setAttribute('data-original', account.avatar_url);
+        a.href = href || '#account_home!account=' + account.login + '@' + provider.name;
+        username_holder.innerHTML = account.login;
+        img.setAttribute('data-original', account.avatar_url);
 
-            if (account.html_prepend) {
-                $(a).prepend(account.html_prepend);
-            }
-
-            items.push(li);
+        if (account.html_prepend) {
+            $(a).prepend(account.html_prepend);
         }
 
+        return li;
+    }); // create_account_list_item
+
+    App.Display.prototype.create_accounts_list_items = (function Display__create_accounts_list_items (accounts, provider) {
+        var items = [];
+        for (var i=0; i<accounts.length; i++) {
+            items.push(this.create_account_list_item(accounts[i], provider));
+        }
         return items;
     }); // create_accounts_list_items
 

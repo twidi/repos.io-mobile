@@ -64,9 +64,14 @@
                 hash: hash,
                 model: obj.$class.model_name,
                 ref: obj.ref,
-                title: page.title,
-                options: options
+                provider: obj.provider.name
             };
+            if (page.title != 'Details') {
+                favorite.title = page.title;
+            }
+            if (options && _.size(options) > 0) {
+                favorite.options = options;
+            }
             switch (obj.$class.model_name) {
                 case 'account':
                     if (obj.details && obj.details.avatar_url) {
@@ -77,11 +82,18 @@
                     if (obj.details.user && obj.details.user.avatar_url) {
                         favorite.avatar_url = obj.details.user.avatar_url;
                     }
+                    if (obj.details.is_fork) {
+                        favorite.is_fork = true;
+                    }
+                    if (obj.details.description) {
+                        favorite.description = obj.details.description;
+                    }
                     break;
             }
             favorites.push(favorite);
         }
         $.jStorage.set('favorites', favorites);
+        $.jStorage.set('favorites-managed', true);
     }); // add_favorite
 
     App.Controller = Controller;

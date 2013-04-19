@@ -85,7 +85,7 @@ html.loading.ui-mobile-rendering > * { visibility: visible !important; }
         return hash;
     }
 
-    var corrected_hash = querystringize(location.hash);
+    var corrected_hash = location.hash ? querystringize(location.hash) : '#home';
     if (corrected_hash != location.hash) {
         try {
             window.history.replaceState({}, document.title, corrected_hash);
@@ -136,13 +136,8 @@ html.loading.ui-mobile-rendering > * { visibility: visible !important; }
         <a href="#main_menu_home" data-icon="gear" data-iconpos="notext" data-rel="popup" class="ui-btn-right">Options</a>
     </div>
     <div data-role="content">
-        <ul data-role="listview" data-inset="true">
-            <li data-role="list-divider" data-theme="d">Local favorites</li>
-            <li>
-                <a href="#account_home!account=twidi@github">
-                    twidi@github
-                </a>
-            </li>
+        <ul id="home-favorites" class="ui-listview mixed-list">
+            <li class="ui-li ui-li-divider">Local favorites</li>
         </ul>
         <p>Local favorites are a way to quickly access favorites accounts, repositories...</p>
         <a data-role="button" href="#favorites" data-icon="arrow-r" data-iconpos="right" data-inline="true">
@@ -181,7 +176,7 @@ html.loading.ui-mobile-rendering > * { visibility: visible !important; }
     <div data-role="popup" id="main_menu_favorites" data-theme="a" class="main-nav-menu">
         <div data-role="controlgroup" data-theme="a">
             <div class="divider">Application</div>
-            <a href="/" data-role="button" data-icon="home" data-rel="home">Home</a>
+            <a href="#home" data-role="button" data-icon="home" data-rel="home">Home</a>
             <label><input type="checkbox" name="fullscreen" class="fullscreen-control" id="fullscreen-favorites" data-theme="a"/>Full screen</label>
             <a href="#repository_home!repository=twidi:repos.io-mobile@github" data-role="button" data-icon="arrow-r" data-theme="a">About</a>
         </div>
@@ -668,7 +663,7 @@ html.loading.ui-mobile-rendering > * { visibility: visible !important; }
     <div data-template-for="main-nav-menu"><!--
         <div data-role="controlgroup" data-theme="a">
             <div class="divider">Application</div>
-            <a href="/" data-role="button" data-icon="home" data-rel="home">Home</a>
+            <a href="#home" data-role="button" data-icon="home" data-rel="home">Home</a>
             <label><input type="checkbox" name="fullscreen" class="fullscreen-control" id="fullscreen-' + cur_page.id + '" />Full screen</label>
             <a href="#repository_home!repository=twidi:repos.io-mobile@github" data-role="button" data-icon="arrow-r">About</a>
             <div class="divider">Context</div>

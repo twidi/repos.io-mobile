@@ -40,14 +40,12 @@
                         $('html').removeClass('loading');
                     }
                 } else {
-                    var already_seen = cookie.get('start_screen') == 'seen';
+                    var already_seen = $.jStorage.get('start_screen_seen');
                     loader.parent().html('Enjoy !');
                     start_screen.fadeOut(already_seen ? 'fast' : 1200, function() {
                         start_screen.remove();
                     });
-                    cookie.set('start_screen', 'seen', {
-                        expires: 365
-                    });
+                    $.jStorage.set('start_screen_seen', true);
                 }
 
             }); // delay_init_pages

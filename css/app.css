@@ -844,13 +844,16 @@ div[id^=main_menu_][id$=-popup].ui-popup-container.ui-popup-active {
 
 
 /* Favorites */
-#favorites .ui-content > p,
 #home .ui-content > p {
-    text-align: center;
+    text-align: justify;
     font-style: italic;
     text-shadow: 1px 1px 1px white;
+    -webkit-hyphens: auto;
+       -moz-hyphens: auto;
+        -ms-hyphens: auto;
+         -o-hyphens: auto;
+            hyphens: auto;
 }
-
 #home .ui-content .ui-li-divider {
     margin-bottom: 10px;
 }

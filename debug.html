@@ -140,9 +140,7 @@ html.loading.ui-mobile-rendering > * { visibility: visible !important; }
             <li class="ui-li ui-li-divider">Local favorites</li>
         </ul>
         <p>Local favorites are a way to quickly access favorites accounts, repositories...</p>
-        <a data-role="button" href="#favorites" data-icon="arrow-r" data-iconpos="right" data-inline="true">
-            Manage favorites
-        </a>
+        <p>To add / remove a favorite, simply go on an account or repository page and check / uncheck the "Local favorite" entry in the main top right menu.</p>
     </div>
     <div data-role="popup" id="main_menu_home" data-theme="a" class="main-nav-menu">
         <div data-role="controlgroup" data-theme="a">
@@ -152,51 +150,6 @@ html.loading.ui-mobile-rendering > * { visibility: visible !important; }
         </div>
     </div>
 </div>
-
-
-<!-- Manage local favories -->
-<div data-role="page" id="favorites">
-    <div data-theme="a" data-role="header" data-position="fixed">
-        <h3>Local favorites</h3>
-        <a href="#main_menu_favorites" data-icon="gear" data-iconpos="notext" data-rel="popup" class="ui-btn-right">Options</a>
-    </div>
-    <div data-role="content">
-        <ul data-role="listview" data-inset="true" data-split-icon="minus">
-            <li>
-                <a href="#account_home!account=twidi@github">
-                    twidi@github
-                </a>
-                <a href="#favorite-remove" data-rel="popup" data-position-to="window" data-transition="pop">
-                    Remove favorite
-                </a>
-            </li>
-        </ul>
-        <p>To add a favorite, click 'Local favorite' on the main top left menu on any account/repository page</p>
-    </div>
-    <div data-role="popup" id="main_menu_favorites" data-theme="a" class="main-nav-menu">
-        <div data-role="controlgroup" data-theme="a">
-            <div class="divider">Application</div>
-            <a href="#home" data-role="button" data-icon="home" data-rel="home">Home</a>
-            <label><input type="checkbox" name="fullscreen" class="fullscreen-control" id="fullscreen-favorites" data-theme="a"/>Full screen</label>
-            <a href="#repository_home!repository=twidi:repos.io-mobile@github" data-role="button" data-icon="arrow-r" data-theme="a">About</a>
-        </div>
-    </div>
-
-    <!-- Remove favorite -->
-    <div data-role="popup" id="favorite-remove" data-theme="a" data-overlay-theme="a">
-        <div class="ui-bar ui-bar-a">
-            <h1>Remove local favorite?</h1>
-        </div>
-        <div data-role="content" data-theme="a">
-            <p>The local favorite <strong>twidi@github</strong> will be removed from this app.</p>
-            <fieldset class="buttons">
-                <a href="index.html" data-role="button" data-rel="back" data-theme="b" data-icon="check" data-mini="true" data-inline="true">Remove</a>
-                <a href="index.html" data-role="button" data-rel="back" data-mini="true" data-icon="delete" data-inline="true">Cancel</a>
-            </fieldset>
-        </div>
-    </div>
-</div>
-
 
 <div id="templates">
     <div data-template-for="account_home"><!--

@@ -388,6 +388,13 @@
         $(window).on('scrollstop', display.load_visible_images);
         $(window).on('resize', display.load_visible_images);
 
+        $.jStorage.listenKeyChange('favorites', function(key, action){
+            display.need_favorites_redraw = true;
+            if ($.mobile.activePage.data('url') == 'home') {
+                display.refresh_home_favorites();
+            }
+        });
+
         if (screenfull.enabled) {
             $(document).on('change', '.fullscreen-control', (function Display__fullscreen_click (e) {
                 $(this).parents('.main-nav-menu').popup('close');

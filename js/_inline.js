@@ -12,7 +12,7 @@
         return hash;
     }
 
-    var corrected_hash = querystringize(location.hash);
+    var corrected_hash = location.hash ? querystringize(location.hash) : '#home';
     if (corrected_hash != location.hash) {
         try {
             window.history.replaceState({}, document.title, corrected_hash);

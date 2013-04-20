@@ -8,97 +8,20 @@
         <a href="#main_menu_home" data-icon="gear" data-iconpos="notext" data-rel="popup" class="ui-btn-right">Options</a>
     </div>
     <div data-role="content">
-        <ul data-role="listview" data-divider-theme="b" data-inset="true">
-            <li data-theme="c">
-                <a href="#account_home!account=twidi@github">
-                    twidi@github
-                </a>
-            </li>
+        <ul id="home-favorites" class="ui-listview mixed-list">
+            <li class="ui-li ui-li-divider">Local favorites</li>
         </ul>
-        <a data-role="button" href="#accounts" data-icon="arrow-r" data-iconpos="right" data-theme="b" data-inline="true">
-            Manage accounts
-        </a>
+        <p>Local favorites are a way to quickly access favorites accounts, repositories...</p>
+        <p>To add / remove a favorite, simply go on an account or repository page and check / uncheck the "Local favorite" entry in the main top right menu.</p>
     </div>
     <div data-role="popup" id="main_menu_home" data-theme="a" class="main-nav-menu">
         <div data-role="controlgroup" data-theme="a">
+            <div class="divider">Application</div>
             <label><input type="checkbox" name="fullscreen" class="fullscreen-control" id="fullscreen-home" data-theme="a"/>Full screen</label>
             <a href="#repository_home!repository=twidi:repos.io-mobile@github" data-role="button" data-icon="arrow-r" data-theme="a">About</a>
         </div>
     </div>
 </div>
-
-
-<!-- Manage accounts -->
-<div data-role="page" id="accounts">
-    <div data-theme="a" data-role="header" data-position="fixed">
-        <h3>Accounts</h3>
-        <a href="#main_menu_accounts" data-icon="gear" data-iconpos="notext" data-rel="popup" class="ui-btn-right">Options</a>
-    </div>
-    <div data-role="content">
-        <ul data-role="listview" data-inset="true" data-split-icon="minus" data-split-theme="a">
-            <li data-theme="c">
-                <a href="#account_home!account=twidi@github">
-                    twidi@github
-                </a>
-                <a href="#account-remove" data-rel="popup" data-position-to="window" data-transition="pop">
-                    Remove account
-                </a>
-            </li>
-        </ul>
-        <a data-role="button" href="#account-new" data-icon="plus" data-iconpos="left" data-theme="b" data-rel="popup" data-position-to="window" data-transition="pop" data-inline="true">
-            Add account
-        </a>
-    </div>
-    <div data-role="popup" id="main_menu_accounts" data-theme="a" class="main-nav-menu">
-        <div data-role="controlgroup" data-theme="a">
-            <label><input type="checkbox" name="fullscreen" class="fullscreen-control" id="fullscreen-accounts" data-theme="a"/>Full screen</label>
-            <a href="#repository_home!repository=twidi:repos.io-mobile@github" data-role="button" data-icon="arrow-r" data-theme="a">About</a>
-        </div>
-    </div>
-
-    <!-- Remove account -->
-    <div data-role="popup" id="account-remove" data-theme="a" data-overlay-theme="a">
-        <div class="ui-bar ui-bar-a">
-            <h1>Remove account?</h1>
-        </div>
-        <div data-role="content" data-theme="a">
-            <p>Your account <strong>twidi@github</strong> will be fully removed from this app.</p>
-            <fieldset class="buttons">
-                <a href="index.html" data-role="button" data-rel="back" data-theme="b" data-icon="check" data-mini="true" data-inline="true">Remove</a>
-                <a href="index.html" data-role="button" data-rel="back" data-mini="true" data-icon="delete" data-inline="true">Cancel</a>
-            </fieldset>
-        </div>
-    </div>
-
-    <!-- Add account -->
-    <div data-role="popup" id="account-new" data-theme="a" data-overlay-theme="a">
-        <div class="ui-bar ui-bar-a">
-            <h1>Add account</h1>
-        </div>
-        <div data-role="content" data-theme="a">
-            <fieldset data-role="controlgroup" data-type="vertical">
-                <input id="radio1" name="" value="github" type="radio" data->
-                <label for="radio1">
-                    Github
-                </label>
-                <input id="radio2" name="" value="bitbucket" type="radio">
-                <label for="radio2">
-                    Bitbucket
-                </label>
-            </fieldset><fieldset data-role="controlgroup" class="ui-hide-label">
-                <label for="textinput1">
-                    Username:
-                </label>
-                <input name="" id="textinput1" placeholder="Username" value="" type="text">
-            </fieldset><fieldset class="buttons">
-                <input data-icon="check" data-iconpos="left" value="Add" type="submit" data-rel="back" data-theme="b" data-mini="true" data-inline="true">
-                <a href="index.html" data-role="button" data-rel="back" data-mini="true" data-icon="delete" data-mini="true" data-inline="true">Cancel</a>
-            </fieldset>
-        </div>
-    </div>
-
-</div>
-
 
 <div id="templates">
     <div data-template-for="account_home"><!--
@@ -564,10 +487,14 @@
 
     <div data-template-for="main-nav-menu"><!--
         <div data-role="controlgroup" data-theme="a">
-            <a href="/" data-role="button" data-icon="home" data-rel="home" data-theme="a">Home</a>
-            <label><input type="checkbox" name="fullscreen" class="fullscreen-control" id="fullscreen-' + cur_page.id + '" data-theme="a"/>Full screen</label>
-            <a href="#" data-role="button" data-icon="refresh" class="refresh-control" data-theme="a">Refresh</a>
-            <a href="#" data-role="button" data-icon="arrow-r" class="go-button" data-theme="a" target="_blank">View on <span class="provider"></span></a>
+            <div class="divider">Application</div>
+            <a href="#home" data-role="button" data-icon="home" data-rel="home">Home</a>
+            <label><input type="checkbox" name="fullscreen" class="fullscreen-control" id="fullscreen-' + cur_page.id + '" />Full screen</label>
+            <a href="#repository_home!repository=twidi:repos.io-mobile@github" data-role="button" data-icon="arrow-r">About</a>
+            <div class="divider">Context</div>
+            <a href="#" data-role="button" data-icon="refresh" class="refresh-control">Refresh</a>
+            <label><input type="checkbox" name="toggle-favorite" class="favorite-control" id="toggle-favorite-' + cur_page.id + '" />Local favorite</label>
+            <a href="#" data-role="button" data-icon="arrow-r" class="go-button" target="_blank">View on <span class="provider"></span></a>
         </div>
     --></div>
 </div>

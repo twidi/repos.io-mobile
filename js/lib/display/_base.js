@@ -720,8 +720,10 @@
             items = this.get_favorites_items();
         this.clear_listview(this.nodes.home.favorites);
         this.nodes.home.favorites.append(items);
-        setTimeout(function() { display.load_visible_images(); }, 500);
         this.need_favorites_redraw = false;
+        setTimeout(display.load_visible_images, 500);
+        setTimeout(display.load_visible_images, 1000);
+        setTimeout(display.load_visible_images, 2000);
     }); // refresh_home_favorites
 
 })(Reposio);

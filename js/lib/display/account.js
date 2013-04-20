@@ -8,7 +8,7 @@
         { id: 'stars' },
         { id: 'following', count: true },
         { id: 'followers', count: true },
-        { id: 'events', method: 'received_events' }
+        { id: 'events', title: "Friends activity", method: 'received_events' }
     ];
 
     App.Display.prototype.change_account = (function Display__change_account () {

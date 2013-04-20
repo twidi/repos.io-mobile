@@ -730,10 +730,16 @@ div.ui-input-text input.ui-input-text, div.ui-input-text textarea.ui-input-text,
 .ui-navbar .ui-btn-active .ui-li-count {
     background: #db4b35;
 }
-.ui-navbar ul.extended.ui-grid-c > li:nth-child(n) {
+.ui-navbar ul.extended > .ui-block-a {
+    width: 20%;
+}
+.ui-navbar ul.extended > .ui-block-b {
     width: 30%;
 }
-.ui-navbar ul.extended.ui-grid-c > li:last-child {
+.ui-navbar ul.extended > .ui-block-c {
+    width: 40%;
+}
+.ui-navbar ul.extended > .ui-block-d {
     width: 10%;
 }
 .nav-menu .ui-li {

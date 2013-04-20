@@ -686,7 +686,7 @@
                     if (favorite.avatar_url) {
                         obj.avatar_url = favorite.avatar_url;
                     }
-                    items.push(this.create_account_list_item(obj, provider, favorite.href));
+                    items.push(this.create_account_list_item(obj, provider, favorite.hash));
                     break;
                 case 'repository':
                     obj = {
@@ -700,7 +700,7 @@
                     if (favorite.avatar_url) {
                         obj.user = { avatar_url: favorite.avatar_url };
                     }
-                    items.push(this.create_repository_list_item(obj, provider, favorite.href));
+                    items.push(this.create_repository_list_item(obj, provider, favorite.hash));
                     break;
             }
         }

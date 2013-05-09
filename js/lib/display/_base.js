@@ -272,7 +272,10 @@
                 display.update_go_button(page, page.nodes.main_menu.data('go-button-url'));
                 page.nodes.favorite_control = page.nodes.main_menu.find('.favorite-control');
                 display.update_favorite_control(page);
-                page.nodes.main_menu.find('.auth-menu .ui-btn-text').text(display.controller.current_user ? 'Logout' : 'Login');
+
+                var auth_menu = page.nodes.main_menu.find('.auth-menu');
+                auth_menu.find('.ui-btn-text').text(display.controller.current_user ? 'Logout' : 'Login');
+                if (display.controller.can_login) { auth_menu.show(); }
             }
         })); // main-nav-menu popupbeforeposition
 

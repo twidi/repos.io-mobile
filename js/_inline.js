@@ -7,9 +7,9 @@
 
     function querystringize(hash) {
         if (hash.indexOf('!') != -1) {
-            return hash.replace('!', '?');
+            return hash.replace(/!/g, '?');
         }
-        return hash;
+        return hash.replace(/&ui-state=dialog/g, '');
     }
 
     var corrected_hash = location.hash ? querystringize(location.hash) : '#home';

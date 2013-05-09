@@ -1,7 +1,7 @@
 var providers_config = {
     github: {
-        username: 'foo',
-        password: 'bar',
-        auth: 'basic'
+        auth: 'oauth',
+        client_id: 'foobar', // you must create an app on github
+        token_script: 'http://path.to/token.py' // careful of CORS !
     }
 };

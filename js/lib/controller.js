@@ -2,16 +2,25 @@
 
     var Controller = (function Controller__constructor () {
         this.providers = {};
+        this.can_login = false;
+
         for (var provider_name in App.Providers) {
             this.providers[provider_name] = new App.Providers[provider_name](this);
+            if (!this.can_login && this.providers[provider_name].can_login()) {
+                this.can_login = true;
+            }
         }
+
         for (var model_name in App.Models) {
             this[model_name] = null;
         }
+        this.current_user = null; // assume only one provider for now
+
         this.display = new App.Display(this);
     }); // Controller
 
     Controller.prototype.init = (function Controller__init () {
+        this.get_current_user();
         this.display.init();
     }); // init
 
@@ -96,6 +105,38 @@
         $.jStorage.set('favorites-managed', true);
         this.display.need_favorites_redraw = true;
     }); // add_favorite
+
+    Controller.prototype.get_current_user = (function Controller__get_current_user () {
+        this.current_user = $.jStorage.get('logged-user', null);
+    }); // get_current_user
+
+    Controller.prototype.login = (function Controller__login (username, token) {
+        this.current_user = {
+            username: username,
+            token: token
+        };
+        $.jStorage.set('logged-user', this.current_user);
+        this.display.login_success();
+    }); // logout
+
+    Controller.prototype.logout = (function Controller__logout () {
+        this.current_user = null;
+        $.jStorage.deleteKey('logged-user');
+    }); // logout
+
+    Controller.prototype.check_login = (function Controller__check_login (params) {
+        var controller = this;
+        setTimeout(function() {
+            if (!params.provider || !controller.providers[params.provider]) {
+                return controller.display.login_fail();
+            }
+            controller.providers[params.provider].check_login(
+                params,
+                function(username, token) { controller.login(username, token); },
+                function() { controller.display.login_fail(); }
+            );
+        }, 1);
+    }); // check_login
 
     App.Controller = Controller;
 

@@ -10,15 +10,20 @@
         this.need_favorites_redraw = true;
         this.templates_container = $('#templates');
 
+        this.nodes = {
+            body: $('body'),
+            home: {
+                'favorites': $('#home-favorites'),
+                'anonymous': $('#welcome-anonymous'),
+                'username': $('#welcome span'),
+                'login_button': $('#home-login-button'),
+                'no_login_button': $('.home-hide-no-login-button')
+            }
+        };
+
         for (var obj_type in this.pages_list) {
             this.construct_pages(obj_type, this.pages_list[obj_type]);
         }
-
-        this.nodes = {
-            home: {
-                'favorites': $('#home-favorites')
-            }
-        };
 
         $.mobile.initializePage();
         display.init_events();
@@ -52,9 +57,13 @@
 
         delay_init_pages(pages, 0);
 
+        if (this.controller.can_login) {
+            $('#welcome-anonymous-cannot-login').hide();
+            $('#welcome-anonymous-can-login').show();
+            $('.auth-menu').show();
+            this.toggle_auth_infos();
+        }
     }); // init
-
-    
 
     Display.prototype.format_date = (function Display__format_date(str_date, show_time, show_seconds, time_only) {
         if (!str_date) { return ''; }
@@ -160,7 +169,7 @@
 
         }
 
-        $('body').append(all_markup);
+        this.nodes.body.append(all_markup);
 
         for (var m=0; m<pages.length; m++) {
             var final_page = pages[m],
@@ -263,6 +272,7 @@
                 display.update_go_button(page, page.nodes.main_menu.data('go-button-url'));
                 page.nodes.favorite_control = page.nodes.main_menu.find('.favorite-control');
                 display.update_favorite_control(page);
+                page.nodes.main_menu.find('.auth-menu .ui-btn-text').text(display.controller.current_user ? 'Logout' : 'Login');
             }
         })); // main-nav-menu popupbeforeposition
 
@@ -403,6 +413,30 @@
             var controls = $('.fullscreen-control');
             controls.parents('.ui-checkbox').add(controls.parents('label')).remove();
         }
+
+        display.nodes.home.no_login_button.on('click', (function Display__no_login_click (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            display.nodes.home.anonymous.fadeOut();
+        })); // no_login_button.click
+
+        display.nodes.home.login_button.on('click', (function Display__login_click (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            display.login();
+        })); // login_button.click
+
+        $(document).on('click', '.auth-menu', (function Display__auth_menu_click (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var page = display.pages[$.mobile.activePage.data('url')];
+            (page ? page.nodes.main_menu : $.mobile.activePage.find('.main-nav-menu')).popup('close');
+            if (display.controller.current_user) {
+                display.logout();
+            } else {
+                display.login();
+            }
+        })); // auth_menu_click
 
     }); // init_events
 
@@ -723,5 +757,38 @@
         setTimeout(display.load_visible_images, 1000);
         setTimeout(display.load_visible_images, 2000);
     }); // refresh_home_favorites
+
+    Display.prototype.login = (function Display__login () {
+        window.open(this.controller.providers.github.login_url($.mobile.path.makeUrlAbsolute('github_login.html')));
+    }); // login
+
+    Display.prototype.logout = (function Display__logout () {
+        this.controller.logout();
+        this.toggle_auth_infos();
+    }); // logout
+
+    Display.prototype.toggle_auth_infos = (function Display__toggle_auth_infos () {
+        if (!this.controller.can_login) { return; }
+        var logged = !!this.controller.current_user;
+        $('.auth-menu .ui-btn-text, .auth-menu:not(.ui-btn)').text(logged ? 'Logout' : 'Login');
+        if (logged) {
+            this.nodes.home.anonymous.fadeOut();
+            this.nodes.home.username.html(', <strong>' + this.controller.current_user.username + '</strong>');
+            this.nodes.home.username.show();
+        } else {
+            this.nodes.home.anonymous.fadeIn();
+            this.nodes.home.username.hide();
+            this.nodes.home.username.html('');
+        }
+    }); // toggle_auth_infos
+
+    Display.prototype.login_success = (function Display__login_success () {
+        this.toggle_auth_infos();
+        alert('You are now identified as ' + this.controller.current_user.username);
+    }); // login_success
+
+    Display.prototype.login_fail = (function Display__login_fail () {
+        alert("Something goes wrong and we couldn't complete the authentication.");
+    }); // login_fail
 
 })(Reposio);

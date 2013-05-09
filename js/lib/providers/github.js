@@ -334,17 +334,12 @@
 
 
     var Provider = (function Github__constructor (controller) {
-        var authorization, conf = (providers_config ? providers_config.github || {} : {});
+        this.conf = (providers_config ? providers_config.github || {} : {});
 
         this.name = 'github';
 
-        if (conf.auth == 'basic' && conf.username && conf.password) {
-            authorization = 'Basic ' + Base64.encode(conf.username + ':' + conf.password);
-        } else if (conf.auth == 'oauth' && conf.token) {
-            authorization = 'token '+ conf.token;
-        }
-        if (authorization) {
-            Gh3.Helper.headers['Authorization'] = authorization;
+        if (this.conf.auth == 'oauth' && this.conf.token) {
+            this.set_token(this.conf.token);
         }
 
         Gh3.Helper.cache = false;
@@ -352,6 +347,50 @@
         this.controller = controller;
         this.formatter = new EventFormatter(this);
     }); // Provider
+
+    Provider.prototype.set_token = (function Github__set_token (token) {
+        this.conf.token = token;
+        Gh3.Helper.headers['Authorization'] = 'token ' + token;
+    }); // set_token
+
+    Provider.prototype.can_login = (function Github__can_login () {
+        return !!(this.conf.auth == 'oauth' && this.conf.client_id && this.conf.token_script);
+    }); // can_login
+
+    Provider.prototype.login_url = (function Github__login_url(redirect_url) {
+        this.conf.last_state = Math.random();
+        var url = 'https://github.com/login/oauth/authorize?scope=public_repo,user:follow&client_id=';
+        url += this.conf.client_id;
+        url += '&redirect_uri=' + escape(redirect_url);
+        url += '&state=' + this.conf.last_state;
+        return url;
+    }); // login_url
+
+    Provider.prototype.check_login = (function Github__check_login (params, callback_success, callback_fail) {
+        var provider = this,
+            last_state = this.conf.last_state;
+        delete this.conf.last_state;
+        if (params.error || !params.code || !params.state || params.state != last_state) { return callback_fail(); }
+
+        $.ajax({
+            url: this.conf.token_script + '?code=' + escape(params.code),
+            dataType: "json"
+        }).done(function(token_data) {
+            if (token_data.error || !token_data.token) {
+                return callback_fail();
+            }
+            provider.set_token(token_data.token);
+            var user = new Gh3.CurrentUser();
+            user.fetch(function(error, user_data) {
+                if (!error && user_data) {
+                    callback_success(user_data.login, token_data.token);
+                } else {
+                    callback_fail();
+                }
+            });
+        }).fail(callback_fail);
+
+    }); // check_login
 
     Provider.prototype.get_user = (function Github__get_user (username) {
         return new Gh3.User(username);

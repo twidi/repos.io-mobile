@@ -266,10 +266,14 @@
                 var template = display.get_template('main-nav-menu');
                 popup.append(template.cloneNode(true));
                 popup.trigger('create');
+
                 var page = display.pages[$.mobile.activePage.data('url')];
+
                 page.nodes.refresh_control = page.nodes.main_menu.find('.refresh-control');
+
                 page.nodes.go_button = page.nodes.main_menu.find('.go-button');
                 display.update_go_button(page, page.nodes.main_menu.data('go-button-url'));
+
                 page.nodes.favorite_control = page.nodes.main_menu.find('.favorite-control');
                 display.update_favorite_control(page);
 
@@ -435,7 +439,7 @@
             var page = display.pages[$.mobile.activePage.data('url')];
             (page ? page.nodes.main_menu : $.mobile.activePage.find('.main-nav-menu')).popup('close');
             if (display.controller.current_user) {
-                display.logout();
+                display.controller.logout();
             } else {
                 display.login();
             }
@@ -766,7 +770,6 @@
     }); // login
 
     Display.prototype.logout = (function Display__logout () {
-        this.controller.logout();
         this.toggle_auth_infos();
     }); // logout
 

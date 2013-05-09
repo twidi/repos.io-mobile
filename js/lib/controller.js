@@ -122,6 +122,7 @@
     Controller.prototype.logout = (function Controller__logout () {
         this.current_user = null;
         $.jStorage.deleteKey('logged-user');
+        this.display.logout();
     }); // logout
 
     Controller.prototype.check_login = (function Controller__check_login (params) {

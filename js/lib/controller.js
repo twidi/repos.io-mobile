@@ -108,6 +108,16 @@
 
     Controller.prototype.get_current_user = (function Controller__get_current_user () {
         this.current_user = $.jStorage.get('logged-user', null);
+
+        if (this.current_user && this.current_user.provider && this.providers[this.current_user.provider]) {
+            if (!this.providers[this.current_user.provider].init_auth(this.current_user)) {
+                this.current_user = null;
+            }
+        }
+
+        if (!this.current_user) {
+            this.logout();
+        }
     }); // get_current_user
 
     Controller.prototype.login = (function Controller__login (username, auth_data, provider) {

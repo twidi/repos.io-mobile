@@ -350,8 +350,26 @@
 
     Provider.prototype.set_token = (function Github__set_token (token) {
         this.conf.token = token;
-        Gh3.Helper.headers['Authorization'] = 'token ' + token;
+        if (token) {
+            Gh3.Helper.headers.Authorization = 'token ' + token;
+        } else if (Gh3.Helper.headers.Authorization) {
+            delete Gh3.Helper.headers.Authorization;
+        }
     }); // set_token
+
+    Provider.prototype.init_auth = (function Github__init_auth (auth_data) {
+        if (!auth_data || auth_data.provider != this.name || !auth_data.token) { return false; }
+        this.set_token(auth_data.token);
+        var provider = this,
+            user = new Gh3.CurrentUser();
+        user.fetch(function(error, user_data) {
+            if (error || !user_data) {
+                provider.set_token(null);
+                provider.controller.logout();
+            }
+        });
+        return true;
+    });
 
     Provider.prototype.can_login = (function Github__can_login () {
         return !!(this.conf.auth == 'oauth' && this.conf.client_id && this.conf.token_script);

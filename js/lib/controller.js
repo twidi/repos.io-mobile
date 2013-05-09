@@ -110,11 +110,10 @@
         this.current_user = $.jStorage.get('logged-user', null);
     }); // get_current_user
 
-    Controller.prototype.login = (function Controller__login (username, token) {
-        this.current_user = {
-            username: username,
-            token: token
-        };
+    Controller.prototype.login = (function Controller__login (username, auth_data, provider) {
+        this.current_user = auth_data;
+        this.current_user.username = username;
+        this.current_user.provider = provider;
         $.jStorage.set('logged-user', this.current_user);
         this.display.login_success();
     }); // logout
@@ -133,7 +132,7 @@
             }
             controller.providers[params.provider].check_login(
                 params,
-                function(username, token) { controller.login(username, token); },
+                function(username, auth_data) { controller.login(username, auth_data, params.provider); },
                 function() { controller.display.login_fail(); }
             );
         }, 1);

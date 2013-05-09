@@ -108,15 +108,18 @@
 
     Controller.prototype.get_current_user = (function Controller__get_current_user () {
         this.current_user = $.jStorage.get('logged-user', null);
+        if (!this.current_user) { return; }
 
-        if (this.current_user && this.current_user.provider && this.providers[this.current_user.provider]) {
+        if (this.current_user.provider && this.providers[this.current_user.provider]) {
             if (!this.providers[this.current_user.provider].init_auth(this.current_user)) {
                 this.current_user = null;
             }
+        } else {
+            this.current_user = null;
         }
 
         if (!this.current_user) {
-            this.logout();
+            setTimeout(function() { controller.logout(); }, 500);
         }
     }); // get_current_user
 

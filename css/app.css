@@ -21,7 +21,8 @@ body {
     background: #edeae1;
 }
 
-.ui-content > p {
+.ui-content > p,
+.ui-content > hr {
     margin-left: 2%;
     margin-right: 2%;
 }
@@ -862,4 +863,37 @@ div[id^=main_menu_][id$=-popup].ui-popup-container.ui-popup-active {
 }
 #home .ui-content .ui-li-divider {
     margin-bottom: 10px;
+}
+
+/* Auth */
+#welcome-anonymous {
+    background: #fff;
+    border: 1px solid #bab9b3;
+    -webkit-border-radius: 4px;
+       -moz-border-radius: 4px;
+        -ms-border-radius: 4px;
+         -o-border-radius: 4px;
+            border-radius: 4px;
+    margin: 0 2% 15px 2%;
+    margin-bottom: 15px;
+    padding: 0.5em 1em;
+}
+#welcome-anonymous-can-login, .auth-menu {
+    display: none;
+}
+#welcome-anonymous ul {
+    padding-left: 2em;
+}
+#welcome-anonymous li {
+    margin-top: 1ex;
+}
+.home-auth-buttons .ui-btn {
+    text-decoration: none;
+    color: #444;
+    font-weight: bold;
+    display: block;
+    display: table;
+    margin: 0 auto;
+    width: auto;
+    width: -moz-fit-content;
 }

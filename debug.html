@@ -135,6 +135,34 @@ html.loading.ui-mobile-rendering > * { visibility: visible !important; }
         <a href="#main_menu_home" data-icon="gear" data-iconpos="notext" data-rel="popup" class="ui-btn-right">Options</a>
     </div>
     <div data-role="content">
+        <p id="welcome">Welcome on Repos.io mobile<span></span></p>
+        <div id="welcome-anonymous">
+            <div id="welcome-anonymous-can-login">
+                <p><strong>Note to anonymous users :</strong></p>
+                <p>By authenticating with Github, you'll get full power of Repos.io mobile:</p>
+                <ul>
+                    <li>ability to (un)star and (un)follow repositories and users</li>
+                    <li>nearly no limit to access content (Github limits API calls to <em>60/hour</em> for anonymous users)</li>
+                </ul>
+                <p><em>Note that as it's a full web-app, we don't store anything on our servers, everything is in your browser.</em></p>
+                <div class="ui-grid-a home-auth-buttons">
+                    <div class="ui-block-a"><a data-role="button" href='#' data-icon="person" data-inline="true" data-mini="true" id="home-login-button" data-corners="false" >Login</a></div>
+                    <div class="ui-block-b"><a data-role="button" href='#' data-icon="delete" data-inline="true" data-mini="true" class="home-hide-no-login-button" data-corners="false" >Not now</a></div>
+                </div>
+            </div>
+            <div id="welcome-anonymous-cannot-login">
+                <p><strong>Information about authentication :</strong></p>
+                <p>The configuration of your version of Repos.io mobile does not allow authentication with Github, therefore:</p>
+                <ul>
+                    <li>you won't be able to (un)star and (un)follow repositories and users</li>
+                    <li>calls made by this application to the Github API will be limited (Github limits API calls to <em>60/hour</em> for anonymous users)</li>
+                </ul>
+                <p>The host of this application can change this easily in its <em>providers-config.js</em> file</p>
+                <div class="home-auth-buttons">
+                <a data-role="button" href='#' data-icon="delete" data-inline="true" data-mini="true" class="home-hide-no-login-button" data-corners="false" >Hide</a></div>
+            </div>
+        </div>
+        <hr />
         <ul id="home-favorites" class="ui-listview mixed-list">
             <li class="ui-li ui-li-divider">Local favorites</li>
         </ul>

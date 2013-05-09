@@ -292,6 +292,7 @@
         _setData: function(data) {
             /* Take an object/hash of data and save properties in self.
              */
+            if (!data) { return; }
             for(var prop in data) {
                 this[prop] = data[prop];
             }
@@ -593,6 +594,17 @@
         /* List of a repository's stargazers
          */
         _service: function() { return this.parent._service() + "/stargazers"; }
+    });
+
+
+    Gh3.CurrentUser = Gh3.User.extend({
+        constructor: function() {
+            // this.login will be set on fetch
+            Gh3.CurrentUser.__super__.constructor.call(this, 'logged-user');
+        },
+        _service: function() {
+            return "user";
+        }
     });
 
 

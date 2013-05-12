@@ -252,10 +252,11 @@
     }); // more_IssuesEvent
 
     EventFormatter.prototype.MemberEvent = (function GithubEventFormatter__MemberEvent (event, source) {
-        var part = event.action + ' ';
+        var part = event.action + ' ', desc;
         part += this.format_actor(event.member, source);
         part += ' as a member ' + (event.action == 'added' ? 'to' : 'from');
-        return this.base_format(event, source, part);
+        desc = this.description_fetcher(event, source);
+        return this.base_format(event, source, part, desc);
     }); // MemberEvent
 
     EventFormatter.prototype.PublicEvent = (function GithubEventFormatter__PublicEvent (event, source) {

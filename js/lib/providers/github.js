@@ -401,7 +401,7 @@
             var user = new Gh3.CurrentUser();
             user.fetch(function(error, user_data) {
                 if (!error && user_data) {
-                    callback_success(user_data.login, {token: token_data.token});
+                    callback_success(provider.map_account(user_data), {token: token_data.token});
                 } else {
                     callback_fail();
                 }

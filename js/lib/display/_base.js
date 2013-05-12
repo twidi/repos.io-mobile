@@ -405,10 +405,7 @@
 
         $.jStorage.listenKeyChange('favorites', function(key, action){
             display.controller.favorites = $.jStorage.get('favorites', []);
-            display.need_favorites_redraw = true;
-            if ($.mobile.activePage.data('url') == 'home') {
-                display.refresh_home_favorites();
-            }
+            display.ask_for_favorites_redraw();
         });
 
         if (screenfull.enabled) {
@@ -750,6 +747,13 @@
         }
         return items;
     }); // get_favorites_items
+
+    Display.prototype.ask_for_favorites_redraw = (function Display__ask_for_favorites_redraw () {
+        this.need_favorites_redraw = true;
+        if ($.mobile.activePage.data('url') == 'home') {
+            this.refresh_home_favorites();
+        }
+    }); // ask_for_favorites_redraw
 
     Display.prototype.refresh_home_favorites = (function Display__refresh_home_favorites () {
         if (!this.need_favorites_redraw) { return; }

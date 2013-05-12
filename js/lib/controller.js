@@ -11,10 +11,13 @@
             }
         }
 
+
         for (var model_name in App.Models) {
             this[model_name] = null;
         }
         this.current_user = null; // assume only one provider for now
+
+        this.favorites = $.jStorage.get('favorites', []);
 
         this.display = new App.Display(this);
     }); // Controller
@@ -61,13 +64,12 @@
         return hash;
     }); // make_page_hash
 
-    Controller.prototype.toggle_favorite = (function Controller__add_favorite (obj, page, options) {
+    Controller.prototype.toggle_favorite = (function Controller__add_favorite (obj, page, options, before) {
         var hash = this.make_page_hash(obj, page, options),
-            favorites = $.jStorage.get('favorites', []),
-            len = favorites.length,
+            len = this.favorites.length,
             favorite;
-        favorites = _.reject(favorites, function(fav) { return fav.hash == hash; } );
-        if (len == favorites.length) {
+        this.favorites = _.reject(this.favorites, function(fav) { return fav.hash == hash; } );
+        if (len == this.favorites.length) {
             // same length = not removed = add favorite
             favorite = {
                 hash: hash,
@@ -99,12 +101,17 @@
                     }
                     break;
             }
-            favorites.push(favorite);
+            this.favorites[before ? 'unshift' : 'push'](favorite);
         }
-        $.jStorage.set('favorites', favorites);
+        $.jStorage.set('favorites', this.favorites);
         $.jStorage.set('favorites-managed', true);
         this.display.need_favorites_redraw = true;
     }); // add_favorite
+
+    Controller.prototype.is_favorited = (function Controller__is_favorited (obj, page, options) {
+        var hash = this.make_page_hash(obj, page);
+        return !!(_.find(this.favorites, function(fav) { return fav.hash == hash; } ));
+    });
 
     Controller.prototype.get_current_user = (function Controller__get_current_user () {
         this.current_user = $.jStorage.get('logged-user', null);

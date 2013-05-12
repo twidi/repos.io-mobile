@@ -404,6 +404,7 @@
         $(window).on('resize', display.load_visible_images);
 
         $.jStorage.listenKeyChange('favorites', function(key, action){
+            display.controller.favorites = $.jStorage.get('favorites', []);
             display.need_favorites_redraw = true;
             if ($.mobile.activePage.data('url') == 'home') {
                 display.refresh_home_favorites();
@@ -467,9 +468,7 @@
     }); // update_fullscreen_control
 
     Display.prototype.update_favorite_control = (function Display__update_favorite_control (page) {
-        var hash = this.controller.make_page_hash(this.controller[page.type], page, page.view.accept_options ? page.view.get_options_from_form() : null),
-            favorites = $.jStorage.get('favorites', []),
-            favorited = _.find(favorites, function(fav) { return fav.hash == hash; } );
+        var favorited = this.controller.is_favorited(this.controller[page.type], page, page.view.accept_options ? page.view.get_options_from_form() : null);
         page.nodes.favorite_control.attr("checked", !!favorited).checkboxradio("refresh");
     }); // update_favorite_control
 
@@ -699,10 +698,9 @@
     App.Display = Display;
 
     Display.prototype.get_favorites_items = (function Display__list_favorites () {
-        var favorites = $.jStorage.get('favorites', []),
-            items = [], i, favorite, obj, provider;
-        if (!favorites.length) {
-            favorites = [{
+        var items = [], i, favorite, obj, provider;
+        if (!this.controller.favorites.length) {
+            this.controller.favorites = [{
                 hash: '#account_home!account=twidi@github',
                 model: 'account',
                 ref: 'twidi',
@@ -717,11 +715,11 @@
                 provider: 'github'
             }];
             if (!$.jStorage.get('favorites-managed')) {
-                $.jStorage.set('favorites', favorites);
+                $.jStorage.set('favorites', this.controller.favorites);
             }
         }
-        for (i = 0; i < favorites.length; i++) {
-            favorite = favorites[i];
+        for (i = 0; i < this.controller.favorites.length; i++) {
+            favorite = this.controller.favorites[i];
             provider = {name: favorite.provider};
             switch (favorite.model) {
                 case 'account':

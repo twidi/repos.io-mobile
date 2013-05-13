@@ -82,6 +82,7 @@
     }); // escape_html
 
     Display.prototype.nodes = {};
+    Display.prototype.template_sources = {};
     Display.prototype.templates = {};
     Display.prototype.pages_list = {};  // to define pages in display/*.js
     Display.prototype.pages = {};  // to hold all final pages
@@ -98,7 +99,11 @@
         }
 
         var all_markup = '',
-            extended_navbar = (pages.length > 4);
+            extended_navbar = (pages.length > 4),
+            footer_template = {
+                account: this.get_template_source('account-footer'),
+                repository: this.get_template_source('repository-footer')
+            };
 
         for (var i=0; i<pages.length; i++) {
             var cur_page = pages[i],
@@ -115,7 +120,7 @@
 
             markup = '<div data-role="page" id="' + cur_page.id + '">';
 
-                markup += '<div data-role="header" data-id="' + type + '_pages" data-position="fixed" data-theme="a">';
+                markup += '<div data-role="header" data-id="' + type + '_pages" data-position="fixed" data-theme="a" class="header">';
                     markup += '<h3></h3>';
                     markup += '<a href="#main_menu_' + cur_page.id + '" id="main_menu_' + cur_page.id + '_opener" data-icon="gear" data-iconpos="notext" data-rel="popup" class="ui-btn-right">Options</a>';
                     markup += '<div data-role="navbar">';
@@ -139,6 +144,8 @@
                 markup += '</div>';
 
                 markup += '<div data-role="content"></div>';
+
+                markup += footer_template[pages[i].type];
 
                 if (extended_navbar) {
                     markup += '<div data-role="popup" id="menu_' + cur_page.id + '" data-theme="a" class="nav-menu">';
@@ -175,6 +182,7 @@
             var final_page = pages[m],
                 page_node = $('#' + final_page.id),
                 main_menu = $('#main_menu_' + final_page.id),
+                footer = page_node.find('.footer'),
                 template = this.get_template(final_page.id, true, true);
 
             // cache some page nodes
@@ -184,9 +192,10 @@
                 header: page_node.children(':jqmData(role=header)').children('h3'),
                 content: page_node.children(":jqmData(role=content)"),
                 main_menu: main_menu,
-                refresh_control: $(),
-                go_button: $(),
-                favorite_control: $()
+                footer: footer,
+                refresh_control: footer.find('.refresh-control'),
+                go_provider_control: footer.find('.go-provider-control'),
+                favorite_control: footer.find('.favorite-control')
             };
             final_page.node = final_page.nodes.page;
 
@@ -202,14 +211,11 @@
 
     }); // construct_pages
 
-    Display.prototype.update_go_button = (function Display__update_go_button (page, url) {
-        var go_button = page.nodes.go_button;
-        if (go_button.length) {
-            go_button.find('.provider').text(this.controller[page.type].provider.name);
-            go_button.toggleClass('ui-disabled', !url);
-            go_button.attr('href', url || '');
-        }
-    }); // update_go_button
+    Display.prototype.update_go_provider_control = (function Display__update_go_provider_control (page, url) {
+        page.nodes.go_provider_control.find('.provider').text(this.controller[page.type].provider.name);
+        page.nodes.go_provider_control.toggleClass('ui-disabled', !url);
+        page.nodes.go_provider_control.attr('href', url || '');
+    }); // update_go_provider_control
 
     Display.prototype.init_events = (function Display__init_events () {
         var display = this;
@@ -235,8 +241,7 @@
                 var page = display.pages[data.toPage.data('url')], real_url;
                 display.update_favorite_control(page);
                 real_url = display['get_real_' + page.type + '_page'](page.name, display.controller[page.type]);
-                page.nodes.main_menu.data('go-button-url', real_url);
-                display.update_go_button(page, real_url);
+                display.update_go_provider_control(page, real_url);
             } catch(ex) {}
         })); // pagechange
 
@@ -267,17 +272,8 @@
                 popup.append(template.cloneNode(true));
                 popup.trigger('create');
 
-                var page = display.pages[$.mobile.activePage.data('url')];
-
-                page.nodes.refresh_control = page.nodes.main_menu.find('.refresh-control');
-
-                page.nodes.go_button = page.nodes.main_menu.find('.go-button');
-                display.update_go_button(page, page.nodes.main_menu.data('go-button-url'));
-
-                page.nodes.favorite_control = page.nodes.main_menu.find('.favorite-control');
-                display.update_favorite_control(page);
-
-                var auth_menu = page.nodes.main_menu.find('.auth-menu');
+                var page = display.pages[$.mobile.activePage.data('url')],
+                    auth_menu = page.nodes.main_menu.find('.auth-menu');
                 auth_menu.find('.ui-btn-text').text(display.controller.current_user ? 'Logout' : 'Login');
                 if (display.controller.can_login) { auth_menu.show(); }
             }
@@ -391,13 +387,13 @@
             }), 200);
         })); // refresh-control.click
 
-        $(document).on('change', '.favorite-control', (function Display__favorite_click (e) {
+        $(document).on('click', '.favorite-control', (function Display__favorite_click (e) {
             e.preventDefault();
             e.stopPropagation();
             var page = display.pages[$.mobile.activePage.data('url')],
-                options = page.view.accept_options ? page.view.get_options_from_form() : null;
-            page.nodes.main_menu.popup('close');
-            display.controller.toggle_favorite(display.controller[page.type], page, options);
+                options = page.view.accept_options ? page.view.get_options_from_form() : null,
+                favorited = display.controller.toggle_favorite(display.controller[page.type], page, options);
+            display.update_favorite_control(page, !!favorited);
         })); // favorite-control.click
 
         $(window).on('scrollstop', display.load_visible_images);
@@ -464,9 +460,11 @@
             });
     }); // update_fullscreen_control
 
-    Display.prototype.update_favorite_control = (function Display__update_favorite_control (page) {
-        var favorited = this.controller.is_favorited(this.controller[page.type], page, page.view.accept_options ? page.view.get_options_from_form() : null);
-        page.nodes.favorite_control.attr("checked", !!favorited).checkboxradio("refresh");
+    Display.prototype.update_favorite_control = (function Display__update_favorite_control (page, favorited) {
+        if (favorited !== false || favorited !== true) {
+            favorited = this.controller.is_favorited(this.controller[page.type], page, page.view.accept_options ? page.view.get_options_from_form() : null);
+        }
+        page.nodes.favorite_control.toggleClass("selected", favorited);
     }); // update_favorite_control
 
     Display.prototype.on_before_page_change = (function Display__on_before_page_change (e, data) {
@@ -661,16 +659,23 @@
         return result;
     }); // confirm_new_fech
 
+    Display.prototype.get_template_source = (function Display__get_template_source (name) {
+        if (!this.template_sources[name]) {
+            var template_container = this.templates_container.find('[data-template-for=' + name + ']')[0];
+            this.template_sources[name] = template_container.childNodes[0].nodeValue;
+            template_container.parentNode.removeChild(template_container);
+        }
+        return this.template_sources[name];
+    }); // get_template_source
+
     Display.prototype.get_template = (function Display__get_template (name, consume, return_container) {
-        var template_container, template;
+        var source, template;
         if (!this.templates[name]) {
-            template_container = this.templates_container.find('[data-template-for=' + name + ']')[0];
             template = document.createElement('div');
-            template.innerHTML = template_container.childNodes[0].nodeValue;
+            template.innerHTML = this.get_template_source(name);
             if (!return_container) {
                 template = template.removeChild(template.children[0]);
             }
-            template_container.parentNode.removeChild(template_container);
             this.templates[name] = template;
         }
         template = this.templates[name];

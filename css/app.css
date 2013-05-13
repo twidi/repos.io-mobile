@@ -15,6 +15,11 @@ body {
     color: white;
     border-bottom: 3px solid #ab3927;
 }
+.ui-footer {
+    background: #db4b35;
+    color: white;
+    border-top: 3px solid #ab3927;
+}
 
 .ui-content {
     padding-top: 0;
@@ -707,14 +712,28 @@ div.ui-input-text input.ui-input-text, div.ui-input-text textarea.ui-input-text,
     color: inherit;
     text-decoration: none;
     font-weight: bold;
+}
+.header .ui-navbar .ui-btn-inline {
     -webkit-border-radius: 2px 2px 0 0;
        -moz-border-radius: 2px 2px 0 0;
         -ms-border-radius: 2px 2px 0 0;
          -o-border-radius: 2px 2px 0 0;
             border-radius: 2px 2px 0 0;
 }
-.ui-navbar .ui-btn-active {
+.ui-navbar .ui-btn-active,
+.ui-navbar .selected {
     background: #ab3927;
+}
+.footer .ui-navbar li .ui-btn {
+    padding: 2px;
+}
+.footer .ui-navbar li .selected {
+    padding: 4px 0 0 4px;
+    -webkit-box-shadow: -2px 2px 2px rgba(0, 0, 0, 0.3) inset;
+       -moz-box-shadow: -2px 2px 2px rgba(0, 0, 0, 0.3) inset;
+        -ms-box-shadow: -2px 2px 2px rgba(0, 0, 0, 0.3) inset;
+         -o-box-shadow: -2px 2px 2px rgba(0, 0, 0, 0.3) inset;
+            box-shadow: -2px 2px 2px rgba(0, 0, 0, 0.3) inset;
 }
 .ui-navbar .ui-btn-inline .ui-li-count {
     background: #ab3927;
@@ -815,7 +834,7 @@ div.ui-input-text input.ui-input-text, div.ui-input-text textarea.ui-input-text,
     background-color: #ab3927;
     left: 10px;
 }
-.go-button .provider {
+.go-provider-control .provider {
     text-transform: capitalize;
 }
 div[id^=main_menu_][id$=-popup].ui-popup-container.ui-popup-active {
@@ -824,17 +843,6 @@ div[id^=main_menu_][id$=-popup].ui-popup-container.ui-popup-active {
     right: 5px !important;
     left: auto !important;
     bottom: auto !important;
-}
-.main-nav-menu .last-common-menu {
-    /*border-bottom: 2px solid #ab3927;    */
-}
-.main-nav-menu .ui-controlgroup-controls > .divider {
-    color: rgba(255, 255, 255, 0.8);
-    background: #ab3927;
-    padding-left: 10px;
-    font-style: italic;
-    padding-bottom: 2px;
-    padding-top: 2px;
 }
 
 /* more buttons */

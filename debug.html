@@ -171,7 +171,6 @@ html.loading.ui-mobile-rendering > * { visibility: visible !important; }
     </div>
     <div data-role="popup" id="main_menu_home" data-theme="a" class="main-nav-menu">
         <div data-role="controlgroup" data-theme="a">
-            <div class="divider">Application</div>
             <label><input type="checkbox" name="fullscreen" class="fullscreen-control" id="fullscreen-home" data-theme="a"/>Full screen</label>
             <a href="#repository_home!repository=twidi:repos.io-mobile@github" data-role="button" data-icon="arrow-r" data-theme="a">About</a>
             <a href="#" class="auth-menu" data-role="button" data-icon="person">Login</a>
@@ -643,15 +642,33 @@ html.loading.ui-mobile-rendering > * { visibility: visible !important; }
 
     <div data-template-for="main-nav-menu"><!--
         <div data-role="controlgroup" data-theme="a">
-            <div class="divider">Application</div>
             <a href="#home" data-role="button" data-icon="home" data-rel="home">Home</a>
             <label><input type="checkbox" name="fullscreen" class="fullscreen-control" id="fullscreen-' + cur_page.id + '" />Full screen</label>
             <a href="#repository_home!repository=twidi:repos.io-mobile@github" data-role="button" data-icon="arrow-r">About</a>
             <a href="#" class="auth-menu" data-role="button" data-icon="person">Login</a>
-            <div class="divider">Context</div>
-            <a href="#" data-role="button" data-icon="refresh" class="refresh-control">Refresh</a>
-            <label><input type="checkbox" name="toggle-favorite" class="favorite-control" id="toggle-favorite-' + cur_page.id + '" />Local favorite</label>
-            <a href="#" data-role="button" data-icon="arrow-r" class="go-button" target="_blank">View on <span class="provider"></span></a>
+        </div>
+    --></div>
+
+    <div data-template-for="account-footer"><!--
+        <div data-role="footer" data-position="fixed" data-id="content-footer" class="footer">
+            <div data-role="navbar">
+                <ul>
+                    <li><a href="#" data-icon="star" class="favorite-control">Local favorite</a></li>
+                    <li><a href="#" data-icon="refresh" class="refresh-control">Refresh</a></li>
+                    <li><a href="#" data-icon="arrow-r" class="go-provider-control" target="_blank"><span class="provider">View</span></a></li>
+                </ul>
+            </div>
+        </div>
+    --></div>
+    <div data-template-for="repository-footer"><!--
+        <div data-role="footer" data-position="fixed" data-id="content-footer" class="footer">
+            <div data-role="navbar">
+                <ul>
+                    <li><a href="#" data-icon="star" class="favorite-control">Local favorite</a></li>
+                    <li><a href="#" data-icon="refresh" class="refresh-control">Refresh</a></li>
+                    <li><a href="#" data-icon="arrow-r" class="go-provider-control" target="_blank"><span class="provider">View</span></a></li>
+                </ul>
+            </div>
         </div>
     --></div>
 </div>

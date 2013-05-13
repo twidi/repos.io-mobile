@@ -67,16 +67,18 @@
     Controller.prototype.toggle_favorite = (function Controller__add_favorite (obj, page, options, before) {
         var hash = this.make_page_hash(obj, page, options),
             len = this.favorites.length,
-            favorite;
+            favorite, favorited = false;
         this.favorites = _.reject($.jStorage.get('favorites', []), function(fav) { return fav.hash == hash; } );
         if (len == this.favorites.length) {
             // same length = not removed = add favorite
             favorite = this.create_favorite(hash, obj, page.title, options);
             this.favorites[before ? 'unshift' : 'push'](favorite);
+            favorited = true;
         }
         $.jStorage.set('favorites', this.favorites);
         $.jStorage.set('favorites-managed', true);
         this.display.ask_for_favorites_redraw();
+        return favorited;
     }); // add_favorite
 
     Controller.prototype.create_favorite = (function Controller__create_favorite (hash, obj, title, options) {

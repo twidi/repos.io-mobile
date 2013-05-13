@@ -8,23 +8,25 @@
 <body>
 This window will close itself in a short moment.
 <script type='text/javascript'>
-    if (!window.opener || !window.opener.Reposio || !window.opener.Reposio.controller || !window.opener.Reposio.controller.check_login) {
-        alert('A problem prevented us to finish authentication. Please close the current window/tab and retry.');
-        return;
-    }
-    var entries = unescape(location.search.substring(1)).split(/&/),
-        params = { provider: 'github' },
-        i, parts;
-
-    for (i = 0; i < entries.length; i++) {
-        parts = entries[i].split('=');
-        if (parts.length === 2) {
-            params[parts[0]] = parts[1];
+    (function () {
+        if (!window.opener || !window.opener.Reposio || !window.opener.Reposio.controller || !window.opener.Reposio.controller.check_login) {
+            alert('A problem prevented us to finish authentication. Please close the current window/tab and retry.');
+            return;
         }
-    }
+        var entries = unescape(location.search.substring(1)).split(/&/),
+            params = { provider: 'github' },
+            i, parts;
 
-    window.opener.Reposio.controller.check_login(params);
+        for (i = 0; i < entries.length; i++) {
+            parts = entries[i].split('=');
+            if (parts.length === 2) {
+                params[parts[0]] = parts[1];
+            }
+        }
 
-    window.close();
+        window.opener.Reposio.controller.check_login(params);
+
+        window.close();
+    })();
 </script>
 </body>

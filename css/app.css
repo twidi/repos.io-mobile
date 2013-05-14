@@ -729,11 +729,11 @@ div.ui-input-text input.ui-input-text, div.ui-input-text textarea.ui-input-text,
 }
 .footer .ui-navbar li .selected {
     padding: 4px 0 0 4px;
-    -webkit-box-shadow: -2px 2px 2px rgba(0, 0, 0, 0.3) inset;
-       -moz-box-shadow: -2px 2px 2px rgba(0, 0, 0, 0.3) inset;
-        -ms-box-shadow: -2px 2px 2px rgba(0, 0, 0, 0.3) inset;
-         -o-box-shadow: -2px 2px 2px rgba(0, 0, 0, 0.3) inset;
-            box-shadow: -2px 2px 2px rgba(0, 0, 0, 0.3) inset;
+    -webkit-box-shadow: 0 0 2px rgba(0, 0, 0, 0.5) inset;
+       -moz-box-shadow: 0 0 2px rgba(0, 0, 0, 0.5) inset;
+        -ms-box-shadow: 0 0 2px rgba(0, 0, 0, 0.5) inset;
+         -o-box-shadow: 0 0 2px rgba(0, 0, 0, 0.5) inset;
+            box-shadow: 0 0 2px rgba(0, 0, 0, 0.5) inset;
 }
 .ui-navbar .ui-btn-inline .ui-li-count {
     background: #ab3927;

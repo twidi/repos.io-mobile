@@ -195,7 +195,8 @@
                 footer: footer,
                 refresh_control: footer.find('.refresh-control'),
                 go_provider_control: footer.find('.go-provider-control'),
-                favorite_control: footer.find('.favorite-control')
+                favorite_control: footer.find('.favorite-control'),
+                star_control: footer.find('.star-control')
             };
             final_page.node = final_page.nodes.page;
 
@@ -238,10 +239,12 @@
                 $.mobile.loading('show');
             }
             try {
-                var page = display.pages[data.toPage.data('url')], real_url;
+                var page = display.pages[data.toPage.data('url')], real_url,
+                    obj = display.controller[page.type];
                 display.update_favorite_control(page);
-                real_url = display['get_real_' + page.type + '_page'](page.name, display.controller[page.type]);
+                real_url = display['get_real_' + page.type + '_page'](page.name, obj);
                 display.update_go_provider_control(page, real_url);
+                display.update_star_control(page, obj);
             } catch(ex) {}
         })); // pagechange
 
@@ -380,11 +383,10 @@
             e.stopPropagation();
             var page = display.pages[$.mobile.activePage.data('url')],
                 options = page.view.accept_options ? page.view.get_options_from_form() : null;
-            page.nodes.main_menu.popup('close');
             setTimeout((function Display__refresh_page() {
                 $.mobile.loading('show');
                 display.ask_for_page(page.id, display.controller[page.type].id, options, 'force');
-            }), 200);
+            }), 100);
         })); // refresh-control.click
 
         $(document).on('click', '.favorite-control', (function Display__favorite_click (e) {
@@ -392,9 +394,19 @@
             e.stopPropagation();
             var page = display.pages[$.mobile.activePage.data('url')],
                 options = page.view.accept_options ? page.view.get_options_from_form() : null,
-                favorited = display.controller.toggle_favorite(display.controller[page.type], page, options);
+                obj = display.controller[page.type],
+                favorited = display.controller.toggle_favorite(obj, page, options);
             display.update_favorite_control(page, !!favorited);
         })); // favorite-control.click
+
+        $(document).on('click', '.star-control', (function Display__star_click (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (!display.controller.current_user) { return; }
+            var page = display.pages[$.mobile.activePage.data('url')],
+                obj = display.controller[page.type];
+            display.toggle_star(page, obj);
+        })); // star-control.click
 
         $(window).on('scrollstop', display.load_visible_images);
         $(window).on('resize', display.load_visible_images);
@@ -461,11 +473,49 @@
     }); // update_fullscreen_control
 
     Display.prototype.update_favorite_control = (function Display__update_favorite_control (page, favorited) {
-        if (favorited !== false || favorited !== true) {
+        if (favorited !== false && favorited !== true) {
             favorited = this.controller.is_favorited(this.controller[page.type], page, page.view.accept_options ? page.view.get_options_from_form() : null);
         }
         page.nodes.favorite_control.toggleClass("selected", favorited);
     }); // update_favorite_control
+
+    Display.prototype.update_star_control = (function Display__update_star_control (page, obj) {
+        var display = this;
+        if (!this.is_page_for(page, obj)) { return; }
+        if (!this.controller.current_user || (obj.starred !== false && obj.starred !== true)) {
+            page.nodes.star_control.removeClass("selected");
+            page.nodes.star_control.addClass("ui-disabled");
+            if (this.controller.current_user) {
+                this.controller.check_star(obj, function(starred) {
+                    display.update_star_control(page, obj);
+                }, function() {
+                    if (confirm('Unable to check if you starred repository "' + obj.ref + '". Retry ?')) {
+                        display.update_star_control(page, obj);
+                    }
+                });
+            }
+        } else {
+            page.nodes.star_control.removeClass("ui-disabled");
+            page.nodes.star_control.toggleClass("selected", obj.starred);
+        }
+    }); // update_star_control
+
+    Display.prototype.toggle_star = (function Display__toggle_star (page, obj) {
+        var display = this, page_for_obj = this.is_page_for(page, obj);
+        $.mobile.loading('show');
+        if (page_for_obj) { page.nodes.star_control.addClass("ui-disabled"); }
+        this.controller.toggle_star(obj, function() {
+            display.update_star_control(page, obj);
+            $.mobile.loading('hide');
+        }, function() {
+            if (confirm('Unable to toggle your star of the repository "' + obj.ref + '". Retry ?')) {
+                display.toggle_star(page, obj);
+            } else {
+                display.update_star_control(page, obj);
+                $.mobile.loading('hide');
+            }
+        });
+    });
 
     Display.prototype.on_before_page_change = (function Display__on_before_page_change (e, data) {
         var url = $.mobile.path.parseUrl(data.toPage),

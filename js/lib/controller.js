@@ -161,7 +161,7 @@
 
     Controller.prototype.logout = (function Controller__logout () {
         if (this.current_user) {
-            this.current_user.provider.logout();
+            this.providers[this.current_user.provider].logout();
         }
         this.current_user = null;
         $.jStorage.deleteKey('logged-user');
@@ -201,6 +201,31 @@
             );
         }, 1);
     }); // check_login
+
+    Controller.prototype.check_star = (function Controller__check_star (obj, on_success, on_error) {
+        var provider = this.providers[obj.provider.name];
+        provider.check_star(obj.ref, function(starred) {
+            obj.starred = !!starred;
+            on_success(obj.starred);
+        }, on_error);
+    });
+
+    Controller.prototype.toggle_star = (function Controller__toggle_star (obj, on_success, on_error) {
+        var controller = this,
+            provider = this.providers[obj.provider.name];
+        if (obj.starred !== false && obj.starred !== true) {
+            this.check_star(obj, function() {
+                controller.toggle_star(obj, on_success, on_error);
+            }, on_error);
+        } else {
+            var method = obj.starred ? 'unstar' : 'star';
+            provider[method](obj.ref, function() {
+                obj.starred = !obj.starred;
+                on_success();
+            }, on_error);
+        }
+
+    }); // toggle_star
 
     App.Controller = Controller;
 

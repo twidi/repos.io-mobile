@@ -399,14 +399,15 @@
             display.update_favorite_control(page, !!favorited);
         })); // favorite-control.click
 
-        $(document).on('click', '.star-control', (function Display__star_click (e) {
+        $(document).on('click', '.flag-control', (function Display__flag_click (e) {
             e.preventDefault();
             e.stopPropagation();
             if (!display.controller.current_user) { return; }
             var page = display.pages[$.mobile.activePage.data('url')],
-                obj = display.controller[page.type];
-            display.toggle_star(page, obj);
-        })); // star-control.click
+                obj = display.controller[page.type],
+                flag_type = $(this).data('flag');
+            display['toggle_' + flag_type](page, obj);
+        })); // flag-control.click
 
         $(window).on('scrollstop', display.load_visible_images);
         $(window).on('resize', display.load_visible_images);
@@ -479,43 +480,70 @@
         page.nodes.favorite_control.toggleClass("selected", favorited);
     }); // update_favorite_control
 
-    Display.prototype.update_star_control = (function Display__update_star_control (page, obj) {
-        var display = this;
-        if (!this.is_page_for(page, obj)) { return; }
-        if (!this.controller.current_user || (obj.starred !== false && obj.starred !== true)) {
-            page.nodes.star_control.removeClass("selected");
-            page.nodes.star_control.addClass("ui-disabled");
+    Display.prototype.update_flag_control = (function Display__update_flag_control (flag_type, page, obj, confirm_retry) {
+        var display = this,
+            page_for_obj = this.is_page_for(page, obj),
+            control = page.nodes[flag_type + '_control'];
+        if (!this.controller.current_user || !obj.is_flag_set(flag_type)) {
+            if (page_for_obj) {
+                control.removeClass("selected");
+                control.addClass("ui-disabled");
+            }
             if (this.controller.current_user) {
-                this.controller.check_star(obj, function(starred) {
-                    display.update_star_control(page, obj);
-                }, function() {
-                    if (confirm('Unable to check if you starred repository "' + obj.ref + '". Retry ?')) {
-                        display.update_star_control(page, obj);
-                    }
-                });
+                this.controller['check_' + flag_type](obj,
+                    function(flagged) { // check on success
+                        display.update_flag_control(flag_type, page, obj, confirm_retry);
+                    }, // check on success
+                    function() { // check on error
+                        if (confirm(confirm_retry + '"' + obj.ref + '". Retry ?')) {
+                            display.update_flag_control(flag_type, page, obj, confirm_retry);
+                        }
+                    } // check on error
+                ); // controller.check
             }
         } else {
-            page.nodes.star_control.removeClass("ui-disabled");
-            page.nodes.star_control.toggleClass("selected", obj.starred);
+            if (page_for_obj) {
+                control.removeClass("ui-disabled");
+                control.toggleClass("selected", obj.flags[flag_type]);
+            }
         }
+    }); // update_flag_control
+
+    Display.prototype.toggle_flag = (function Display__toggle_flag (flag_type, page, obj, confirm_retry) {
+        var display = this,
+            page_for_obj = this.is_page_for(page, obj),
+            control = page.nodes[flag_type + '_control'];
+        if (page_for_obj) {
+            $.mobile.loading('show');
+            control.addClass("ui-disabled");
+        }
+        this.controller['toggle_' + flag_type](obj,
+            function() { // toggle on success
+                if (page_for_obj) {
+                    display.update_flag_control(flag_type, page, obj, confirm_retry);
+                    $.mobile.loading('hide');
+                }
+            }, // toggle on success
+            function() { // toggle on error
+                if (confirm(confirm_retry + '"' + obj.ref + '". Retry ?')) {
+                    display.toggle_flag(flag_type, page, obj, confirm_retry);
+                } else {
+                    if (page_for_obj) {
+                        display.update_flag_control(flag_type, page, obj, confirm_retry);
+                        $.mobile.loading('hide');
+                    }
+                }
+            } // toggle on error
+        ); // controller.toggle
+    }); // toggle_flag
+
+    Display.prototype.update_star_control = (function Display__update_star_control (page, obj) {
+        this.update_flag_control('star', page, obj, 'Unable to check if you starred the repository ');
     }); // update_star_control
 
     Display.prototype.toggle_star = (function Display__toggle_star (page, obj) {
-        var display = this, page_for_obj = this.is_page_for(page, obj);
-        $.mobile.loading('show');
-        if (page_for_obj) { page.nodes.star_control.addClass("ui-disabled"); }
-        this.controller.toggle_star(obj, function() {
-            display.update_star_control(page, obj);
-            $.mobile.loading('hide');
-        }, function() {
-            if (confirm('Unable to toggle your star of the repository "' + obj.ref + '". Retry ?')) {
-                display.toggle_star(page, obj);
-            } else {
-                display.update_star_control(page, obj);
-                $.mobile.loading('hide');
-            }
-        });
-    });
+        this.toggle_flag('star', page, obj, 'Unable to toggle your star of the repository ');
+    }); // toggle_star
 
     Display.prototype.on_before_page_change = (function Display__on_before_page_change (e, data) {
         var url = $.mobile.path.parseUrl(data.toPage),
@@ -848,7 +876,7 @@
 
     Display.prototype.update_controls_needing_auth = (function Display__update_controls_needing_auth () {
         try {
-            // update the star button to be disabled on logout, unabled and
+            // update the flags buttons to be disabled on logout, unabled and
             // fetched from github on login
             var page = this.pages[$.mobile.activePage.data('url')];
             if (page) {

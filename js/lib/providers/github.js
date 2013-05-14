@@ -696,22 +696,31 @@
         this.get_repo(path).contributors.fetch(this.decorate_collback(callback, 'contributors', 'accounts'), params);
     }); // get_repository_contributors
 
+    Provider.prototype._check_flag = (function Github__check_flag(obj, flag_type, on_success, on_error) {
+        var flag = new Gh3[flag_type](obj);
+        flag.check(on_success, on_error);
+    }); // _check_flag
+
+    Provider.prototype._set_flag = (function Github__set_flag(obj, flag_type, on_success, on_error) {
+        var flag = new Gh3[flag_type](obj);
+        flag.set(function() { on_success(true); }, on_error);
+    }); // _set_flag
+
+    Provider.prototype._unset_flag = (function Github__unset_flag(obj, flag_type, on_success, on_error) {
+        var flag = new Gh3[flag_type](obj);
+        flag.unset(function() { on_success(false); }, on_error);
+    }); // _unset_flag
+
     Provider.prototype.check_star = (function Github__check_star(path, on_success, on_error) {
-        var repo = this.get_repo(path),
-            star = new Gh3.Star(repo);
-        star.check(on_success, on_error);
+        this._check_flag(this.get_repo(path), 'Star', on_success, on_error);
     }); // check_star
 
     Provider.prototype.star = (function Github__star(path, on_success, on_error) {
-        var repo = this.get_repo(path),
-            star = new Gh3.Star(repo);
-        star.set(on_success, on_error);
+        this._set_flag(this.get_repo(path), 'Star', on_success, on_error);
     }); // star
 
     Provider.prototype.unstar = (function Github__unstar(path, on_success, on_error) {
-        var repo = this.get_repo(path),
-            star = new Gh3.Star(repo);
-        star.unset(on_success, on_error);
+        this._unset_flag(this.get_repo(path), 'Star', on_success, on_error);
     }); // unstar
 
     if (!App.Providers) { App.Providers = {}; }

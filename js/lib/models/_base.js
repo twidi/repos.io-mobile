@@ -52,6 +52,7 @@
             this.controller = controller;
             this.list_page_status = {};
             this.details_fetched = false;
+            this.flags = {};
 
             // create fields
             for (var field_name in this.__classvars__.fields) {
@@ -63,6 +64,10 @@
                 }
             }
         }), // __init__
+
+        is_flag_set: (function Model__is_flag_set (flag_type) {
+            return (typeof this.flags[flag_type] != 'undefined');
+        }), // is_flag_set
 
         is_type_list: (function Model__is_type_list (type) {
             return (this.$class.fields[type] instanceof Array);

@@ -166,10 +166,13 @@
         this.current_user = null;
         $.jStorage.deleteKey('logged-user');
 
-        // remove starred status of all objects
-        for (var repo_id in Reposio.Models.base.cache.repository) {
-            delete Reposio.Models.base.cache.repository[repo_id].starred;
-        }
+        // remove all flags status of all objects
+        _.each(['repository', 'account'], function(model) {
+            var objects = Reposio.Models.base.cache[model];
+            for (var obj_id in objects) {
+                objects[obj_id].flags = {};
+            }
+        });
 
         this.display.logout();
     }); // logout
@@ -208,30 +211,40 @@
         }, 1);
     }); // check_login
 
-    Controller.prototype.check_star = (function Controller__check_star (obj, on_success, on_error) {
-        var provider = this.providers[obj.provider.name];
-        provider.check_star(obj.ref, function(starred) {
-            obj.starred = !!starred;
-            on_success(obj.starred);
-        }, on_error);
-    });
 
-    Controller.prototype.toggle_star = (function Controller__toggle_star (obj, on_success, on_error) {
+    Controller.prototype.check_flag = (function Controller__check_flag (flag_type, obj, on_success, on_error) {
+        var provider = this.providers[obj.provider.name];
+        provider['check_' + flag_type](obj.ref, function(flagged) {
+            obj.flags[flag_type] = flagged;
+            on_success(obj.flags[flag_type]);
+        }, on_error);
+    }); // check_flag
+
+    Controller.prototype.toggle_flag = (function Controller__toggle_flag (flag_type, obj, on_success, on_error) {
         var controller = this,
             provider = this.providers[obj.provider.name];
-        if (obj.starred !== false && obj.starred !== true) {
-            this.check_star(obj, function() {
-                controller.toggle_star(obj, on_success, on_error);
+        if (!obj.is_flag_set(flag_type)) {
+            this.check_flag(flag_type, obj, function() {
+                controller.toggle_flag(flag_type, obj, on_success, on_error);
             }, on_error);
         } else {
-            var method = obj.starred ? 'unstar' : 'star';
-            provider[method](obj.ref, function() {
-                obj.starred = !obj.starred;
+            var method = flag_type;
+            if (obj.flags[flag_type]) { method = 'un' + method; }
+            provider[method](obj.ref, function(flagged) {
+                obj.flags[flag_type] = flagged;
                 on_success();
             }, on_error);
         }
+    }); // toggle_flag
 
+    Controller.prototype.check_star = (function Controller__check_star (obj, on_success, on_error) {
+        this.check_flag('star', obj, on_success, on_error);
+    }); // check_star
+
+    Controller.prototype.toggle_star = (function Controller__toggle_star (obj, on_success, on_error) {
+        this.toggle_flag('star', obj, on_success, on_error);
     }); // toggle_star
+
 
     App.Controller = Controller;
 

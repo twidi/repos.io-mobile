@@ -696,6 +696,24 @@
         this.get_repo(path).contributors.fetch(this.decorate_collback(callback, 'contributors', 'accounts'), params);
     }); // get_repository_contributors
 
+    Provider.prototype.check_star = (function Github__check_star(path, on_success, on_error) {
+        var repo = this.get_repo(path),
+            star = new Gh3.Star(repo);
+        star.check(on_success, on_error);
+    }); // check_star
+
+    Provider.prototype.star = (function Github__star(path, on_success, on_error) {
+        var repo = this.get_repo(path),
+            star = new Gh3.Star(repo);
+        star.set(on_success, on_error);
+    }); // star
+
+    Provider.prototype.unstar = (function Github__unstar(path, on_success, on_error) {
+        var repo = this.get_repo(path),
+            star = new Gh3.Star(repo);
+        star.unset(on_success, on_error);
+    }); // unstar
+
     if (!App.Providers) { App.Providers = {}; }
     App.Providers.github = Provider;
 

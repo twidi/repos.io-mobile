@@ -121,11 +121,25 @@
     });
 
     Controller.prototype.get_current_user = (function Controller__get_current_user () {
+        var controller = this;
         this.current_user = $.jStorage.get('logged-user', null);
         if (!this.current_user) { return; }
 
         if (this.current_user.provider && this.providers[this.current_user.provider]) {
-            if (!this.providers[this.current_user.provider].init_auth(this.current_user)) {
+            var provider = this.providers[this.current_user.provider];
+            if (!provider.login(
+                this.current_user,
+                (function Controller__provider__login__success(user_data) {
+                    var current_user = App.Models.account.get(user_data.login+'@'+provider.name, controller);
+                    current_user.update_data('details', user_data);
+                    current_user.details_fetched = true;
+                }),
+                (function Controller__provider__login__error(error) {
+                    console.log('ERROR LOGIN', error);
+                    alert('We are unable to check your authentication, you may want to logout and login again.');
+                    // controller.logout();
+                })
+            )) {
                 this.current_user = null;
             }
         } else {
@@ -146,6 +160,9 @@
     }); // logout
 
     Controller.prototype.logout = (function Controller__logout () {
+        if (this.current_user) {
+            this.current_user.provider.logout();
+        }
         this.current_user = null;
         $.jStorage.deleteKey('logged-user');
         this.display.logout();

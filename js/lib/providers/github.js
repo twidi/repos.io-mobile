@@ -358,19 +358,24 @@
         }
     }); // set_token
 
-    Provider.prototype.init_auth = (function Github__init_auth (auth_data) {
+    Provider.prototype.login = (function Github__login (auth_data, callback_success, callback_fail) {
         if (!auth_data || auth_data.provider != this.name || !auth_data.token) { return false; }
         this.set_token(auth_data.token);
         var provider = this,
             user = new Gh3.CurrentUser();
         user.fetch(function(error, user_data) {
             if (error || !user_data) {
-                provider.set_token(null);
-                provider.controller.logout();
+                if (callback_fail) { callback_fail(error); }
+            } else {
+                if (callback_success) { callback_success(provider.map_account(user_data)); }
             }
         });
         return true;
-    });
+    }); // login
+
+    Provider.prototype.logout = (function Githu__logout () {
+        this.set_token();
+    }); // logout
 
     Provider.prototype.can_login = (function Github__can_login () {
         return !!(this.conf.auth == 'oauth' && this.conf.client_id && this.conf.token_script);

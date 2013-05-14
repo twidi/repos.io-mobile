@@ -404,7 +404,6 @@
         $(document).on('click', '.flag-control', (function Display__flag_click (e) {
             e.preventDefault();
             e.stopPropagation();
-            if (!display.controller.current_user) { return; }
             var page = display.pages[$.mobile.activePage.data('url')],
                 obj = display.controller[page.type],
                 flag_type = $(this).data('flag');
@@ -482,17 +481,36 @@
         page.nodes.favorite_control.toggleClass("selected", favorited);
     }); // update_favorite_control
 
+    Display.prototype.user_can_flag = (function Display__user_can_flag (flag_type, obj) {
+        if (!this.controller.current_user) { return false; }
+
+        if (!obj.can_have_flag(flag_type)) { return false; }
+
+        switch (flag_type) {
+            case 'follow':
+                // user can't follow itself
+                if (obj.$class.model_name == 'account' && obj.username == this.controller.current_user.username) {
+                    return false;
+                }
+                break;
+            case 'star':
+                break;
+        }
+        return true;
+    }); // user_can_flag
+
     Display.prototype.update_flag_control = (function Display__update_flag_control (flag_type, page, obj, confirm_retry) {
-        if (!obj.can_have_flag(flag_type)) { return; }
         var display = this,
             page_for_obj = this.is_page_for_obj(page, obj),
-            control = page.nodes[flag_type + '_control'];
-        if (!this.controller.current_user || !obj.is_flag_set(flag_type)) {
+            control = page.nodes[flag_type + '_control'],
+            can_flag = this.user_can_flag(flag_type, obj);
+
+        if (!can_flag || !obj.is_flag_set(flag_type)) {
             if (page_for_obj) {
                 control.removeClass("selected");
                 control.addClass("ui-disabled");
             }
-            if (this.controller.current_user) {
+            if (can_flag) {
                 this.controller['check_' + flag_type](obj,
                     function(flagged) { // check on success
                         display.update_flag_control(flag_type, page, obj, confirm_retry);
@@ -513,10 +531,13 @@
     }); // update_flag_control
 
     Display.prototype.toggle_flag = (function Display__toggle_flag (flag_type, page, obj, confirm_retry) {
-        if (!obj.can_have_flag(flag_type)) { return; }
         var display = this,
             page_for_obj = this.is_page_for_obj(page, obj),
-            control = page.nodes[flag_type + '_control'];
+            control = page.nodes[flag_type + '_control'],
+            can_flag = this.user_can_flag(flag_type, obj);
+
+        if (!can_flag) { return; }
+
         if (page_for_obj) {
             $.mobile.loading('show');
             control.addClass("ui-disabled");

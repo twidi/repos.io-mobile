@@ -325,6 +325,17 @@
     }); // Gh3.Star
 
 
+    Gh3.Following = Flag.extend({
+        /* This class reprensents a the following of a user by the current user */
+        constructor: function (ghUser) {
+            this.user = ghUser;
+        },
+        _service: function() {
+            return 'user/following/' + this.user.login;
+        }
+    }); // Gh3.Star
+
+
     /* Base objects */
 
     Fetchable = Kind.extend({

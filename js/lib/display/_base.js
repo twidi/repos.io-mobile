@@ -828,6 +828,7 @@
 
     Display.prototype.logout = (function Display__logout () {
         this.toggle_auth_infos();
+        this.update_controls_needing_auth();
     }); // logout
 
     Display.prototype.toggle_auth_infos = (function Display__toggle_auth_infos () {
@@ -845,8 +846,20 @@
         }
     }); // toggle_auth_infos
 
+    Display.prototype.update_controls_needing_auth = (function Display__update_controls_needing_auth () {
+        try {
+            // update the star button to be disabled on logout, unabled and
+            // fetched from github on login
+            var page = this.pages[$.mobile.activePage.data('url')];
+            if (page) {
+                this.update_star_control(page, this.controller[page.type]);
+            }
+        } catch(ex) {}
+    }); // update_controls_needing_auth
+
     Display.prototype.login_success = (function Display__login_success () {
         this.toggle_auth_infos();
+        this.update_controls_needing_auth();
         alert('You are now identified as ' + this.controller.current_user.username);
     }); // login_success
 

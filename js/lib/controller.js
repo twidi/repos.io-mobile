@@ -165,6 +165,12 @@
         }
         this.current_user = null;
         $.jStorage.deleteKey('logged-user');
+
+        // remove starred status of all objects
+        for (var repo_id in Reposio.Models.base.cache.repository) {
+            delete Reposio.Models.base.cache.repository[repo_id].starred;
+        }
+
         this.display.logout();
     }); // logout
 

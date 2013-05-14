@@ -245,6 +245,13 @@
         this.toggle_flag('star', obj, on_success, on_error);
     }); // toggle_star
 
+    Controller.prototype.check_follow = (function Controller__check_follow (obj, on_success, on_error) {
+        this.check_flag('follow', obj, on_success, on_error);
+    }); // check_follow
+
+    Controller.prototype.toggle_follow = (function Controller__toggle_follow (obj, on_success, on_error) {
+        this.toggle_flag('follow', obj, on_success, on_error);
+    }); // toggle_follow
 
     App.Controller = Controller;
 

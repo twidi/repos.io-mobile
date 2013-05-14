@@ -196,7 +196,8 @@
                 refresh_control: footer.find('.refresh-control'),
                 go_provider_control: footer.find('.go-provider-control'),
                 favorite_control: footer.find('.favorite-control'),
-                star_control: footer.find('.star-control')
+                star_control: footer.find('.star-control'),
+                follow_control: footer.find('.follow-control')
             };
             final_page.node = final_page.nodes.page;
 
@@ -245,6 +246,7 @@
                 real_url = display['get_real_' + page.type + '_page'](page.name, obj);
                 display.update_go_provider_control(page, real_url);
                 display.update_star_control(page, obj);
+                display.update_follow_control(page, obj);
             } catch(ex) {}
         })); // pagechange
 
@@ -481,8 +483,9 @@
     }); // update_favorite_control
 
     Display.prototype.update_flag_control = (function Display__update_flag_control (flag_type, page, obj, confirm_retry) {
+        if (!obj.can_have_flag(flag_type)) { return; }
         var display = this,
-            page_for_obj = this.is_page_for(page, obj),
+            page_for_obj = this.is_page_for_obj(page, obj),
             control = page.nodes[flag_type + '_control'];
         if (!this.controller.current_user || !obj.is_flag_set(flag_type)) {
             if (page_for_obj) {
@@ -510,8 +513,9 @@
     }); // update_flag_control
 
     Display.prototype.toggle_flag = (function Display__toggle_flag (flag_type, page, obj, confirm_retry) {
+        if (!obj.can_have_flag(flag_type)) { return; }
         var display = this,
-            page_for_obj = this.is_page_for(page, obj),
+            page_for_obj = this.is_page_for_obj(page, obj),
             control = page.nodes[flag_type + '_control'];
         if (page_for_obj) {
             $.mobile.loading('show');
@@ -538,12 +542,20 @@
     }); // toggle_flag
 
     Display.prototype.update_star_control = (function Display__update_star_control (page, obj) {
-        this.update_flag_control('star', page, obj, 'Unable to check if you starred the repository ');
+        this.update_flag_control('star', page, obj, 'Unable to check if you star the repository ');
     }); // update_star_control
 
     Display.prototype.toggle_star = (function Display__toggle_star (page, obj) {
         this.toggle_flag('star', page, obj, 'Unable to toggle your star of the repository ');
     }); // toggle_star
+
+    Display.prototype.update_follow_control = (function Display__update_follow_control (page, obj) {
+        this.update_flag_control('follow', page, obj, 'Unable to check if you follow ');
+    }); // update_follow_control
+
+    Display.prototype.toggle_follow = (function Display__toggle_follow (page, obj) {
+        this.toggle_flag('follow', page, obj, 'Unable to toggle your following of ');
+    }); // toggle_follow
 
     Display.prototype.on_before_page_change = (function Display__on_before_page_change (e, data) {
         var url = $.mobile.path.parseUrl(data.toPage),
@@ -573,9 +585,14 @@
 
     }); // on_before_page_change
 
-    Display.prototype.is_page_for = (function Display__is_page_for (page, obj, options) {
+    Display.prototype.is_page_for_obj = (function Display__is_page_for_obj (page, obj) {
         var current_for = page.node.data('current-for');
         if (!current_for || current_for != obj.id) { return false; }
+        return true;
+    }); // is_page_for_obj
+
+    Display.prototype.is_page_for = (function Display__is_page_for (page, obj, options) {
+        if (!this.is_page_for_obj(page, obj)) { return false; }
         if (page.view.accept_options && page.node.data('current-options') != $.param(options)) {
             return false;
         }
@@ -881,6 +898,7 @@
             var page = this.pages[$.mobile.activePage.data('url')];
             if (page) {
                 this.update_star_control(page, this.controller[page.type]);
+                this.update_follow_control(page, this.controller[page.type]);
             }
         } catch(ex) {}
     }); // update_controls_needing_auth

@@ -723,6 +723,18 @@
         this._unset_flag(this.get_repo(path), 'Star', on_success, on_error);
     }); // unstar
 
+    Provider.prototype.check_follow = (function Github__check_following(username, on_success, on_error) {
+        this._check_flag(this.get_user(username), 'Following', on_success, on_error);
+    }); // check_follow
+
+    Provider.prototype.follow = (function Github__following(username, on_success, on_error) {
+        this._set_flag(this.get_user(username), 'Following', on_success, on_error);
+    }); // follow
+
+    Provider.prototype.unfollow = (function Github__unfollowing(username, on_success, on_error) {
+        this._unset_flag(this.get_user(username), 'Following', on_success, on_error);
+    }); // unfollow
+
     if (!App.Providers) { App.Providers = {}; }
     App.Providers.github = Provider;
 

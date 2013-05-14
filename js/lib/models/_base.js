@@ -69,6 +69,10 @@
             return (typeof this.flags[flag_type] != 'undefined');
         }), // is_flag_set
 
+        can_have_flag: (function Model__can_have_flag (flag_type) {
+            return (this.$class.flags.indexOf(flag_type) !== -1);
+        }), // can_have_flag
+
         is_type_list: (function Model__is_type_list (type) {
             return (this.$class.fields[type] instanceof Array);
         }), // is_type_list

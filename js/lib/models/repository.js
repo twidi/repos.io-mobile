@@ -12,6 +12,7 @@
                 stars: [],
                 contributors: []
             },
+            flags: ['star'],
             default_params: {
                 activity: {per_page: 30, max_pages: 10},
                 forks: {per_page: 50},

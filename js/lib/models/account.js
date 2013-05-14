@@ -15,6 +15,7 @@
                 org_members: [],
                 orgs: []
             },
+            flags: ['follow'],
             default_params: {
                 repositories: {per_page: 50},
                 stars: {per_page: 50},

@@ -277,6 +277,44 @@
     });
 
 
+    Gh3.Star = Kind.extend({
+        /* This class reprensents a star on an repository by the current user */
+        constructor: function (ghRepository) {
+            this.repository = ghRepository;
+        },
+        _call: function(method, params) {
+            var call_params = $.extend({}, params || {}, {
+                type: method,
+                service: this._service()
+            });
+            Gh3.Helper.callHttpApi(call_params);
+        },
+        _service: function() {
+            return 'user/starred/' + this.repository.path();
+        },
+        check: function(on_success, on_error) {
+            this._call('GET', {
+                success: function() {
+                    on_success(true);
+                },
+                error: function(jqXHR) {
+                    if (jqXHR.status == 404) {
+                        on_success(false);
+                    } else {
+                        on_error(jqXHR);
+                    }
+                }
+            });
+        },
+        set: function(on_success, on_error) {
+            this._call('PUT', { success: on_success, error: on_error });
+        },
+        unset: function(on_success, on_error) {
+            this._call('DELETE', { success: on_success, error: on_error });
+        }
+    }); // Gh3.Star
+
+
     /* Base objects */
 
     Fetchable = Kind.extend({
@@ -1211,8 +1249,11 @@
             this.branches = new Collection.RepositoryBranches(this);
 
         },
+        path: function() {
+            return this.user.login + "/" + this.name;
+        },
         _service: function() {
-            return "repos/" + this.user.login + "/" + this.name;
+            return "repos/" + this.path();
         },
         fetchReadme: function (callback, querystring_args) {
             /* A simple wrapper arroud the readme fetcher to fetch the readme

@@ -33,6 +33,7 @@
     var root = this
     ,    Gh3
     ,    Kind
+    ,    Flag
     ,    Collection
     ,    ItemContent
     ,    SingleObject
@@ -277,20 +278,19 @@
     });
 
 
-    Gh3.Star = Kind.extend({
-        /* This class reprensents a star on an repository by the current user */
-        constructor: function (ghRepository) {
-            this.repository = ghRepository;
-        },
+    Flag = Kind.extend({
+        /* Base class for all Github flag: stars, watched repo, followed users
+         * They all work the same way:
+         * GET on an url to get the status (204=flagged, 404=not flagged)
+         * PUT on the same url to set the flag
+         * DELETE on the same url to remove the flag
+         */
         _call: function(method, params) {
             var call_params = $.extend({}, params || {}, {
                 type: method,
                 service: this._service()
             });
             Gh3.Helper.callHttpApi(call_params);
-        },
-        _service: function() {
-            return 'user/starred/' + this.repository.path();
         },
         check: function(on_success, on_error) {
             this._call('GET', {
@@ -311,6 +311,16 @@
         },
         unset: function(on_success, on_error) {
             this._call('DELETE', { success: on_success, error: on_error });
+        }
+    });
+
+    Gh3.Star = Flag.extend({
+        /* This class reprensents a star on an repository by the current user */
+        constructor: function (ghRepository) {
+            this.repository = ghRepository;
+        },
+        _service: function() {
+            return 'user/starred/' + this.repository.path();
         }
     }); // Gh3.Star
 

@@ -135,7 +135,7 @@
                     current_user.details_fetched = true;
                 }),
                 (function Controller__provider__login__error(error) {
-                    console.log('ERROR LOGIN', error);
+                    //console.log('ERROR LOGIN', error);
                     alert('We are unable to check your authentication, you may want to logout and login again.');
                     // controller.logout();
                 })

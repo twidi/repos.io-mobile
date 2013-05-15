@@ -80,7 +80,7 @@
         }), // _update_owner
 
         _update_fork: (function View_repository_home__update_fork (repository, nodes) {
-            nodes.fork_name.html(this.display.repository_link(repository.details.parent.name, repository.provider.name));
+            nodes.fork_name.html(this.display.repository_link(repository.details.parent.full_name, repository.provider.name, true));
             nodes.fork_owner.html(this.display.account_link(repository.details.parent.user.login, repository.provider.name, repository.details.parent.user.avatar_url));
         }), // _update_fork
 

@@ -23,9 +23,10 @@
 
     }); // change_repository
 
-    App.Display.prototype.repository_link = (function Display__repository_link (name, provider_name) {
-        var ref = name.replace('/', ':');
-        return '<a class="repo-link" href="#repository_home!repository=' + ref + '@' + provider_name + '">' + name + '</a>';
+    App.Display.prototype.repository_link = (function Display__repository_link (name, provider_name, hide_owner) {
+        var ref = name.replace('/', ':'),
+            display_name = hide_owner ? ref.split(':')[1] : name;
+        return '<a class="repo-link" href="#repository_home!repository=' + ref + '@' + provider_name + '">' + display_name + '</a>';
     }); // repository_link
 
     App.Display.prototype.create_repository_list_item = (function Display__create_repositorie_list_item (repository, provider, href) {

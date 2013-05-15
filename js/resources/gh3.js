@@ -324,6 +324,16 @@
         }
     }); // Gh3.Star
 
+    Gh3.Watching = Flag.extend({
+        /* This class reprensents the current user watching or not a repository */
+        constructor: function (ghRepository) {
+            this.repository = ghRepository;
+        },
+        _service: function() {
+            //return this.repository._service() + '/subscription';
+            return 'user/subscriptions/' + this.repository.path();
+        }
+    }); // Gh3.Watch
 
     Gh3.Following = Flag.extend({
         /* This class reprensents a the following of a user by the current user */

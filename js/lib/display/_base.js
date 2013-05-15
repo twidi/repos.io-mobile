@@ -197,6 +197,7 @@
                 go_provider_control: footer.find('.go-provider-control'),
                 favorite_control: footer.find('.favorite-control'),
                 star_control: footer.find('.star-control'),
+                watch_control: footer.find('.watch-control'),
                 follow_control: footer.find('.follow-control')
             };
             final_page.node = final_page.nodes.page;
@@ -246,6 +247,7 @@
                 real_url = display['get_real_' + page.type + '_page'](page.name, obj);
                 display.update_go_provider_control(page, real_url);
                 display.update_star_control(page, obj);
+                display.update_watch_control(page, obj);
                 display.update_follow_control(page, obj);
             } catch(ex) {}
         })); // pagechange
@@ -487,13 +489,15 @@
         if (!obj.can_have_flag(flag_type)) { return false; }
 
         switch (flag_type) {
+            case 'star':
+                break;
+            case 'watch':
+                break;
             case 'follow':
                 // user can't follow itself
                 if (obj.$class.model_name == 'account' && obj.username == this.controller.current_user.username) {
                     return false;
                 }
-                break;
-            case 'star':
                 break;
         }
         return true;
@@ -525,7 +529,7 @@
         } else {
             if (page_for_obj) {
                 control.removeClass("ui-disabled");
-                control.toggleClass("selected", obj.flags[flag_type]);
+                control.toggleClass("selected", obj.is_flagged(flag_type));
             }
         }
     }); // update_flag_control
@@ -569,6 +573,14 @@
     Display.prototype.toggle_star = (function Display__toggle_star (page, obj) {
         this.toggle_flag('star', page, obj, 'Unable to toggle your star of the repository ');
     }); // toggle_star
+
+    Display.prototype.update_watch_control = (function Display__update_watch_control (page, obj) {
+        this.update_flag_control('watch', page, obj, 'Unable to check if you watch the repository ');
+    }); // update_watch_control
+
+    Display.prototype.toggle_watch = (function Display__toggle_watch (page, obj) {
+        this.toggle_flag('watch', page, obj, 'Unable to toggle your watching of the repository ');
+    }); // toggle_watch
 
     Display.prototype.update_follow_control = (function Display__update_follow_control (page, obj) {
         this.update_flag_control('follow', page, obj, 'Unable to check if you follow ');
@@ -919,6 +931,7 @@
             var page = this.pages[$.mobile.activePage.data('url')];
             if (page) {
                 this.update_star_control(page, this.controller[page.type]);
+                this.update_watch_control(page, this.controller[page.type]);
                 this.update_follow_control(page, this.controller[page.type]);
             }
         } catch(ex) {}

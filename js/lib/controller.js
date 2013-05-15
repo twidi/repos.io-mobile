@@ -215,8 +215,8 @@
     Controller.prototype.check_flag = (function Controller__check_flag (flag_type, obj, on_success, on_error) {
         var provider = this.providers[obj.provider.name];
         provider['check_' + flag_type](obj.ref, function(flagged) {
-            obj.flags[flag_type] = flagged;
-            on_success(obj.flags[flag_type]);
+            obj.set_flag(flag_type, flagged);
+            on_success(obj.is_flagged(flag_type));
         }, on_error);
     }); // check_flag
 
@@ -229,9 +229,9 @@
             }, on_error);
         } else {
             var method = flag_type;
-            if (obj.flags[flag_type]) { method = 'un' + method; }
+            if (obj.is_flagged(flag_type)) { method = 'un' + method; }
             provider[method](obj.ref, function(flagged) {
-                obj.flags[flag_type] = flagged;
+                obj.set_flag(flag_type, flagged);
                 on_success();
             }, on_error);
         }
@@ -244,6 +244,14 @@
     Controller.prototype.toggle_star = (function Controller__toggle_star (obj, on_success, on_error) {
         this.toggle_flag('star', obj, on_success, on_error);
     }); // toggle_star
+
+    Controller.prototype.check_watch = (function Controller__check_watch (obj, on_success, on_error) {
+        this.check_flag('watch', obj, on_success, on_error);
+    }); // check_watch
+
+    Controller.prototype.toggle_watch = (function Controller__toggle_watch (obj, on_success, on_error) {
+        this.toggle_flag('watch', obj, on_success, on_error);
+    }); // toggle_watch
 
     Controller.prototype.check_follow = (function Controller__check_follow (obj, on_success, on_error) {
         this.check_flag('follow', obj, on_success, on_error);

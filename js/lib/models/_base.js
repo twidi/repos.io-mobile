@@ -66,12 +66,20 @@
         }), // __init__
 
         is_flag_set: (function Model__is_flag_set (flag_type) {
-            return (typeof this.flags[flag_type] != 'undefined');
+            return (typeof this.flags['flag_' + flag_type] != 'undefined');
         }), // is_flag_set
+
+        is_flagged: (function Model__is_flagged (flag_type) {
+            return !!this.flags['flag_' + flag_type];
+        }), // is_flagged
 
         can_have_flag: (function Model__can_have_flag (flag_type) {
             return (this.$class.flags.indexOf(flag_type) !== -1);
         }), // can_have_flag
+
+        set_flag: (function Model__set_flag (flag_type, value) {
+            this.flags['flag_' + flag_type] = !!value;
+        }), // set_flag
 
         is_type_list: (function Model__is_type_list (type) {
             return (this.$class.fields[type] instanceof Array);

@@ -476,16 +476,25 @@ div.markdown li {
          -o-box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
             box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
 }
-
-.ui-content > .issues-list .issue-state {
-    padding: 0 3px 1px 4px;
-    color: white;
-    background: #6CC644;
+.ui-content > .issues-list .issue-indicators > span {
     -webkit-border-radius: 2px;
        -moz-border-radius: 2px;
         -ms-border-radius: 2px;
          -o-border-radius: 2px;
             border-radius: 2px;
+    padding: 1px 3px 1px 4px;
+    color: white;
+    vertical-align: middle;
+}
+.ui-content > .issues-list .issue-pr {
+    background: #444;
+    margin-right: 2px;
+}
+.ui-content > .issues-list > li.no-pr .issue-pr {
+    display: none;
+}
+.ui-content > .issues-list .issue-state {
+    background: #6CC644;
 }
 .ui-content > .issues-list > .issue-closed .issue-state {
     background: #BD2C00;

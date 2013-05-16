@@ -759,7 +759,8 @@
             a = li.getElementsByTagName('a')[0];
             a_children = a.children;
             number_holder = a_children[0];
-            state_holder = a_children[1];
+            indicators = a_children[1].children;
+            state_holder = indicators[1];
             title_holder = a_children[2];
             created_children = a_children[3].children;
             creator_avatar_holder = created_children[0];
@@ -798,6 +799,9 @@
             }
 
             classes.push('issue-' + issue.state);
+            if (!issue.pull_request || !issue.pull_request.html_url) {
+                classes.push('no-pr');
+            }
 
             if (classes.length) {
                 li.className +=  ' ' + classes.join(' ');

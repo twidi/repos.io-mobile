@@ -626,6 +626,37 @@ html.loading.ui-mobile-rendering > * { visibility: visible !important; }
         </div>
      --></div>
 
+    <div data-template-for="repository_issues_options"><!--
+        <div data-role="collapsible" data-corners="false" data-theme="e" data-content-theme="c" data-mini="true" data-inset="false" class="view-options">
+            <h3>Options and filters</h3>
+            <form id="repository_issues_options" data-ajax="false">
+                <div class="fieldsets">
+                    <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label ui-with-radio-legend">
+                        <legend>State: </legend>
+                        <label><input type="radio" name="repository_issues_options_state" id="repository_issues_options_state__label" value="__label__" disabled="disabled" data-theme="a" />State: </label>
+                        <label><input type="radio" name="repository_issues_options_state" id="repository_issues_options_state_open" value="open" />Open</label>
+                        <label><input type="radio" name="repository_issues_options_state" id="repository_issues_options_state_closed" value="closed" />Closed</label>
+                    </fieldset><fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label ui-with-radio-legend">
+                        <legend>Sort: </legend>
+                        <label><input type="radio" name="repository_issues_options_sort" id="repository_issues_options_sort__label" value="__label__" disabled="disabled" data-theme="a" />Sort: </label>
+                        <label><input type="radio" name="repository_issues_options_sort" id="repository_issues_options_sort_created" value="created" checked="checked" />Created</label>
+                        <label><input type="radio" name="repository_issues_options_sort" id="repository_issues_options_sort_updated" value="updated" />Updated</label>
+                        <label><input type="radio" name="repository_issues_options_sort" id="repository_issues_options_sort_comments" value="comments" />Comments</label>
+                    </fieldset><fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label ui-with-radio-legend">
+                        <legend>Direction: </legend>
+                        <label><input type="radio" name="repository_issues_options_direction" id="repository_issues_options_direction__label" value="__label__" disabled="disabled" data-theme="a" />Direction: </label>
+                        <label><input type="radio" name="repository_issues_options_direction" id="repository_issues_options_direction_asc" value="asc" />Asc</label>
+                        <label><input type="radio" name="repository_issues_options_direction" id="repository_issues_options_direction_desc" value="desc" checked="checked" />Desc</label>
+                    </fieldset>
+                </div>
+                <fieldset class="buttons">
+                    <button type="reset" data-mini="true" data-theme="c" data-icon="delete" data-inline="true" name="reset" value="reset-value">Default</button>
+                    <button type="submit" data-mini="true" data-theme="b" data-icon="check" data-inline="true" name="submit" value="submit-value">Update</button>
+                </fieldset>
+            </form>
+        </div>
+     --></div>
+
     <ul data-template-for="repository-list-item"><!--
         <li class="ui-btn ui-btn-icon-right ui-li-has-arrow ui-li ui-btn-up-c repo"><div class="ui-btn-inner ui-li"><div class="ui-btn-text">
             <a href="#repository_home" class="ui-link-inherit">

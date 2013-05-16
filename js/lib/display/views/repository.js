@@ -187,7 +187,13 @@
         __classvars__: {
             model: 'repository',
             view_name: 'repository_issues',
-            data_field: 'issues'
+            data_field: 'issues',
+            accept_options: true,
+            default_options: {
+                direction: 'desc',
+                sort: 'created',
+                state: 'open'
+            }
         }
     }); // View.repository_issues
 

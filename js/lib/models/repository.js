@@ -23,12 +23,17 @@
             },
             fetchable_params: {
                 forks: ['sort'],
-                activity: []
+                activity: [],
+                issues: ['direction', 'sort', 'state' ]
             },
             sort_and_filter_helpers: {
                 forks: {
                     sort_field: {newest: 'created_at', oldest: 'created_at', watchers: 'watchers_count'},
                     filter_never_updated: (function Repository__forks_fiter_never_updated (repository) {return repository.pushed_at <= repository.created_at; })
+                },
+                issues: {
+                    sort_field: {created: 'created_at', updated: 'updated_at', comments: 'comments'},
+                    filter_state: (function Repository__issues_filter_state (issue) { return issue.state == this; })
                 }
             },
             save_many: (function Repository__save_many (repositories, provider, controller) {
@@ -114,7 +119,37 @@
             var global = this.list_page_status.activity.__global__,
                 data = force_data || this.activity[global.str_params];
             return this.sort_and_filter_events(options, data);
-        }) // sort_and_filter_activity
+        }), // sort_and_filter_activity
+
+        manage_global_for_issues: (function Repository__manage_global_for_issues () {
+            var global = this.list_page_status.issues.__global__;
+            // we may want to find a way to detect all for open AND all for closed
+            // but currently we can't so we consider we never have all data
+            // (or a way to consider global for open AND a global for closed)
+            global.all = false;
+        }), // manage_global_for_issues
+
+        sort_and_filter_issues: (function Repository__sort_and_filter_issues (options, force_data) {
+            var global = this.list_page_status.issues.__global__,
+                helpers = this.$class.sort_and_filter_helpers.issues,
+                data = force_data || this.issues[global.str_params];
+
+            data = _.filter(data, helpers.filter_state, options.state);
+
+            if (force_data || options.sort != global.params.sort) {
+                data = _.sortBy(data, helpers.sort_field[options.sort]);
+                if (options.direction == 'desc') {
+                    data.reverse();
+                }
+            } else {
+                if (options.direction != global.params.direction) {
+                    data.reverse();
+                    global.params.direction = options.direction;  // change the saved direction because we update real data
+                }
+            }
+
+            return data;
+        }) // sort_and_filter_issues
 
     }); // Repository
 

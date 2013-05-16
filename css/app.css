@@ -487,7 +487,7 @@ div.markdown li {
          -o-border-radius: 2px;
             border-radius: 2px;
 }
-.ui-content > .issues-list .issue-state.issue-close {
+.ui-content > .issues-list > .issue-closed .issue-state {
     background: #BD2C00;
 }
 .ui-content > .issues-list > li.no-infos .issue-infos {

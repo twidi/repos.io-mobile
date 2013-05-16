@@ -44,7 +44,7 @@
 
     EventFormatter.prototype.base_format = (function GithubEventFormatter__base_format (event, source, middle_part, desc, target, external_link) {
         var result, content;
-        result = '<p class="ui-li-aside">' + this.provider.controller.display.format_date(event.created_at, 'show-time', null, 'time-only') + '</p>';
+        result = '<p class="indicator">' + this.provider.controller.display.format_date(event.created_at, 'show-time', null, 'time-only') + '</p>';
         if (!target && event.repository && event.repository.full_name) {
             target = this.format_repo(event.repository, event.actor, source, 'main');
         }
@@ -219,7 +219,7 @@
 
     EventFormatter.prototype.IssueCommentEvent = (function GithubEventFormatter__IssueCommentEvent (event, source) {
         var part,
-            desc = (event.is_pull_request ? 'Pull request' : 'Issue') + ': <strong>#' + event.issue.number + ' - ' + event.issue.title + '</strong>',
+            desc = (event.is_pull_request ? 'Pull request' : 'Issue') + ' <strong>#' + event.issue.number + ' - ' + event.issue.title + '</strong>',
             link;
         if (event.action == 'created') {
             part = this.trigger_text('commented', event.comment.body);

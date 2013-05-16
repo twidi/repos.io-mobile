@@ -219,19 +219,48 @@ div.markdown li {
     border: none;
 }
 
+.ui-content > .ui-listview > li.with-banner {
+    overflow: hidden;
+    position: relative;    
+}
+
+.ui-content > .ui-listview .banner {
+    color: white;
+    text-align: center;
+    width: 70px;
+    position: absolute;
+    top: -8px;
+    left: -25px;
+    padding: 10px 2px 2px;
+    margin: 0;
+    font-weight: bold;
+    font-size: 12px;
+    background: #db4b35;
+    -webkit-box-shadow: 1px 1px 2px rgba(219, 75, 53, 0.7);
+       -moz-box-shadow: 1px 1px 2px rgba(219, 75, 53, 0.7);
+        -ms-box-shadow: 1px 1px 2px rgba(219, 75, 53, 0.7);
+         -o-box-shadow: 1px 1px 2px rgba(219, 75, 53, 0.7);
+            box-shadow: 1px 1px 2px rgba(219, 75, 53, 0.7);
+    -webkit-transform: rotate(-30deg);
+       -moz-transform: rotate(-30deg);
+        -ms-transform: rotate(-30deg);
+         -o-transform: rotate(-30deg);
+            transform: rotate(-30deg);
+}
+
+.ui-content > .ui-listview .indicator {
+    font-size: 75%;
+    position: absolute;
+    margin: 0;
+    top: 2px;
+    right: 2px;
+    color: #bbb;
+}
+
 
 /* lists of evens */
 .ui-content > .events-list > li .event-main {
     padding: 10px;
-}
-.ui-content > .events-list > li > .ui-li-aside {
-    font-size: 75%;
-    float: none;
-    width: auto;
-    position: absolute;
-    top: -3px;
-    right: 2px;
-    color: #bbb;
 }
 .ui-content > .events-list > li > .ui-li-desc {
     background: #ddd;
@@ -370,33 +399,7 @@ div.markdown li {
 
 .ui-content > .repos-list > li,
 .ui-content > .mixed-list > li.repo {
-    overflow: hidden;
-    position: relative;
     margin-bottom: 15px;
-}
-.ui-content > .repos-list > li .repo-is-fork,
-.ui-content > .mixed-list > li.repo .repo-is-fork {
-    background: #db4b35;
-    color: white;
-    text-align: center;
-    width: 70px;
-    position: absolute;
-    top: -8px;
-    left: -25px;
-    padding: 10px 2px 2px;
-    margin: 0;
-    font-weight: bold;
-    float: none;
-    -webkit-box-shadow: 1px 1px 2px rgba(219, 75, 53, 0.7);
-       -moz-box-shadow: 1px 1px 2px rgba(219, 75, 53, 0.7);
-        -ms-box-shadow: 1px 1px 2px rgba(219, 75, 53, 0.7);
-         -o-box-shadow: 1px 1px 2px rgba(219, 75, 53, 0.7);
-            box-shadow: 1px 1px 2px rgba(219, 75, 53, 0.7);
-    -webkit-transform: rotate(-30deg);
-       -moz-transform: rotate(-30deg);
-        -ms-transform: rotate(-30deg);
-         -o-transform: rotate(-30deg);
-            transform: rotate(-30deg);
 }
 .ui-content > .repos-list > li .repo-desc,
 .ui-content > .mixed-list > li.repo .repo-desc {

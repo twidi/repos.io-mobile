@@ -57,6 +57,8 @@
 
         if (!repository.is_fork) {
             classes.push('no-fork');
+        } else {
+            classes.push('with-banner');
         }
 
         if (repository.pushed_at) {
@@ -82,8 +84,8 @@
 
     App.Display.prototype.update_repository_navbar = (function Display__update_repository_navbar (repository) {
         $('.go-button').find('.provider').html(repository.provider.name);
-        $('.repository_forks-count').html(repository.details ? repository.details.forks_count : '?').show();
-        $('.repository_stars-count').html(repository.details ? repository.details.watchers_count : '?').show();
+        $('.repository_forks-count').html(typeof repository.details.forks_count !== 'undefined' ? repository.details.forks_count : '?').show();
+        $('.repository_stars-count').html(typeof repository.details.watchers_count !== 'undefined'  ? repository.details.watchers_count : '?').show();
     }); // update_repository_navbar
 
     App.Display.prototype.get_real_repository_page = (function Display__get_real_repository_page (page_name, repository) {

@@ -750,7 +750,11 @@
     Display.prototype.create_issues_list_items = (function Display__create_issues_list_items (issues) {
         var template = this.get_template('issue-list-item'),
             items = [],
-            li, issue, a, a_children, h_children, classes;
+            li, issue, classes,
+            a, a_children, number_holder, state_holder, title_holder,
+            created_children, creator_avatar_holder, creator_holder,
+            created_at_holder, infos_children, comments_holder,
+            last_status_holder, last_status_date_holder;
 
         for (var i=0; i<issues.length; i++) {
             issue = issues[i];
@@ -759,8 +763,7 @@
             a = li.getElementsByTagName('a')[0];
             a_children = a.children;
             number_holder = a_children[0];
-            indicators = a_children[1].children;
-            state_holder = indicators[1];
+            state_holder = a_children[1].children[1];
             title_holder = a_children[2];
             created_children = a_children[3].children;
             creator_avatar_holder = created_children[0];

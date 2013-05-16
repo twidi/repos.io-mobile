@@ -479,7 +479,7 @@
     }); // map_account
 
     Provider.prototype.repository_mapping = {
-        _: ['name', 'full_name', 'description', 'pushed_at', 'created_at', 'updated_at', 'forks_count', 'fork', 'watchers_count', 'language'],
+        _: ['name', 'full_name', 'description', 'pushed_at', 'created_at', 'updated_at', 'forks_count', 'fork', 'watchers_count', 'language', 'open_issues_count'],
         fork: 'is_fork'
     };
 
@@ -695,6 +695,10 @@
     Provider.prototype.get_repository_contributors = (function Github__get_repository_contributors (path, callback, params) {
         this.get_repo(path).contributors.fetch(this.decorate_collback(callback, 'contributors', 'accounts'), params);
     }); // get_repository_contributors
+
+    Provider.prototype.get_repository_issues = (function Github__get_repository_issues (path, callback, params) {
+        this.get_repo(path).issues.fetch(this.decorate_collback(callback, 'issues', 'issues'), params);
+    }); // get_repository_issues
 
     Provider.prototype._check_flag = (function Github__check_flag(obj, flag_type, on_success, on_error) {
         var flag = new Gh3[flag_type](obj);

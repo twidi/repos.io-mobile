@@ -747,6 +747,68 @@
         return items;
     }); // create_events_list_items
 
+    Display.prototype.create_issues_list_items = (function Display__create_issues_list_items (issues) {
+        var template = this.get_template('issue-list-item'),
+            items = [],
+            li, issue, a, a_children, h_children, classes;
+
+        for (var i=0; i<issues.length; i++) {
+            issue = issues[i];
+
+            li = template.cloneNode(true);
+            a = li.getElementsByTagName('a')[0];
+            a_children = a.children;
+            number_holder = a_children[0];
+            state_holder = a_children[1];
+            title_holder = a_children[2];
+            created_children = a_children[3].children;
+            creator_avatar_holder = created_children[0];
+            creator_holder = created_children[1];
+            created_at_holder = created_children[2];
+            infos_children = a_children[4].children;
+            comments_holder = infos_children[0];
+            last_status_holder = infos_children[1];
+            last_status_date_holder = infos_children[2];
+
+            classes = [];
+
+            a.href = issue.html_url;
+
+            number_holder.innerHTML = issue.number;
+            title_holder.innerHTML = this.escape_html(issue.title);
+            state_holder.innerHTML = issue.state;
+
+            created_at_holder.innerHTML = this.format_date(issue.created_at, true);
+            creator_holder.innerHTML = issue.user.login;
+            if (issue.user.avatar_url) {
+                creator_avatar_holder.setAttribute('data-original', issue.user.avatar_url);
+            }
+
+            if (issue.state == 'closed' || issue.comments) {
+                comments_holder.innerHTML = (issue.comments || 'No') + ' comment' + (issue.comments == 1 ? '' : 's');
+                if (issue.state == 'closed') {
+                    last_status_holder.innerHTML = 'closed';
+                    last_status_date_holder.innerHTML = this.format_date(issue.closed_at, true);
+                } else {
+                    last_status_holder.innerHTML = 'updated';
+                    last_status_date_holder.innerHTML = this.format_date(issue.updated_at, true);
+                }
+            } else {
+                classes.push('no-infos');
+            }
+
+            classes.push('issue-' + issue.state);
+
+            if (classes.length) {
+                li.className +=  ' ' + classes.join(' ');
+            }
+
+            items.push(li);
+        }
+
+        return items;
+    }); // create_issues_list_items
+
     Display.prototype.get_error_text = (function Display__get_error_text (error) {
         var error_text = '';
         if (error) {

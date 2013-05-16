@@ -19,7 +19,7 @@
                 }
                 return this.cache[this.model_name][id];
             }), // get
-            save_many_from_events: (function Account__save_many (events, provider, controller) {
+            save_many_from_events: (function Model__save_many_from_events (events, provider, controller) {
                 var event, account, repository, name;
                 for (var i = 0; i < events.length; i++) {
                     event = events[i];
@@ -41,7 +41,7 @@
                         repository.update_data('details', event.forkee);
                     }
                 }
-            }) // save_many
+            }) // save_many_from_events
         }, // __classvars__
 
         __init__: (function Model__constructor (id, controller) {

@@ -10,14 +10,16 @@
                 activity: [],
                 forks: [],
                 stars: [],
-                contributors: []
+                contributors: [],
+                issues: []
             },
             flags: ['star', 'watch'],
             default_params: {
                 activity: {per_page: 30, max_pages: 10},
                 forks: {per_page: 50},
                 stars: {per_page: 50},
-                contributors: {per_page: 100} // no pagination !?
+                contributors: {per_page: 100}, // no pagination !?
+                issues: {per_page: 50}
             },
             fetchable_params: {
                 forks: ['sort'],
@@ -35,7 +37,23 @@
                     repository = App.Models.repository.get(repositories[i].full_name + '@' + provider.name, controller);
                     repository.update_data('details', repositories[i]);
                 }
-            }) // save_many
+            }), // save_many
+            save_many_from_issues: (function Repository__save_many_from_issues (issues, provider, controller) {
+                var issue, account, name;
+                for (var i = 0; i < issues.length; i++) {
+                    issue = issues[i];
+                    // create a user object only if avatar, useless if not
+                    if (issue.user && issue.user.login && issue.user.avatar_url) {
+                        account = App.Models.account.get(issue.user.login + '@' + provider.name, controller);
+                        account.update_data('details', issue.user);
+                    }
+                    // idem for the assigne
+                    if (issue.assignee && issue.assignee.login && issue.assignee.avatar_url) {
+                        account = App.Models.account.get(issue.assignee.login + '@' + provider.name, controller);
+                        account.update_data('details', issue.assignee);
+                    }
+                }
+            }) // save_many_from_issues
         }, // __classvars__
 
         __init__: (function Repository__constructor (id, controller) {
@@ -70,6 +88,8 @@
                 case 'activity':
                     App.Models.base.save_many_from_events(data, this.provider, this.controller);
                     break;
+                case 'issues':
+                    App.Models.repository.save_many_from_issues(data, this.provider, this.controller);
             }
         }), // update_data
 

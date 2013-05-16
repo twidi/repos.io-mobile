@@ -325,4 +325,10 @@
         }) // refresh_widgets
     }); // View._events
 
+    App.View.views._issues = App.View.views._list.$extend({
+        get_items: (function View__issues__get_items (obj, issues) {
+            return this.display.create_issues_list_items(issues);
+        }) // get_items
+    }); // View._issues
+
 })(Reposio);

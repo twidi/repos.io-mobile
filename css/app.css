@@ -463,6 +463,41 @@ div.markdown li {
     max-width: 40px;
 }
 
+/* Lists of issues */
+.ui-content > .issues-list .ui-li-heading {
+    white-space: normal;
+    overflow: auto;
+}
+.ui-content > .ui-listview .banner {
+    background: #444;
+    -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+       -moz-box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+        -ms-box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+         -o-box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+            box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+.ui-content > .issues-list .issue-state {
+    padding: 0 3px 1px 4px;
+    color: white;
+    background: #6CC644;
+    -webkit-border-radius: 2px;
+       -moz-border-radius: 2px;
+        -ms-border-radius: 2px;
+         -o-border-radius: 2px;
+            border-radius: 2px;
+}
+.ui-content > .issues-list .issue-state.issue-close {
+    background: #BD2C00;
+}
+.ui-content > .issues-list > li.no-infos .issue-infos {
+    display: none;
+}
+.ui-content > .issues-list .ui-li-desc {
+    font-style: italic;
+    color: #777;
+    margin: 10px 0 0;
+}
 
 /* forms */
 form {

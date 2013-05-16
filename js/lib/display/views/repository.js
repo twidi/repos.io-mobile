@@ -183,4 +183,12 @@
         }
     }); // View.repository_stars
 
+    App.View.views.repository_issues = App.View.views._issues.$extend({
+        __classvars__: {
+            model: 'repository',
+            view_name: 'repository_issues',
+            data_field: 'issues'
+        }
+    }); // View.repository_issues
+
 })(Reposio);

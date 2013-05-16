@@ -1278,6 +1278,7 @@
             this.stargazers = new Collection.RepositoryStargazers(this);
             this.events = new Collection.RepositoryEvents(this);
             this.branches = new Collection.RepositoryBranches(this);
+            this.issues = new Collection.RepositoryIssues(this);
 
         },
         path: function() {
@@ -1389,6 +1390,92 @@
         _service: function() { return this.parent._service() + "/forks"; }
     });
 
+
+    Gh3.Issue = SingleObject.extend({
+        /* This class reprensent a Github issue, belonging to a repository */
+        constructor: function(ghRepo, number, infos) {
+            /* Save mandatary repository and number and then call the
+               constructor
+             */
+
+            if (ghRepo && number) {
+                this.number = number;
+                this.repository = ghRepo;
+            } else {
+                throw "number && repository !";
+            }
+
+            Gh3.Issue.__super__.constructor.call(this, infos);
+        },
+        _service: function() {
+            return this.repository._service() + "/issues/" + this.number;
+        },
+        _defaultFetchCallParams: function() {
+            /* Update the default params as we don't want a json response, but
+             * the full issue body in its html version to use it directly
+             */
+            var params = Gh3.Issue.__super__._defaultFetchCallParams.call(this);
+            params.headers = $.extend({}, params.headers || {}, {
+                Accept: 'application/vnd.github.html+json',
+            });
+            return params;
+        },
+        _setData: function(data) {
+            /* Save user, assignee and repo, then normal fields
+             */
+            if (data) {
+                if (data.user) {
+                    if (data.user.login) {
+                        if (!this.user) {
+                            this.user = new Gh3.User(data.user.login);
+                        }
+                        this.user._setData(data.user)
+                    }
+                    delete data.user;
+                }
+                if (data.assignee) {
+                    if (data.assignee.login) {
+                        if (!this.assignee) {
+                            this.assignee = new Gh3.User(data.assignee.login);
+                        }
+                        this.assignee._setData(data.assignee)
+                    }
+                    delete data.assignee;
+                }
+                if (data.repo) {
+                    this.repository._setData(data.repo);
+                    delete data.repo;
+                }
+            }
+
+            Gh3.Issue.__super__._setData.call(this, data);
+
+        }
+    }); // Gh3.Issue
+    
+    Collection._IssuesList = Collection._Base.extend({
+        _prepareItem: function(item) {
+            /* Simply create a Gh3.Issue with raw data from the api
+            */
+            return new Gh3.Issue(this.parent, item.number, item);
+        },
+        _defaultFetchCallParams: function() {
+            /* Update the default params as we don't want a json response, but
+             * the full issue body in its html version to use it directly
+             */
+            var params = Collection._IssuesList.__super__._defaultFetchCallParams.call(this);
+            params.headers = $.extend({}, params.headers || {}, {
+                Accept: 'application/vnd.github.html+json',
+            });
+            return params;
+        }
+    });
+
+    Collection.RepositoryIssues = Collection._IssuesList.extend({
+        /* List of issues of a repositories
+         */
+        _service: function() { return this.parent._service() + "/issues"; }
+    });
 
     /* Search */
 

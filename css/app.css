@@ -121,21 +121,21 @@ body {
 }
 
 
-/* markdown simple style */
-div.markdown p {
+/* markup simple style */
+div.markup p {
     margin: 0.5em 0;
 }
-div.markdown a {
+div.markup a {
     color: black;
 }
-div.markdown code {
+div.markup code {
     background: #f8f8f8;
     border: 1px solid #eaeaea;
     padding: 2px;
     margin: 0 2px;
     line-height: 2em;
 }
-div.markdown pre {
+div.markup pre {
     background: #f8f8f8;
     border: 1px solid #ccc;
     display: inline-block;
@@ -143,22 +143,22 @@ div.markdown pre {
     padding: 1ex;
     overflow-x: auto;
 }
-div.markdown pre code {
+div.markup pre code {
     background: transparent;
     padding: 0;
     margin: 0;
     border: none;
     line-height: 1.4em;
 }
-div.markdown blockquote {
+div.markup blockquote {
     border-left: 4px solid #ccc;
     margin: 1em 0.5em 1em 2em;
     padding: 0 0 0 0.5em;
 }
-div.markdown ul {
+div.markup ul {
     padding-left: 15px;
 }
-div.markdown li {
+div.markup li {
     overflow: inherit;
     list-style-type: disc;
 }
@@ -335,6 +335,7 @@ div.markdown li {
     margin: 0;
     display: none;
     border:none;
+    cursor: default;
 }
 .ui-content > .with-more > li .more.ui-collapsible {
     display: block;
@@ -474,7 +475,7 @@ div.markdown li {
 /* Lists of issues */
 .ui-content > .issues-list .ui-li-heading {
     white-space: normal;
-    overflow: auto;
+    overflow: hidden;
 }
 .ui-content > .issues-list .issue-indicators > span {
     -webkit-border-radius: 2px;
@@ -507,6 +508,74 @@ div.markdown li {
     color: #777;
     margin: 10px 0 0;
 }
+.ui-content > .issues-list .issue-more {
+    background: #ddd;
+    margin: 0;
+    padding: 4px 6px 2px;
+    color: #444;
+    text-shadow: 1px 1px 1px white;
+    font-size: 12px
+}
+.ui-content > .issues-list > li.no-details .issue-more {
+    display: none;
+}
+ul.issue-labels, ul.issue-labels > li {
+    list-style:none;
+    margin: 0;
+    padding: 0;
+    display: block;
+    border: 0;
+}
+ul.issue-labels > li {
+    display: inline-block;
+    -webkit-border-radius: 2px;
+       -moz-border-radius: 2px;
+        -ms-border-radius: 2px;
+         -o-border-radius: 2px;
+            border-radius: 2px;
+    padding: 1px 3px 1px 4px;
+    color: white;
+    vertical-align: middle;
+    background: #444;
+    margin: 2px;
+    font-size : 11px;
+    font-weight: bold;
+    -webkit-box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.12) inset;
+       -moz-box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.12) inset;
+        -ms-box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.12) inset;
+         -o-box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.12) inset;
+            box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.12) inset;
+}
+ul.issue-labels > li.dark-label {
+    color: white;
+    -webkit-text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.2);
+       -moz-text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.2);
+        -ms-text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.2);
+         -o-text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.2);
+            text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.2);
+}
+ul.issue-labels > li.light-label {
+    color: black;
+    -webkit-text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
+       -moz-text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
+        -ms-text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
+         -o-text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
+            text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.ui-content > .issues-list > li > .ui-collapsible > div > .issue-labels {
+    padding: 0 3px;
+}
+.ui-content > .issues-list > li > .ui-collapsible > div > .issue-labels:last-child {
+    margin-bottom: 3px;
+}
+.ui-content > .issues-list > li > .ui-collapsible > div > .issue-body > :first-child {
+    margin-top: 5px;
+}
+.ui-content > .issues-list > li > .ui-collapsible > div > .issue-body > :last-child {
+    margin-bottom: 5px;
+}
+
 
 /* forms */
 form {

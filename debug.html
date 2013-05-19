@@ -618,7 +618,7 @@ html.loading.ui-mobile-rendering > * { visibility: visible !important; }
      --></div>
 
     <div data-template-for="repository_issues"><!--
-        <ul data-role='listview' class='ui-listview issues-list'>
+        <ul class="ui-listview with-more issues-list" data-mobile-listview='{"options":{}}'>
         </ul>
         <div class="ui-grid-a load-buttons" id="repository_issues_load_buttons">
             <div class="ui-block-a"><a data-role="button" href='#' data-icon="plus" data-inline="true" data-mini="true" class="list-more-button ui-disabled" data-corners="false" >Load more</a></div>
@@ -688,6 +688,7 @@ html.loading.ui-mobile-rendering > * { visibility: visible !important; }
                 <p class="ui-li-desc issue-created">By <img src="img/default-avatar.png" class="avatar-small" /><span></span>, <span></span></p>
                 <p class="ui-li-desc issue-infos"><span></span>, <span></span> on <span></span></p>
             </a>
+            <p class="collapsible-trigger issue-more">Details...</p>
             </div><span class="ui-icon ui-icon-arrow-r ui-icon-shadow">&nbsp;</span></div></li>
         </li>
      --></ul>

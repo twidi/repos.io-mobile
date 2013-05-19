@@ -81,6 +81,23 @@
         return html.indexOf('<') === -1 ? html : $('<div/>').text(html).html();
     }); // escape_html
 
+    Display.prototype.is_light_color = (function Display__is_light_color(color) {
+        var r, g, b, yiq;
+        try {
+            color = color.replace('#', '');
+            if (color.length == 3) {
+                color = color[0] + color[0] + color[1] + color[1] + color[2] + color[2];
+            }
+            r = parseInt(color.substr(0, 2), 16);
+            g = parseInt(color.substr(2, 2), 16);
+            b = parseInt(color.substr(4, 2), 16);
+            yiq = ((r*299)+(g*587)+(b*114))/1000;
+            return (yiq >= 128);
+        } catch(ex) {
+            return true;
+        }
+    }); // is_light_color
+
     Display.prototype.nodes = {};
     Display.prototype.template_sources = {};
     Display.prototype.templates = {};
@@ -809,6 +826,13 @@
                 classes.push('no-pr');
             }
 
+            if ((!issue.labels || !issue.labels.length) && (!issue.comments)) {
+                classes.push('no-details');
+            } else {
+                li.more_type = 'issue';
+                li.issue_data = issue;
+            }
+
             if (classes.length) {
                 li.className +=  ' ' + classes.join(' ');
             }
@@ -1028,5 +1052,24 @@
         }
     }); // render_event_collapsible
 
+    Display.prototype.render_issue_collapsible = (function Display__render_issue_collapsible(li) {
+        var issue = li[0].issue_data,
+            parts = [],
+            labels_part, label, body_part;
+        if (issue.labels && issue.labels.length) {
+            labels_part = '<ul class="issue-labels">';
+            for (var i = 0; i < issue.labels.length; i++) {
+                label = issue.labels[i];
+                labels_part += '<li style="background:#' + label.color + '" class="' + (this.is_light_color(label.color) ? 'light' : 'dark' )+ '-label">' + label.name + '</li>';
+            }
+            labels_part += '</ul>';
+            parts.push(labels_part);
+        }
+        if (issue.body_html) {
+            body_part = '<div class="markup issue-body">' + issue.body_html + '</div>';
+            parts.push(body_part);
+        }
+        return parts.join('');
+    }); // render_issue_collapsible
 
 })(Reposio);

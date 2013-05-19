@@ -64,7 +64,7 @@
 
     EventFormatter.prototype.markdown_event_more = (function GithubEventFormatter__markdown_event_more (text) {
         if (!text) { return ''; }
-        result = '<div class="markdown">';
+        result = '<div class="markup">';
         result += marked(text, {sanitize: true, breaks: true, smartLists: true});
         result +='</div>';
         return result;

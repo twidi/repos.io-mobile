@@ -235,17 +235,25 @@ div.markdown li {
     margin: 0;
     font-weight: bold;
     font-size: 12px;
+    background: #444;
+    -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+       -moz-box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+        -ms-box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+         -o-box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+            box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+    -webkit-transform: rotate(-30deg);
+       -moz-transform: rotate(-30deg);
+        -ms-transform: rotate(-30deg);
+         -o-transform: rotate(-30deg);
+            transform: rotate(-30deg);
+}
+.ui-content > .ui-listview .banner.flash {
     background: #db4b35;
     -webkit-box-shadow: 1px 1px 2px rgba(219, 75, 53, 0.7);
        -moz-box-shadow: 1px 1px 2px rgba(219, 75, 53, 0.7);
         -ms-box-shadow: 1px 1px 2px rgba(219, 75, 53, 0.7);
          -o-box-shadow: 1px 1px 2px rgba(219, 75, 53, 0.7);
             box-shadow: 1px 1px 2px rgba(219, 75, 53, 0.7);
-    -webkit-transform: rotate(-30deg);
-       -moz-transform: rotate(-30deg);
-        -ms-transform: rotate(-30deg);
-         -o-transform: rotate(-30deg);
-            transform: rotate(-30deg);
 }
 
 .ui-content > .ui-listview .indicator {
@@ -467,14 +475,6 @@ div.markdown li {
 .ui-content > .issues-list .ui-li-heading {
     white-space: normal;
     overflow: auto;
-}
-.ui-content > .ui-listview .banner {
-    background: #444;
-    -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
-       -moz-box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
-        -ms-box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
-         -o-box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
-            box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
 }
 .ui-content > .issues-list .issue-indicators > span {
     -webkit-border-radius: 2px;

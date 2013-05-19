@@ -562,12 +562,25 @@ ul.issue-labels > li.light-label {
          -o-text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
             text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
 }
-
+.ui-content > .issues-list > li > .ui-collapsible > div > hr {
+    margin-bottom: 0;
+    border: none;
+    border-top: 1px solid #bab9b3;
+}
+.ui-content > .issues-list > li > .ui-collapsible > div > .issue-labels:before {
+    content: 'Tags:';
+    padding-right: 2px;
+    font-weight: bold;
+    display: inline-block;
+}
 .ui-content > .issues-list > li > .ui-collapsible > div > .issue-labels {
-    padding: 0 3px;
+    padding: 0 8px;
+}
+.ui-content > .issues-list > li > .ui-collapsible > div > .issue-labels:first-child {
+    margin-top: 4px;
 }
 .ui-content > .issues-list > li > .ui-collapsible > div > .issue-labels:last-child {
-    margin-bottom: 3px;
+    margin-bottom: 7px;
 }
 .ui-content > .issues-list > li > .ui-collapsible > div > .issue-body > :first-child {
     margin-top: 5px;

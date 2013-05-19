@@ -826,7 +826,7 @@
                 classes.push('no-pr');
             }
 
-            if ((!issue.labels || !issue.labels.length) && (!issue.comments)) {
+            if ((!issue.labels || !issue.labels.length) && !issue.body_html && (!issue.milestone && !issue.milestone.id)) {
                 classes.push('no-details');
             } else {
                 li.more_type = 'issue';
@@ -1055,7 +1055,13 @@
     Display.prototype.render_issue_collapsible = (function Display__render_issue_collapsible(li) {
         var issue = li[0].issue_data,
             parts = [],
-            labels_part, label, body_part;
+            labels_part, label, body_part, milestone_part, assignee_part;
+
+        if (issue.milestone && issue.milestone.id) {
+            milestone_part = '<div class="issue-milestone"><strong>Milestone: </strong>' + this.escape_html(issue.milestone.title) + '</div>';
+            parts.push(milestone_part);
+        }
+
         if (issue.labels && issue.labels.length) {
             labels_part = '<ul class="issue-labels">';
             for (var i = 0; i < issue.labels.length; i++) {
@@ -1065,10 +1071,25 @@
             labels_part += '</ul>';
             parts.push(labels_part);
         }
+
+        if (issue.assignee && issue.assignee.id) {
+            assignee_part = '<div class="issue-assignee"><strong>Assigned to: </strong>';
+            assignee_part += this.account_link(issue.assignee.login, this.controller.repository.provider.name, issue.assignee.avatar_url);
+            assignee_part += '</div>';
+            parts.push(assignee_part);
+        }
+
         if (issue.body_html) {
-            body_part = '<div class="markup issue-body">' + issue.body_html + '</div>';
+            if (parts.length) {
+                parts.push('<hr />');
+            }
+            body_part = '<div class="issue-body">';
+            body_part += '<div><strong>Description</strong>, by ' + this.account_link(issue.user.login, this.controller.repository.provider.name, issue.user.avatar_url) + '</div>';
+            body_part += '<div class="markup">' + issue.body_html + '</div>';
+            body_part += '</div>';
             parts.push(body_part);
         }
+
         return parts.join('');
     }); // render_issue_collapsible
 

@@ -330,20 +330,20 @@ div.markdown li {
     margin-bottom: 1px;
 }
 
-/* "more" part of events */
-.ui-content > .events-list > li .event-more {
+/* "more" part of events/issues */
+.ui-content > .with-more > li .more {
     margin: 0;
     display: none;
     border:none;
 }
-.ui-content > .events-list > li .event-more.ui-collapsible {
+.ui-content > .with-more > li .more.ui-collapsible {
     display: block;
     margin-top: -2px;
 }
-.ui-content > .events-list > li .event-more > h3 {
+.ui-content > .with-more > li .more > h3 {
     display: none;
 }
-.ui-content > .events-list > li .event-more > div {
+.ui-content > .with-more > li .more > div {
     padding: 0;
     margin-top: 5px;
     background: none repeat scroll 0 0 transparent;
@@ -362,42 +362,42 @@ div.markdown li {
          -o-transition: all 0.2s ease 0s;
             transition: all 0.2s ease 0s;
 }
-.ui-content > .events-list > li .ui-collapsible .ui-collapsible-content-collapsed {
+.ui-content > .with-more > li .ui-collapsible .ui-collapsible-content-collapsed {
     margin-top: 1px;
     max-height: 1px;
 }
-.ui-content > .events-list > li .ui-collapsible > div > ul,
-.ui-content > .events-list > li .ui-collapsible > div > p,
-.ui-content > .events-list > li .ui-collapsible > div > div {
+.ui-content > .with-more > li .ui-collapsible > div > ul,
+.ui-content > .with-more > li .ui-collapsible > div > p,
+.ui-content > .with-more > li .ui-collapsible > div > div {
     margin: 1px 0 0 0;
     margin-top: 1px;
     font-size: smaller;
     border: none;
     background: transparent;
 }
-.ui-content > .events-list > li .ui-collapsible > div > div,
-.ui-content > .events-list > li .ui-collapsible > div > p {
+.ui-content > .with-more > li .ui-collapsible > div > div,
+.ui-content > .with-more > li .ui-collapsible > div > p {
     padding: 0.5em 10px;
 }
 
 /* li in "more" parts, with extension (only a little part displayed */
-.ui-content > .events-list li.with-extension > em {
+.ui-content > .with-more li.with-extension > em {
     cursor: pointer;
 }
-.ui-content > .events-list li.with-extension > em .extension {
+.ui-content > .with-more li.with-extension > em .extension {
     display: none;
 }
-.ui-content > .events-list li.with-extension > em:after {
+.ui-content > .with-more li.with-extension > em:after {
     content: " …";
     font-weight: bold;
 }
-.ui-content > .events-list li.with-extension.extended > em {
+.ui-content > .with-more li.with-extension.extended > em {
     cursor: default;
 }
-.ui-content > .events-list li.with-extension.extended > em .extension {
+.ui-content > .with-more li.with-extension.extended > em .extension {
     display: inline;
 }
-.ui-content > .events-list li.with-extension.extended > em:after {
+.ui-content > .with-more li.with-extension.extended > em:after {
     display: none;
 }
 

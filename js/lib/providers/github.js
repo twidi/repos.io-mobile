@@ -79,10 +79,7 @@
     }); // trigger_text
 
     EventFormatter.prototype.more = (function GithubEventFormatter__more (html) {
-        var more = '<div data-role="collapsible" data-content-theme="d" data-corners="false" data-mini="true" class="event-more"><h3>More</h3>';
-        more += html;
-        more += '</div>';
-        return more;
+        return html;
     }); // more
 
     EventFormatter.prototype.description_fetcher = (function GithubEventFormatter__description_fetcher (event, source, repo) {

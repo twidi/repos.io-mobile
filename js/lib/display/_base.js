@@ -291,26 +291,28 @@
             opener.removeClass('popup-opened');
         })); // main-nav-menu popupafterclose
 
-        $(document).on('click', '.events-list a.collapsible-trigger', (function Display__on_collapsible_trigger_click (e) {
-            // open/close collapsible when clicking triggering links in list of events
+        $(document).on('click', '.collapsible-trigger', (function Display__on_collapsible_trigger_click (e) {
+            // open/close collapsible when clicking triggering links in list of events, issues...
             e.preventDefault();
             e.stopPropagation();
             var link = $(this),
                 li = link.parents('li'),
-                opened, collapsible, ev_data, more;
+                opened, collapsible, type, more;
             if (!link.hasClass('filled')) {
                 link.addClass('filled');
-                ev_data = li[0].event_data;
-                if (ev_data.provider['more_' + ev_data.event.type]) {
-                    more = ev_data.provider['more_' + ev_data.event.type](ev_data.event, ev_data.source);
-                    li.append(more);
-                    collapsible =  li.children(':last');
-                    collapsible.collapsible();
-                    display.render_widgets(collapsible);
-                    link.data('collapsible', collapsible);
-                    setTimeout(function() {
-                        collapsible.trigger('expand');
-                    }, 100);
+                type = li[0].more_type;
+                if (display['render_' + type + '_collapsible']) {
+                    more = display['render_' + type + '_collapsible'](li);
+                    if (more !== null) {
+                        li.append('<div data-role="collapsible" data-content-theme="d" data-corners="false" data-mini="true" class="more"><h3>More</h3>' + more + '</div>');
+                        collapsible =  li.children(':last');
+                        collapsible.collapsible();
+                        display.render_widgets(collapsible);
+                        link.data('collapsible', collapsible);
+                        setTimeout(function() {
+                            collapsible.trigger('expand');
+                        }, 100);
+                    }
                 }
             } else {
                 opened = li.hasClass('more-opened');
@@ -736,6 +738,7 @@
 
             li = event_template.cloneNode(true);
             li.innerHTML = event.html;
+            li.more_type = 'event';
             li.event_data = {
                 event: event.event,
                 source: event.source,
@@ -1015,5 +1018,15 @@
     Display.prototype.login_fail = (function Display__login_fail () {
         alert("Something goes wrong and we couldn't complete the authentication.");
     }); // login_fail
+
+    Display.prototype.render_event_collapsible = (function Display__render_event_collapsible(li) {
+        var ev_data = li[0].event_data;
+        if (ev_data.provider['more_' + ev_data.event.type]) {
+            return ev_data.provider['more_' + ev_data.event.type](ev_data.event, ev_data.source);
+        } else {
+            return null;
+        }
+    }); // render_event_collapsible
+
 
 })(Reposio);

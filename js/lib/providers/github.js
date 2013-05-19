@@ -465,7 +465,9 @@
     }); // map
 
     Provider.prototype.account_mapping = {
-        _: ['login', 'type', 'avatar_url', 'name', 'created_at', 'company', 'location', 'email', 'blog', 'public_repos', 'followers_count', 'following_count', 'contributions'],
+        _: ['login', 'type', 'avatar_url', 'name', 'created_at', 'company',
+            'location', 'email', 'blog', 'public_repos', 'followers_count',
+            'following_count', 'contributions'],
         blog: 'site',
         public_repos: 'repos_count'
     };
@@ -479,7 +481,9 @@
     }); // map_account
 
     Provider.prototype.repository_mapping = {
-        _: ['name', 'full_name', 'description', 'pushed_at', 'created_at', 'updated_at', 'forks_count', 'fork', 'watchers_count', 'language', 'open_issues_count'],
+        _: ['name', 'full_name', 'description', 'pushed_at', 'created_at',
+            'updated_at', 'forks_count', 'fork', 'watchers_count', 'language',
+            'open_issues_count', 'has_issues'],
         fork: 'is_fork'
     };
 

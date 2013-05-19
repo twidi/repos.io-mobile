@@ -149,7 +149,11 @@
             }
 
             return data;
-        }) // sort_and_filter_issues
+        }), // sort_and_filter_issues
+
+        can_have_issues: (function Repository__can_have_issues () {
+            return (this.details && this.details.has_issues);
+        }) // can_have_issues
 
     }); // Repository
 

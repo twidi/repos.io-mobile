@@ -10,10 +10,6 @@
     ];
 
     App.Display.prototype.change_repository = (function Display__change_repository () {
-        $('.repository_forks-count').hide();
-        $('.repository_stars-count').hide();
-        $('.repository_issues-count').hide();
-
         for (var i=0; i<this.pages_list.repository.length; i++) {
             var page = this.pages_list.repository[i];
             for (var j=0; j<page.nodes.links.length; j++) {
@@ -85,10 +81,12 @@
     }); // create_repositories_list_items
 
     App.Display.prototype.update_repository_navbar = (function Display__update_repository_navbar (repository) {
+        var can_have_issues = repository.can_have_issues();
         $('.go-button').find('.provider').html(repository.provider.name);
-        $('.repository_forks-count').html(typeof repository.details.forks_count !== 'undefined' ? repository.details.forks_count : '?').show();
-        $('.repository_stars-count').html(typeof repository.details.watchers_count !== 'undefined'  ? repository.details.watchers_count : '?').show();
-        $('.repository_issues-count').html(typeof repository.details.open_issues_count !== 'undefined'  ? repository.details.open_issues_count : '?').show();
+        $('.repository_forks-count').html(typeof repository.details.forks_count !== 'undefined' ? repository.details.forks_count : '?');
+        $('.repository_stars-count').html(typeof repository.details.watchers_count !== 'undefined'  ? repository.details.watchers_count : '?');
+        $('.repository_issues-count').html(typeof repository.details.open_issues_count !== 'undefined' && can_have_issues ? repository.details.open_issues_count : '?');
+        $('.repository_issues-link').closest('li')[can_have_issues ? 'show': 'hide']();
     }); // update_repository_navbar
 
     App.Display.prototype.get_real_repository_page = (function Display__get_real_repository_page (page_name, repository) {

@@ -266,6 +266,7 @@
                 display.update_star_control(page, obj);
                 display.update_watch_control(page, obj);
                 display.update_follow_control(page, obj);
+                display.load_visible_images();
             } catch(ex) {}
         })); // pagechange
 

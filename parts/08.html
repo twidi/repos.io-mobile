@@ -245,7 +245,7 @@
      --></div>
 
     <div data-template-for="account_activity"><!--
-        <ul class="ui-listview events-list" data-mobile-listview='{"options":{}}'>
+        <ul class="ui-listview with-more events-list" data-mobile-listview='{"options":{}}'>
         </ul>
         <div class="ui-grid-a load-buttons" id="account_activity_load_buttons">
             <div class="ui-block-a"><a data-role="button" href='#' data-icon="plus" data-inline="true" data-mini="true" class="list-more-button ui-disabled" data-corners="false" >Load more</a></div>
@@ -300,7 +300,7 @@
      --></div>
 
     <div data-template-for="account_events"><!--
-        <ul class="ui-listview events-list" data-mobile-listview='{"options":{}}'>
+        <ul class="ui-listview with-more events-list" data-mobile-listview='{"options":{}}'>
         </ul>
         <div class="ui-grid-a load-buttons" id="account_events_load_buttons">
             <div class="ui-block-a"><a data-role="button" href='#' data-icon="plus" data-inline="true" data-mini="true" class="list-more-button ui-disabled" data-corners="false" >Load more</a></div>
@@ -422,7 +422,7 @@
      --></div>
 
     <div data-template-for="repository_activity"><!--
-        <ul class="ui-listview events-list" data-mobile-listview='{"options":{}}'>
+        <ul class="ui-listview with-more events-list" data-mobile-listview='{"options":{}}'>
         </ul>
         <div class="ui-grid-a load-buttons" id="repository_activity_load_buttons">
             <div class="ui-block-a"><a data-role="button" href='#' data-icon="plus" data-inline="true" data-mini="true" class="list-more-button ui-disabled" data-corners="false" >Load more</a></div>
@@ -490,10 +490,50 @@
         </div>
      --></div>
 
+    <div data-template-for="repository_issues"><!--
+        <ul class="ui-listview with-more issues-list" data-mobile-listview='{"options":{}}'>
+        </ul>
+        <div class="ui-grid-a load-buttons" id="repository_issues_load_buttons">
+            <div class="ui-block-a"><a data-role="button" href='#' data-icon="plus" data-inline="true" data-mini="true" class="list-more-button ui-disabled" data-corners="false" >Load more</a></div>
+            <div class="ui-block-b"><a data-role="button" href='#' data-icon="grid" data-inline="true" data-mini="true" class="list-all-button ui-disabled" data-corners="false" >Load all</a></div>
+        </div>
+     --></div>
+
+    <div data-template-for="repository_issues_options"><!--
+        <div data-role="collapsible" data-corners="false" data-theme="e" data-content-theme="c" data-mini="true" data-inset="false" class="view-options">
+            <h3>Options and filters</h3>
+            <form id="repository_issues_options" data-ajax="false">
+                <div class="fieldsets">
+                    <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label ui-with-radio-legend">
+                        <legend>State: </legend>
+                        <label><input type="radio" name="repository_issues_options_state" id="repository_issues_options_state__label" value="__label__" disabled="disabled" data-theme="a" />State: </label>
+                        <label><input type="radio" name="repository_issues_options_state" id="repository_issues_options_state_open" value="open" />Open</label>
+                        <label><input type="radio" name="repository_issues_options_state" id="repository_issues_options_state_closed" value="closed" />Closed</label>
+                    </fieldset><fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label ui-with-radio-legend">
+                        <legend>Sort: </legend>
+                        <label><input type="radio" name="repository_issues_options_sort" id="repository_issues_options_sort__label" value="__label__" disabled="disabled" data-theme="a" />Sort: </label>
+                        <label><input type="radio" name="repository_issues_options_sort" id="repository_issues_options_sort_created" value="created" checked="checked" />Created</label>
+                        <label><input type="radio" name="repository_issues_options_sort" id="repository_issues_options_sort_updated" value="updated" />Updated</label>
+                        <label><input type="radio" name="repository_issues_options_sort" id="repository_issues_options_sort_comments" value="comments" />Comments</label>
+                    </fieldset><fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label ui-with-radio-legend">
+                        <legend>Direction: </legend>
+                        <label><input type="radio" name="repository_issues_options_direction" id="repository_issues_options_direction__label" value="__label__" disabled="disabled" data-theme="a" />Direction: </label>
+                        <label><input type="radio" name="repository_issues_options_direction" id="repository_issues_options_direction_asc" value="asc" />Asc</label>
+                        <label><input type="radio" name="repository_issues_options_direction" id="repository_issues_options_direction_desc" value="desc" checked="checked" />Desc</label>
+                    </fieldset>
+                </div>
+                <fieldset class="buttons">
+                    <button type="reset" data-mini="true" data-theme="c" data-icon="delete" data-inline="true" name="reset" value="reset-value">Default</button>
+                    <button type="submit" data-mini="true" data-theme="b" data-icon="check" data-inline="true" name="submit" value="submit-value">Update</button>
+                </fieldset>
+            </form>
+        </div>
+     --></div>
+
     <ul data-template-for="repository-list-item"><!--
         <li class="ui-btn ui-btn-icon-right ui-li-has-arrow ui-li ui-btn-up-c repo"><div class="ui-btn-inner ui-li"><div class="ui-btn-text">
             <a href="#repository_home" class="ui-link-inherit">
-                <p class="ui-li-aside ui-btn-up-e ui-btn-corner-all repo-is-fork ui-li-desc">fork</p>
+                <p class="banner repo-is-fork">fork</p>
                 <h4 class="ui-li-heading"><img src="img/default-avatar.png" class="avatar-small" /><span>loading...</span></h4>
                 <p class="repo-desc ui-li-desc"></p>
                 <p class="repo-last-push ui-li-desc">Last push: <span></span></p>
@@ -512,6 +552,19 @@
      --></ul>
     <ul data-template-for="event-list-day"><!-- <li class="ui-li ui-li-divider"></li> --></ul>
     <ul data-template-for="event-list-item"><!-- <li class="ui-li ui-li-static ui-li-has-alt event"></li> --></ul>
+    <ul data-template-for="issue-list-item"><!--
+        <li class="ui-btn ui-btn-icon-right ui-li-has-arrow ui-li ui-btn-up-c with-banner issue"><div class="ui-btn-inner ui-li"><div class="ui-btn-text">
+            <a href="#" target="_blank" class="ui-link-inherit">
+                <p class="banner issue-number"></p>
+                <p class="indicator issue-indicators"><span class="issue-pr">PR</span><span class="issue-state"></span></p>
+                <h4 class="ui-li-heading">loading...</h4>
+                <p class="ui-li-desc issue-created">By <img src="img/default-avatar.png" class="avatar-small" /><span></span>, <span></span></p>
+                <p class="ui-li-desc issue-infos"><span></span>, <span></span> on <span></span></p>
+            </a>
+            <p class="collapsible-trigger issue-more">Details...</p>
+            </div><span class="ui-icon ui-icon-arrow-r ui-icon-shadow">&nbsp;</span></div></li>
+        </li>
+     --></ul>
 
     <div data-template-for="main-nav-menu"><!--
         <div data-role="controlgroup" data-theme="a">

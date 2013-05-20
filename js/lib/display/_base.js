@@ -366,7 +366,7 @@
 
                 on_success = (function Display__on_fetch_desc_success (data) {
                     var html;
-                    repository.update_data('details', data);
+                    if (data) { repository.update_data('details', data); }
                     if (repository.details.description) {
                         html = '<strong>' + display.escape_html(repository.details.description) + ' </strong>';
                     } else {

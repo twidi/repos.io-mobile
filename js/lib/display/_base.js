@@ -979,7 +979,7 @@
 
     Display.prototype.ask_for_favorites_redraw = (function Display__ask_for_favorites_redraw () {
         this.need_favorites_redraw = true;
-        if ($.mobile.activePage.data('url') == 'home') {
+        if ($.mobile.activePage && $.mobile.activePage.data('url') == 'home') {
             this.refresh_home_favorites();
         }
     }); // ask_for_favorites_redraw

@@ -473,6 +473,13 @@ div.markup li {
 }
 
 /* Lists of issues */
+.ui-content > .issues-list > li {
+    cursor: default;
+}
+.ui-content > .issues-list > li .ui-btn-text  > .ui-link-inherit {
+    padding-bottom: 0;
+    margin-bottom: 0.7em;
+}
 .ui-content > .issues-list .ui-li-heading {
     white-space: normal;
     overflow: hidden;
@@ -511,10 +518,11 @@ div.markup li {
 .ui-content > .issues-list .issue-more {
     background: #ddd;
     margin: 0;
-    padding: 4px 6px 2px;
+    padding: 6px 6px 4px;
     color: #444;
     text-shadow: 1px 1px 1px white;
-    font-size: 12px
+    font-size: 12px;
+    cursor: pointer;
 }
 .ui-content > .issues-list > li.no-details .issue-more {
     display: none;

@@ -9,6 +9,16 @@ body {
     color: #444;
     background: #edeae1;
 }
+body.sorting {
+    overflow-x: visible !important;
+}
+body.sorting .ui-page-active > .ui-content {
+    overflow-x: visible !important;
+}
+body.sorting .ui-page-active .ui-sortable.sorting {
+    padding-left: 10% !important;
+    padding-right: 10% !important;
+}
 
 .ui-header {
     background: #db4b35;
@@ -1008,6 +1018,11 @@ div[id^=main_menu_][id$=-popup].ui-popup-container.ui-popup-active {
 }
 #home .ui-content .ui-li-divider {
     margin-bottom: 10px;
+}
+body.sorting #home.ui-page-active .ui-sortable.sorting .ui-li-divider:after {
+    content: '(arranging mode)';
+    padding-left: 1ex;
+    font-weight: bold;
 }
 
 /* Auth */

@@ -17,9 +17,12 @@
                 'anonymous': $('#welcome-anonymous'),
                 'username': $('#welcome span'),
                 'login_button': $('#home-login-button'),
-                'no_login_button': $('.home-hide-no-login-button')
+                'no_login_button': $('.home-hide-no-login-button'),
+                'sort_favorites_control': $('#sort-favorites-home')
             }
         };
+        this.home_favorites_sortable_created = false;
+        this.nodes.home.sort_favorites_control.attr('checked', false);
 
         for (var obj_type in this.pages_list) {
             this.construct_pages(obj_type, this.pages_list[obj_type]);
@@ -267,6 +270,7 @@
                 display.update_watch_control(page, obj);
                 display.update_follow_control(page, obj);
                 display.load_visible_images();
+                display.toggle_sort_favorites(false);
             } catch(ex) {}
         })); // pagechange
 
@@ -436,20 +440,27 @@
         $(window).on('resize', display.load_visible_images);
 
         $.jStorage.listenKeyChange('favorites', function(key, action){
-            display.controller.favorites = $.jStorage.get('favorites', []);
-            display.ask_for_favorites_redraw();
+            if (!display.nodes.home.favorites.hasClass('sorting')) {
+                display.controller.favorites = $.jStorage.get('favorites', []);
+                display.ask_for_favorites_redraw();
+            }
         });
 
         if (screenfull.enabled) {
-            $(document).on('change', '.fullscreen-control', (function Display__fullscreen_click (e) {
+            $(document).on('change', '.fullscreen-control', (function Display__fullscreen_change (e) {
                 $(this).parents('.main-nav-menu').popup('close');
                 screenfull.toggle();
-            })); // fullscreen.click
+            })); // fullscreen.change
             screenfull.onchange = display.update_fullscreen_control;
         } else {
             var controls = $('.fullscreen-control');
             controls.parents('.ui-checkbox').add(controls.parents('label')).remove();
         }
+
+        $(document).on('change', '#sort-favorites-home', (function Display__sort_favorites_change (e) {
+            $(this).parents('.main-nav-menu').popup('close');
+            display.toggle_sort_favorites(display.nodes.home.sort_favorites_control.attr('checked'));
+        })); // sort-favorites-home.change
 
         display.nodes.home.no_login_button.on('click', (function Display__no_login_click (e) {
             e.preventDefault();
@@ -476,6 +487,26 @@
         })); // auth_menu_click
 
     }); // init_events
+
+    Display.prototype.toggle_sort_favorites = (function Display__toggle_sort_favorites (toggle) {
+        var to_enable;
+        try {
+            to_enable = !!this.nodes.home.favorites.sortable('option', 'disabled');
+            if (typeof toggle !== 'undefined') {
+                to_enable = !!toggle;
+                this.nodes.home.sort_favorites_control.attr('checked', to_enable).checkboxradio('refresh');
+            }
+            this.nodes.body.toggleClass('sorting', to_enable);
+            this.nodes.home.favorites.toggleClass('sorting', to_enable);
+            this.ask_for_favorites_redraw();
+            this.nodes.home.favorites.sortable(to_enable ? 'enable' : 'disable');
+        } catch (ex) {
+            this.nodes.home.sort_favorites_control.attr('checked', false);
+            try {
+                this.nodes.home.sort_favorites_control.checkboxradio('refresh');
+            } catch (ex2) {}
+        }
+    }); // toggle_sort_favorites
 
     Display.prototype.load_visible_images = (function Display__load_visible_images () {
         var img, unloaded_imgs = $('img[data-original]:in-viewport:visible');
@@ -925,7 +956,7 @@
     App.Display = Display;
 
     Display.prototype.get_favorites_items = (function Display__list_favorites () {
-        var items = [], i, favorite, obj, provider;
+        var items = [], i, favorite, obj, provider, item;
         if (!this.controller.favorites.length) {
             this.controller.favorites = [{
                 hash: '#account_home!account=twidi@github',
@@ -948,6 +979,7 @@
         for (i = 0; i < this.controller.favorites.length; i++) {
             favorite = this.controller.favorites[i];
             provider = {name: favorite.provider};
+            item = null;
             switch (favorite.model) {
                 case 'account':
                     obj = { login: favorite.ref };
@@ -957,7 +989,7 @@
                     if (favorite.avatar_url) {
                         obj.avatar_url = favorite.avatar_url;
                     }
-                    items.push(this.create_account_list_item(obj, provider, favorite.hash));
+                    item = this.create_account_list_item(obj, provider, favorite.hash);
                     break;
                 case 'repository':
                     obj = {
@@ -971,8 +1003,12 @@
                     if (favorite.avatar_url) {
                         obj.user = { avatar_url: favorite.avatar_url };
                     }
-                    items.push(this.create_repository_list_item(obj, provider, favorite.hash));
+                    item = this.create_repository_list_item(obj, provider, favorite.hash);
                     break;
+            }
+            if (item) {
+                item.favorite_hash = favorite.hash;
+                items.push(item);
             }
         }
         return items;
@@ -989,9 +1025,36 @@
         if (!this.need_favorites_redraw) { return; }
         var display = this,
             items = this.get_favorites_items();
+
+        if (this.home_favorites_sortable_created) {
+            this.nodes.home.favorites.sortable('disable');
+        }
+
         this.clear_listview(this.nodes.home.favorites);
         this.nodes.home.favorites.append(items);
         this.need_favorites_redraw = false;
+
+        if (!this.home_favorites_sortable_created) {
+            this.nodes.home.favorites.sortable({
+                items: "> li.ui-btn",
+                cursor: "move",
+                axys: "y",
+                delay: 0,
+                opacity: 0.8,
+                disabled: true,
+                stop: function(event, ui) {
+                    var ordered_hashes = [];
+                    display.nodes.home.favorites.children('li.ui-btn').each(function() {
+                        ordered_hashes.push(this.favorite_hash);
+                    });
+                    display.controller.sort_favorites(ordered_hashes);
+                }
+            });
+            this.home_favorites_sortable_created = true;
+        } else {
+            this.nodes.home.favorites.sortable('refresh');
+        }
+
         setTimeout(display.load_visible_images, 500);
         setTimeout(display.load_visible_images, 1000);
         setTimeout(display.load_visible_images, 2000);

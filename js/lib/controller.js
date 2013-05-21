@@ -120,6 +120,22 @@
         return !!(_.find(this.favorites, function(fav) { return fav.hash == hash; } ));
     });
 
+    Controller.prototype.sort_favorites = (function Controller__sort_favorites(ordered_hashes) {
+        var favorites_by_hash = {}, i, j, hash, final_favorites = [];
+        for (i = 0; i < this.favorites.length; i++) {
+            favorites_by_hash[this.favorites[i].hash] = this.favorites[i];
+        }
+        for (j = 0; j < ordered_hashes.length; j++) {
+            hash = ordered_hashes[j];
+            if (favorites_by_hash[hash]) {
+                final_favorites.push(favorites_by_hash[hash]);
+            }
+        }
+        this.favorites = final_favorites;
+        $.jStorage.set('favorites', this.favorites);
+        $.jStorage.set('favorites-managed', true);
+    }); // sort_favorites
+
     Controller.prototype.get_current_user = (function Controller__get_current_user () {
         var controller = this;
         this.current_user = $.jStorage.get('logged-user', null);

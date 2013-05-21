@@ -331,4 +331,10 @@
         }) // get_items
     }); // View._issues
 
+    App.View.views._pull_requests = App.View.views._list.$extend({
+        get_items: (function View__pull_requests__get_items (obj, pull_requests) {
+            return this.display.create_pull_requests_list_items(pull_requests);
+        }) // get_items
+    }); // View._pull_requests
+
 })(Reposio);

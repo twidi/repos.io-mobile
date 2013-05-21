@@ -701,6 +701,10 @@
         this.get_repo(path).issues.fetch(this.decorate_collback(callback, 'issues', 'issues'), params);
     }); // get_repository_issues
 
+    Provider.prototype.get_repository_pull_requests = (function Github__get_repository_pull_requests (path, callback, params) {
+        this.get_repo(path).pull_requests.fetch(this.decorate_collback(callback, 'pull_requests', 'pull_requests'), params);
+    }); // get_repository_pull_requests
+
     Provider.prototype._check_flag = (function Github__check_flag(obj, flag_type, on_success, on_error) {
         var flag = new Gh3[flag_type](obj);
         flag.check(on_success, on_error);

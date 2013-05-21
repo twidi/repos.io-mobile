@@ -482,7 +482,7 @@ div.markup li {
     max-width: 40px;
 }
 
-/* Lists of issues */
+/* Lists of issues / pull requests */
 .ui-content > .issues-list > li {
     cursor: default;
 }
@@ -494,7 +494,8 @@ div.markup li {
     white-space: normal;
     overflow: hidden;
 }
-.ui-content > .issues-list .issue-indicators > span {
+.ui-content > .issues-list .issue-indicators > span,
+.ui-content > .pull_requests-list .pull_request-indicators > span {
     -webkit-border-radius: 2px;
        -moz-border-radius: 2px;
         -ms-border-radius: 2px;
@@ -504,20 +505,29 @@ div.markup li {
     color: white;
     vertical-align: middle;
 }
-.ui-content > .issues-list .issue-pr {
+.ui-content > .issues-list .issue-pr,
+.ui-content > .pull_requests-list .pull_request-merge {
     background: #444;
     margin-right: 2px;
 }
-.ui-content > .issues-list > li.no-pr .issue-pr {
+.ui-content > .issues-list > li.no-pr .issue-pr,
+.ui-content > .pull_requests-list > li.no-merge-indicator .pull_request-merge {
     display: none;
 }
-.ui-content > .issues-list .issue-state {
+.ui-content > .issues-list .issue-state,
+.ui-content > .pull_requests-list .pull_request-state,
+.ui-content > .pull_requests-list > .pull_request-mergeable .pull_request-merge {
     background: #6CC644;
 }
-.ui-content > .issues-list > .issue-closed .issue-state {
+.ui-content > .issues-list > .issue-closed .issue-state,
+.ui-content > .pull_requests-list > .pull_request-closed .pull_request-state {
     background: #BD2C00;
 }
-.ui-content > .issues-list > li.no-infos .issue-infos {
+.ui-content > .pull_requests-list > .pull_request-merged .pull_request-merge {
+    background: #8FB6DC;
+}
+.ui-content > .issues-list > li.no-infos .issue-infos,
+.ui-content > .pull_requests-list > li.no-infos .pull_request-infos {
     display: none;
 }
 .ui-content > .issues-list .ui-li-desc {
@@ -525,7 +535,8 @@ div.markup li {
     color: #777;
     margin: 10px 0 0;
 }
-.ui-content > .issues-list .issue-more {
+.ui-content > .issues-list .issue-more,
+.ui-content > .pull_requests-list .pull_request-more {
     background: #ddd;
     margin: 0;
     padding: 6px 6px 4px;
@@ -534,7 +545,8 @@ div.markup li {
     font-size: 12px;
     cursor: pointer;
 }
-.ui-content > .issues-list > li.no-details .issue-more {
+.ui-content > .issues-list > li.no-details .issue-more, 
+.ui-content > .pull_requests-list > li.no-details .pull_request-more {
     display: none;
 }
 ul.issue-labels, ul.issue-labels > li {
@@ -600,10 +612,12 @@ ul.issue-labels > li.light-label {
 .ui-content > .issues-list > li > .ui-collapsible > div > .issue-labels:last-child {
     margin-bottom: 7px;
 }
-.ui-content > .issues-list > li > .ui-collapsible > div > .issue-body > :first-child {
+.ui-content > .issues-list > li > .ui-collapsible > div > .issue-body > :first-child,
+.ui-content > .pull_requests-list > li > .ui-collapsible > div > .pull_request-body > :first-child {
     margin-top: 5px;
 }
-.ui-content > .issues-list > li > .ui-collapsible > div > .issue-body > :last-child {
+.ui-content > .issues-list > li > .ui-collapsible > div > .issue-body > :last-child
+.ui-content > .pull_requests-list > li > .ui-collapsible > div > .pull_request-body > :last-child {
     margin-bottom: 5px;
 }
 

@@ -6,7 +6,8 @@
         { id: 'contributors' },
         { id: 'forks', count: true },
         { id: 'stars', count: true },
-        { id: 'issues', count: true }
+        { id: 'issues', count: true },
+        { id: 'pull_requests', title: "Pull requests" }
     ];
 
     App.Display.prototype.change_repository = (function Display__change_repository () {
@@ -102,6 +103,8 @@
                 return 'https://github.com/' + repository.path + '/stargazers';
             case 'issues':
                 return 'https://github.com/' + repository.path + '/issues';
+            case 'pull_requests':
+                return 'https://github.com/' + repository.path + '/pulls';
         }
         return null;
     }); // get_real_repository_page

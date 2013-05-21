@@ -39,6 +39,7 @@
     ,    SingleObject
     ,    Fetchable
     ,    ReadmeFetcher
+    ,    BaseIssue
     ,    Base64;
 
     if (typeof exports !== 'undefined') {
@@ -1279,6 +1280,7 @@
             this.events = new Collection.RepositoryEvents(this);
             this.branches = new Collection.RepositoryBranches(this);
             this.issues = new Collection.RepositoryIssues(this);
+            this.pull_requests = new Collection.RepositoryPullRequests(this);
 
         },
         path: function() {
@@ -1391,8 +1393,12 @@
     });
 
 
-    Gh3.Issue = SingleObject.extend({
-        /* This class reprensent a Github issue, belonging to a repository */
+    /* Issues and pull request */
+
+    BaseIssue = SingleObject.extend({
+        /* This class reprensent a Github issue or pull-request, belonging
+           to a repository
+         */
         constructor: function(ghRepo, number, infos) {
             /* Save mandatary repository and number and then call the
                constructor
@@ -1405,18 +1411,15 @@
                 throw "number && repository !";
             }
 
-            Gh3.Issue.__super__.constructor.call(this, infos);
-        },
-        _service: function() {
-            return this.repository._service() + "/issues/" + this.number;
+            BaseIssue.__super__.constructor.call(this, infos);
         },
         _defaultFetchCallParams: function() {
             /* Update the default params as we don't want a json response, but
-             * the full issue body in its html version to use it directly
+             * the full issue/pr body in its html version to use it directly
              */
-            var params = Gh3.Issue.__super__._defaultFetchCallParams.call(this);
+            var params = BaseIssue.__super__._defaultFetchCallParams.call(this);
             params.headers = $.extend({}, params.headers || {}, {
-                Accept: 'application/vnd.github.html+json',
+                Accept: 'application/vnd.github.html+json'
             });
             return params;
         },
@@ -1429,7 +1432,7 @@
                         if (!this.user) {
                             this.user = new Gh3.User(data.user.login);
                         }
-                        this.user._setData(data.user)
+                        this.user._setData(data.user);
                     }
                     delete data.user;
                 }
@@ -1438,7 +1441,7 @@
                         if (!this.assignee) {
                             this.assignee = new Gh3.User(data.assignee.login);
                         }
-                        this.assignee._setData(data.assignee)
+                        this.assignee._setData(data.assignee);
                     }
                     delete data.assignee;
                 }
@@ -1448,27 +1451,39 @@
                 }
             }
 
-            Gh3.Issue.__super__._setData.call(this, data);
+            BaseIssue.__super__._setData.call(this, data);
 
         }
-    }); // Gh3.Issue
-    
-    Collection._IssuesList = Collection._Base.extend({
+    }); // BaseIssue
+
+    Collection._BaseIssuesList = Collection._Base.extend({
         _prepareItem: function(item) {
             /* Simply create a Gh3.Issue with raw data from the api
             */
-            return new Gh3.Issue(this.parent, item.number, item);
+            return new this.model(this.parent, item.number, item);
         },
         _defaultFetchCallParams: function() {
             /* Update the default params as we don't want a json response, but
              * the full issue body in its html version to use it directly
              */
-            var params = Collection._IssuesList.__super__._defaultFetchCallParams.call(this);
+            var params = Collection._BaseIssuesList.__super__._defaultFetchCallParams.call(this);
             params.headers = $.extend({}, params.headers || {}, {
-                Accept: 'application/vnd.github.html+json',
+                Accept: 'application/vnd.github.html+json'
             });
             return params;
         }
+    }); // Collection._BaseIssuesList
+
+
+    Gh3.Issue = BaseIssue.extend({
+        /* This class reprensent a Github issue, belonging to a repository */
+        _service: function() {
+            return this.repository._service() + "/issues/" + this.number;
+        }
+    }); // Gh3.Issue
+    
+    Collection._IssuesList = Collection._BaseIssuesList.extend({
+        model: Gh3.Issue
     });
 
     Collection.RepositoryIssues = Collection._IssuesList.extend({
@@ -1476,6 +1491,43 @@
          */
         _service: function() { return this.parent._service() + "/issues"; }
     });
+
+
+    Gh3.PullRequest = BaseIssue.extend({
+        /* This class reprensent a Github issue, belonging to a repository */
+        _service: function() {
+            return this.repository._service() + "/pulls/" + this.number;
+        },
+        _setData: function(data) {
+            /* Save user, assignee and repo, then normal fields
+             */
+            if (data) {
+                if (data.merged_by) {
+                    if (data.merged_by.login) {
+                        if (!this.merged_by) {
+                            this.merged_by = new Gh3.User(data.merged_by.login);
+                        }
+                        this.merged_by._setData(data.merged_by);
+                    }
+                    delete data.merged_by;
+                }
+            }
+
+            Gh3.PullRequest.__super__._setData.call(this, data);
+
+        }
+    }); // Gh3.PullRequest
+
+    Collection._PullRequestsList = Collection._BaseIssuesList.extend({
+        model: Gh3.PullRequest
+    });
+
+    Collection.RepositoryPullRequests = Collection._PullRequestsList.extend({
+        /* List of issues of a repositories
+         */
+        _service: function() { return this.parent._service() + "/pulls"; }
+    });
+
 
     /* Search */
 

@@ -661,6 +661,34 @@ html.loading.ui-mobile-rendering > * { visibility: visible !important; }
         </div>
      --></div>
 
+    <div data-template-for="repository_pull_requests"><!--
+        <ul class="ui-listview with-more issues-list pull_requests-list" data-mobile-listview='{"options":{}}'>
+        </ul>
+        <div class="ui-grid-a load-buttons" id="repository_pull_requests_load_buttons">
+            <div class="ui-block-a"><a data-role="button" href='#' data-icon="plus" data-inline="true" data-mini="true" class="list-more-button ui-disabled" data-corners="false" >Load more</a></div>
+            <div class="ui-block-b"><a data-role="button" href='#' data-icon="grid" data-inline="true" data-mini="true" class="list-all-button ui-disabled" data-corners="false" >Load all</a></div>
+        </div>
+     --></div>
+
+    <div data-template-for="repository_pull_requests_options"><!--
+        <div data-role="collapsible" data-corners="false" data-theme="e" data-content-theme="c" data-mini="true" data-inset="false" class="view-options">
+            <h3>Options and filters</h3>
+            <form id="repository_pull_requests_options" data-ajax="false">
+                <div class="fieldsets">
+                    <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="ui-hide-label ui-with-radio-legend">
+                        <legend>State: </legend>
+                        <label><input type="radio" name="repository_pull_requests_options_state" id="repository_pull_requests_options_state__label" value="__label__" disabled="disabled" data-theme="a" />State: </label>
+                        <label><input type="radio" name="repository_pull_requests_options_state" id="repository_pull_requests_options_state_open" value="open" />Open</label>
+                        <label><input type="radio" name="repository_pull_requests_options_state" id="repository_pull_requests_options_state_closed" value="closed" />Closed</label>
+                    </fieldset>
+                </div>
+                <fieldset class="buttons">
+                    <button type="reset" data-mini="true" data-theme="c" data-icon="delete" data-inline="true" name="reset" value="reset-value">Default</button>
+                    <button type="submit" data-mini="true" data-theme="b" data-icon="check" data-inline="true" name="submit" value="submit-value">Update</button>
+                </fieldset>
+            </form>
+        </div>
+     --></div>
     <ul data-template-for="repository-list-item"><!--
         <li class="ui-btn ui-btn-icon-right ui-li-has-arrow ui-li ui-btn-up-c repo"><div class="ui-btn-inner ui-li"><div class="ui-btn-text">
             <a href="#repository_home" class="ui-link-inherit">
@@ -693,6 +721,19 @@ html.loading.ui-mobile-rendering > * { visibility: visible !important; }
                 <p class="ui-li-desc issue-infos"><span></span>, <span></span> on <span></span></p>
             </a>
             <p class="collapsible-trigger issue-more">Details...</p>
+            </div><span class="ui-icon ui-icon-arrow-r ui-icon-shadow">&nbsp;</span></div></li>
+        </li>
+     --></ul>
+    <ul data-template-for="pull_request-list-item"><!--
+        <li class="ui-btn ui-btn-icon-right ui-li-has-arrow ui-li ui-btn-up-c with-banner pull_request"><div class="ui-btn-inner ui-li"><div class="ui-btn-text">
+            <a href="#" target="_blank" class="ui-link-inherit">
+                <p class="banner pull_request-number"></p>
+                <p class="indicator pull_request-indicators"><span class="pull_request-merge"></span><span class="pull_request-state"></span></p>
+                <h4 class="ui-li-heading">loading...</h4>
+                <p class="ui-li-desc pull_request-created">By <img src="img/default-avatar.png" class="avatar-small" /><span></span>, <span></span></p>
+                <p class="ui-li-desc pull_request-infos"><span></span> on <span></span></p>
+            </a>
+            <p class="collapsible-trigger pull_request-more">Details...</p>
             </div><span class="ui-icon ui-icon-arrow-r ui-icon-shadow">&nbsp;</span></div></li>
         </li>
      --></ul>

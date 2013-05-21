@@ -197,4 +197,16 @@
         }
     }); // View.repository_issues
 
+    App.View.views.repository_pull_requests = App.View.views._pull_requests.$extend({
+        __classvars__: {
+            model: 'repository',
+            view_name: 'repository_pull_requests',
+            data_field: 'pull_requests',
+            accept_options: true,
+            default_options: {
+                state: 'open'
+            }
+        }
+    }); // View.repository_pull_requests
+
 })(Reposio);

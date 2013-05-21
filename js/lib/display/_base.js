@@ -314,7 +314,7 @@
         })); // main-nav-menu popupafterclose
 
         $(document).on('click', '.collapsible-trigger', (function Display__on_collapsible_trigger_click (e) {
-            // open/close collapsible when clicking triggering links in list of events, issues...
+            // open/close collapsible when clicking triggering links in list of events, issues, pull_requests...
             e.preventDefault();
             e.stopPropagation();
             var link = $(this),
@@ -858,7 +858,7 @@
                 classes.push('no-pr');
             }
 
-            if ((!issue.labels || !issue.labels.length) && !issue.body_html && (!issue.milestone && !issue.milestone.id)) {
+            if ((!issue.labels || !issue.labels.length) && !issue.body_html && (!issue.milestone || !issue.milestone.id)) {
                 classes.push('no-details');
             } else {
                 li.more_type = 'issue';
@@ -874,6 +874,94 @@
 
         return items;
     }); // create_issues_list_items
+
+    Display.prototype.create_pull_requests_list_items = (function Display__create_pull_requests_list_items (pull_requests) {
+        var template = this.get_template('pull_request-list-item'),
+            items = [],
+            li, pull_request, classes,
+            a, a_children, number_holder, state_holder, title_holder,
+            created_children, creator_avatar_holder, creator_holder,
+            created_at_holder, infos_children, comments_holder,
+            last_status_holder, last_status_date_holder,
+            merged;
+
+        for (var i=0; i<pull_requests.length; i++) {
+            pull_request = pull_requests[i];
+
+            li = template.cloneNode(true);
+            a = li.getElementsByTagName('a')[0];
+            a_children = a.children;
+            number_holder = a_children[0];
+            indicators = a_children[1].children,
+            merge_holder = indicators[0];
+            state_holder = indicators[1];
+            title_holder = a_children[2];
+            created_children = a_children[3].children;
+            creator_avatar_holder = created_children[0];
+            creator_holder = created_children[1];
+            created_at_holder = created_children[2];
+            infos_children = a_children[4].children;
+            last_status_holder = infos_children[0];
+            last_status_date_holder = infos_children[1];
+
+            merged = !!(pull_request.state == 'closed' && pull_request.merged_at);
+
+            classes = [];
+
+            a.href = pull_request.html_url;
+
+            number_holder.innerHTML = pull_request.number;
+            title_holder.innerHTML = this.escape_html(pull_request.title);
+            state_holder.innerHTML = pull_request.state;
+
+            created_at_holder.innerHTML = this.format_date(pull_request.created_at, true);
+            creator_holder.innerHTML = pull_request.user.login;
+            if (pull_request.user.avatar_url) {
+                creator_avatar_holder.setAttribute('data-original', pull_request.user.avatar_url);
+            }
+
+            if (merged) {
+                last_status_holder.innerHTML = 'Merged';
+                last_status_date_holder.innerHTML = this.format_date(pull_request.merged_at, true);
+
+            } else if (pull_request.state == 'closed') {
+                last_status_holder.innerHTML = 'Closed';
+                last_status_date_holder.innerHTML = this.format_date(pull_request.closed_at, true);
+            } else if (pull_request.updated_at && this.format_date(pull_request.updated_at) != this.format_date(pull_request.created_at)) {
+                last_status_holder.innerHTML = 'Updated';
+                last_status_date_holder.innerHTML = this.format_date(pull_request.updated_at, true);
+            } else {
+                classes.push('no-infos');
+            }
+
+            classes.push('pull_request-' + pull_request.state);
+
+            if (merged) {
+                classes.push('pull_request-merged');
+                merge_holder.innerHTML = 'merged';
+            } else if (pull_request.state == 'open' && (pull_request.mergeable || pull_request.merge_commit_sha)) {
+                classes.push('pull_request-mergeable');
+                merge_holder.innerHTML = 'mergeable';
+            } else {
+                classes.push('no-merge-indicator');
+            }
+
+            if (!pull_request.body_html && (!pull_request.milestone || !pull_request.milestone.id)) {
+                classes.push('no-details');
+            } else {
+                li.more_type = 'pull_request';
+                li.pull_request_data = pull_request;
+            }
+
+            if (classes.length) {
+                li.className +=  ' ' + classes.join(' ');
+            }
+
+            items.push(li);
+        }
+
+        return items;
+    }); // create_pull_requests_list_items
 
     Display.prototype.get_error_text = (function Display__get_error_text (error) {
         var error_text = '';
@@ -1156,5 +1244,43 @@
 
         return parts.join('');
     }); // render_issue_collapsible
+
+    Display.prototype.render_pull_request_collapsible = (function Display__render_pull_request_collapsible(li) {
+        var pull_request = li[0].pull_request_data,
+            parts = [],
+            body_part, milestone_part, assignee_part;
+
+        if (pull_request.milestone && pull_request.milestone.id) {
+            milestone_part = '<div class="pull_request-milestone"><strong>Milestone: </strong>' + this.escape_html(pull_request.milestone.title) + '</div>';
+            parts.push(milestone_part);
+        }
+
+        if (pull_request.assignee && pull_request.assignee.id) {
+            assignee_part = '<div class="pull_request-assignee"><strong>Assigned to: </strong>';
+            assignee_part += this.account_link(pull_request.assignee.login, this.controller.repository.provider.name, pull_request.assignee.avatar_url);
+            assignee_part += '</div>';
+            parts.push(assignee_part);
+        }
+
+        if (pull_request.merged_by && pull_request.merged_by.id) {
+            merged_by_part = '<div class="pull_request-merged_by"><strong>Merged by: </strong>';
+            merged_by_part += this.account_link(pull_request.merged_by.login, this.controller.repository.provider.name, pull_request.merged_by.avatar_url);
+            merged_by_part += '</div>';
+            parts.push(merged_by_part);
+        }
+
+        if (pull_request.body_html) {
+            if (parts.length) {
+                parts.push('<hr />');
+            }
+            body_part = '<div class="pull_request-body">';
+            body_part += '<div><strong>Description</strong>, by ' + this.account_link(pull_request.user.login, this.controller.repository.provider.name, pull_request.user.avatar_url) + '</div>';
+            body_part += '<div class="markup">' + pull_request.body_html + '</div>';
+            body_part += '</div>';
+            parts.push(body_part);
+        }
+
+        return parts.join('');
+    }); // render_pull_request_collapsible
 
 })(Reposio);

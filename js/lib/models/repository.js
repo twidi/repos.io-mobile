@@ -11,7 +11,8 @@
                 forks: [],
                 stars: [],
                 contributors: [],
-                issues: []
+                issues: [],
+                pull_requests: []
             },
             flags: ['star', 'watch'],
             default_params: {
@@ -19,12 +20,14 @@
                 forks: {per_page: 50},
                 stars: {per_page: 50},
                 contributors: {per_page: 100}, // no pagination !?
-                issues: {per_page: 50}
+                issues: {per_page: 50},
+                pull_requests: {per_page: 50}
             },
             fetchable_params: {
                 forks: ['sort'],
                 activity: [],
-                issues: ['direction', 'sort', 'state' ]
+                issues: ['direction', 'sort', 'state' ],
+                pull_requests: ['state' ]
             },
             sort_and_filter_helpers: {
                 forks: {
@@ -34,6 +37,9 @@
                 issues: {
                     sort_field: {created: 'created_at', updated: 'updated_at', comments: 'comments'},
                     filter_state: (function Repository__issues_filter_state (issue) { return issue.state == this; })
+                },
+                pull_requests: {
+                    filter_state: (function Repository__pull_requests_filter_state (pull_request) { return pull_request.state == this; })
                 }
             },
             save_many: (function Repository__save_many (repositories, provider, controller) {
@@ -47,15 +53,20 @@
                 var issue, account, name;
                 for (var i = 0; i < issues.length; i++) {
                     issue = issues[i];
-                    // create a user object only if avatar, useless if not
+                    // create a user object only if avatar, useless if not (issue or pull request)
                     if (issue.user && issue.user.login && issue.user.avatar_url) {
                         account = App.Models.account.get(issue.user.login + '@' + provider.name, controller);
                         account.update_data('details', issue.user);
                     }
-                    // idem for the assigne
+                    // idem for the assigne (issue only)
                     if (issue.assignee && issue.assignee.login && issue.assignee.avatar_url) {
                         account = App.Models.account.get(issue.assignee.login + '@' + provider.name, controller);
                         account.update_data('details', issue.assignee);
+                    }
+                    // idem for the assigne (pull request only)
+                    if (issue.merged_by && issue.merged_by.login && issue.merged_by.avatar_url) {
+                        account = App.Models.account.get(issue.merged_by.login + '@' + provider.name, controller);
+                        account.update_data('details', issue.merged_by);
                     }
                 }
             }) // save_many_from_issues
@@ -94,6 +105,7 @@
                     App.Models.base.save_many_from_events(data, this.provider, this.controller);
                     break;
                 case 'issues':
+                case 'pull_requests':
                     App.Models.repository.save_many_from_issues(data, this.provider, this.controller);
             }
         }), // update_data
@@ -153,7 +165,25 @@
 
         can_have_issues: (function Repository__can_have_issues () {
             return (this.details && this.details.has_issues);
-        }) // can_have_issues
+        }), // can_have_issues
+
+        manage_global_for_pull_requests: (function Repository__manage_global_for_pull_requests () {
+            var global = this.list_page_status.pull_requests.__global__;
+            // we may want to find a way to detect all for open AND all for closed
+            // but currently we can't so we consider we never have all data
+            // (or a way to consider global for open AND a global for closed)
+            global.all = false;
+        }), // manage_global_for_pull_requests
+
+        sort_and_filter_pull_requests: (function Repository__sort_and_filter_pull_requests (options, force_data) {
+            var global = this.list_page_status.pull_requests.__global__,
+                helpers = this.$class.sort_and_filter_helpers.pull_requests,
+                data = force_data || this.pull_requests[global.str_params];
+
+            data = _.filter(data, helpers.filter_state, options.state);
+
+            return data;
+        }) // sort_and_filter_pull_requests
 
     }); // Repository
 
